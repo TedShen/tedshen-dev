@@ -1,0 +1,134 @@
+---
+// dev.tedshen.link 首頁：軟體接案與技術顧問。
+// 流量來源：名片、社群簡介、搜尋、合作夥伴轉介。目的是讓對方快速確認「是這個人」，然後知道下一步怎麼聯絡。
+// CTA 以 Email 為主，LINE 為輔；財務教練那條線在 grow，這頁不混。
+import Base from '../layouts/Base.astro';
+import OfficialChannels from '../components/OfficialChannels.astro';
+import { EMAIL, LINE_URL, SITE_URL, SITE_DESCRIPTION, HUB_URL, GROW_URL, PERSON } from '../consts';
+
+const abs = (p: string) => new URL(p, SITE_URL).href;
+const mailto = `mailto:${EMAIL}?subject=${encodeURIComponent('軟體合作洽詢')}`;
+
+const serviceSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  '@id': abs('/#service'),
+  name: '軟體開發與技術顧問',
+  description: SITE_DESCRIPTION,
+  serviceType: ['網站與前端開發', '自動化與資料處理', '技術顧問'],
+  provider: { '@type': 'Person', '@id': `${HUB_URL}/#person`, name: PERSON.name, url: HUB_URL },
+  areaServed: '台灣',
+  availableLanguage: ['zh-Hant'],
+  url: abs('/'),
+};
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': abs('/#website'),
+  name: '沈裕德 Ted ｜ 軟體開發',
+  url: SITE_URL,
+  description: SITE_DESCRIPTION,
+  inLanguage: 'zh-Hant',
+  author: { '@id': `${HUB_URL}/#person` },
+};
+---
+
+<Base
+  title="軟體開發與技術顧問 ｜ 沈裕德 Ted"
+  description={SITE_DESCRIPTION}
+  ogTitle="軟體開發與技術顧問 ｜ Ted"
+  ogDescription="網站與前端、自動化與資料處理、技術顧問。先把需求講清楚，再談怎麼做。"
+  path="/"
+  schema={[serviceSchema, websiteSchema]}
+>
+  <!-- ① Hero -->
+  <header class="hero wrap">
+    <img class="avatar" src="/avatar.jpg" alt={`${PERSON.name} ${PERSON.alternateName}，軟體工程師`} width="96" height="96" />
+    <p class="brand-tag">DEV ｜ 軟體開發</p>
+    <h1>把你想做的事<br />變成能跑的系統</h1>
+    <p class="lead">
+      我是沈裕德 Ted，軟體工程師。<br />
+      接網站與前端、自動化與資料處理，也做技術顧問。
+    </p>
+    <a class="btn btn-line" style="background:var(--brand);" href={mailto}>寫信談你的需求 →</a>
+  </header>
+
+  <!-- ② 能做什麼 -->
+  <section class="wrap">
+    <p class="zone-label">我能做的事</p>
+    <h2>三種工作，看你的需求落在哪一種</h2>
+    <div class="cards">
+      <div class="card">
+        <div class="num">01</div>
+        <h3>網站與前端</h3>
+        <p>形象網站、活動頁、部落格、內部工具的介面。重視載入速度、手機體驗，和搜尋引擎能不能正確讀到你的內容。</p>
+      </div>
+      <div class="card">
+        <div class="num">02</div>
+        <h3>自動化與資料處理</h3>
+        <p>把重複的手工流程變成腳本或排程：報表整理、資料清洗與轉換、不同服務之間的串接。目標是讓你不用再每週做同一件事。</p>
+      </div>
+      <div class="card">
+        <div class="num">03</div>
+        <h3>技術顧問</h3>
+        <p>不一定要寫程式。你有一個想法或一個現有系統，需要有人幫你看方向、選工具、評估做法和成本，或審視外包的交付品質。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ③ 合作方式 -->
+  <section class="wrap">
+    <p class="zone-label">合作方式</p>
+    <h2>大小案子都談，但先講清楚</h2>
+    <ul class="pill-list">
+      <li>單次專案 — 範圍明確、有交付日期的案子，先報價再開工</li>
+      <li>持續合作 — 固定時數的維護、迭代或兼職開發</li>
+      <li>顧問時段 — 以小時計的技術諮詢，適合評估與決策階段</li>
+    </ul>
+    <p class="zone-note">
+      第一次聯絡不用準備完整規格。把你想解決的問題、現在怎麼做、希望變成什麼樣子講清楚就好，我會回你問題和初步的做法。
+    </p>
+  </section>
+
+  <!-- ④ 作品：這幾個網站 -->
+  <section class="wrap">
+    <p class="zone-label">一個看得到的例子</p>
+    <h2>你現在看的這個網站，和它的兄弟站</h2>
+    <p class="zone-intro">
+      這站、<a href={HUB_URL} style="color:var(--brand);font-weight:600;">tedshen.link</a> 和
+      <a href={GROW_URL} style="color:var(--brand);font-weight:600;">grow.tedshen.link</a>
+      都是我用 Astro 做的靜態網站，同一套版型，部署在 GitHub Pages，DNS 走 Cloudflare。零客戶端 JavaScript，手機打開不用等。
+    </p>
+    <p class="zone-intro">
+      SEO 也照規矩做完：每頁獨立的標題與描述、結構化資料、sitemap、分享預覽圖，加上舊網址的轉址。你可以直接看原始碼，或用任何 SEO 工具檢查。
+    </p>
+  </section>
+
+  <!-- ⑤ 另一條線 -->
+  <section class="wrap">
+    <p class="zone-label">另一條線</p>
+    <h2>我同時也是財務教練</h2>
+    <p class="zone-intro">
+      如果你是因為財務、資產或理財的事找到這頁，入口在
+      <a href={GROW_URL} style="color:var(--brand);font-weight:600;">grow.tedshen.link</a>。
+      軟體的事在這頁談，財務的事在那邊談，兩邊我都不推銷。
+    </p>
+  </section>
+
+  <!-- ⑥ CTA -->
+  <section class="wrap">
+    <div class="cta">
+      <h2>有想做的東西？</h2>
+      <p>寫信最快。把問題講清楚，我回你可行的做法。<br />也可以加 LINE，但軟體的討論我習慣用信件留紀錄。</p>
+      <a class="btn btn-line" style="background:var(--brand);" href={mailto}>寫信給我 →</a>
+      <p style="margin-top:16px;font-size:.9rem;">
+        <a href={mailto} style="color:var(--brand);">{EMAIL}</a>
+        ・ <a href={LINE_URL} style="color:var(--muted);">LINE 官方帳號</a>
+        ・ 確認身分：<a href={HUB_URL} style="color:var(--muted);">tedshen.link</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- ⑦ 官方管道與防冒用 -->
+  <OfficialChannels />
+</Base>

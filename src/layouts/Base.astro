@@ -1,0 +1,250 @@
+---
+import { SITE_NAME, SITE_URL, SITE_DESCRIPTION, PERSON, EMAIL } from '../consts';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  /** 相對路徑，例如 "/blog/"。用來組 og:url 與 canonical；沒尾斜線會自動補。 */
+  path?: string;
+  /** 分享預覽圖，相對路徑；預設 /og.jpg（1200×630）。單篇文章有專圖時可覆寫。 */
+  image?: string;
+  /** 文章頁傳 'article'，其餘預設 'website'。 */
+  type?: 'website' | 'article';
+  publishedTime?: Date;
+  modifiedTime?: Date;
+  /** 麵包屑，不含首頁（會自動加在最前面）。例：[{ name: '部落格', path: '/blog/' }] */
+  breadcrumbs?: { name: string; path: string }[];
+  /** 額外 JSON-LD（Person、BlogPosting 等），見 src/lib/schema.ts。 */
+  schema?: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const {
+  title = SITE_NAME,
+  description = SITE_DESCRIPTION,
+  ogTitle,
+  ogDescription,
+  path = '/',
+  image = '/og.jpg',
+  type = 'website',
+  publishedTime,
+  modifiedTime,
+  breadcrumbs = [],
+  schema,
+} = Astro.props;
+
+// GitHub Pages 實際服務的是 /path/，沒尾斜線的網址會 301。canonical 必須指向最終網址。
+const withSlash = (p: string) => (p.endsWith('/') ? p : `${p}/`);
+const canonical = new URL(withSlash(path), SITE_URL).href;
+const ogImage = new URL(image, SITE_URL).href;
+
+const breadcrumbLd =
+  breadcrumbs.length > 0
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [{ name: '首頁', path: '/' }, ...breadcrumbs].map((b, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: b.name,
+          item: new URL(withSlash(b.path), SITE_URL).href,
+        })),
+      }
+    : null;
+const schemas = [
+  ...(Array.isArray(schema) ? schema : schema ? [schema] : []),
+  ...(breadcrumbLd ? [breadcrumbLd] : []),
+];
+---
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <!-- Open Graph：分享到 LINE / FB 時的預覽 -->
+    <meta property="og:title" content={ogTitle ?? title} />
+    <meta property="og:description" content={ogDescription ?? description} />
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    {image === '/og.jpg' && (
+      <>
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+      </>
+    )}
+    <meta property="og:image:alt" content={`${PERSON.name} ${PERSON.alternateName}，${PERSON.jobTitle}`} />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:locale" content="zh_TW" />
+    {type === 'article' && publishedTime && (
+      <meta property="article:published_time" content={publishedTime.toISOString()} />
+    )}
+    {type === 'article' && modifiedTime && (
+      <meta property="article:modified_time" content={modifiedTime.toISOString()} />
+    )}
+    {type === 'article' && <meta property="article:author" content={PERSON.name} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={ogTitle ?? title} />
+    <meta name="twitter:description" content={ogDescription ?? description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <!-- 結構化資料：Person / WebSite / BlogPosting / BreadcrumbList，由各頁透過 props 傳入 -->
+    {schemas.map((s) => (
+      <script type="application/ld+json" set:html={JSON.stringify(s)} />
+    ))}
+
+    <style is:global>
+      :root {
+        --bg: #ffffff;
+        --surface: #f5f7f6;
+        --text: #1a2420;
+        --muted: #5c6b64;
+        --brand: #1f9d6b;      /* grow 綠 */
+        --brand-dark: #157a52;
+        --line: #06c755;       /* LINE 官方綠 */
+        --border: #e2e8e4;
+        --shadow: 0 4px 24px rgba(20, 60, 40, 0.08);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0f1512;
+          --surface: #161d19;
+          --text: #eaf1ec;
+          --muted: #9fb0a8;
+          --brand: #2fbd85;
+          --brand-dark: #26a271;
+          --border: #26302b;
+          --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+        }
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html { scroll-behavior: smooth; }
+      body {
+        font-family: -apple-system, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.7;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap { max-width: 680px; margin: 0 auto; padding: 0 24px; }
+      section { padding: 56px 0; }
+      h1 { font-size: 2rem; line-height: 1.3; letter-spacing: -0.01em; }
+      h2 { font-size: 1.35rem; margin-bottom: 24px; }
+      p { color: var(--muted); }
+      .brand-tag { color: var(--brand); font-weight: 700; letter-spacing: 0.05em; }
+
+      /* 按鈕 */
+      .btn {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 14px 28px; border-radius: 999px;
+        font-weight: 700; font-size: 1rem; text-decoration: none;
+        transition: transform .15s ease, box-shadow .15s ease;
+      }
+      .btn:hover { transform: translateY(-2px); }
+      .btn-line { background: var(--line); color: #fff; box-shadow: var(--shadow); }
+      .btn-ghost { background: transparent; color: var(--brand); border: 1.5px solid var(--brand); }
+
+      /* Hero */
+      .hero { padding-top: 80px; text-align: center; }
+      .hero .avatar {
+        width: 96px; height: 96px; border-radius: 50%;
+        object-fit: cover; object-position: center 20%;
+        margin: 0 auto 24px; display: block;
+        border: 1px solid var(--border);
+      }
+      .hero p.lead { font-size: 1.1rem; margin: 16px 0 32px; }
+
+      /* 服務卡片 */
+      .cards { display: grid; gap: 16px; }
+      .card {
+        background: var(--surface); border: 1px solid var(--border);
+        border-radius: 16px; padding: 24px;
+      }
+      .card .num { color: var(--brand); font-weight: 700; font-size: .9rem; }
+      .card h3 { font-size: 1.1rem; margin: 6px 0 8px; }
+      .card p { font-size: .95rem; }
+
+      /* 分區標籤與進階區 */
+      .zone-label {
+        display: inline-block; color: var(--brand); font-weight: 700;
+        font-size: .8rem; letter-spacing: .08em; margin-bottom: 6px;
+      }
+      .zone-intro { margin-bottom: 20px; }
+      .zone-intro strong { color: var(--text); }
+      .pill-list { list-style: none; display: grid; gap: 12px; }
+      .pill-list li {
+        background: var(--surface); border: 1px solid var(--border);
+        border-radius: 12px; padding: 16px 20px; color: var(--text);
+        font-weight: 600; font-size: .98rem;
+      }
+      .zone-note { margin-top: 20px; font-size: .95rem; }
+
+      /* 見證 */
+      .quote {
+        background: var(--surface); border-left: 4px solid var(--brand);
+        border-radius: 8px; padding: 20px 24px; margin-bottom: 16px;
+      }
+      .quote p { color: var(--text); font-style: italic; }
+      .quote .who { color: var(--muted); font-size: .85rem; font-style: normal; margin-top: 8px; }
+
+      /* 內容連結 */
+      .posts a {
+        display: block; padding: 16px 0; border-bottom: 1px solid var(--border);
+        color: var(--text); text-decoration: none;
+      }
+      .posts a:hover { color: var(--brand); }
+      .posts .date { color: var(--muted); font-size: .85rem; }
+
+      /* CTA 區塊 */
+      .cta { text-align: center; background: var(--surface); border-radius: 24px; margin: 40px 0; padding: 48px 24px; }
+      .cta h2 { margin-bottom: 12px; }
+      .cta p { margin-bottom: 28px; }
+
+      footer { text-align: center; padding: 40px 0; color: var(--muted); font-size: .85rem; }
+      footer a { color: var(--muted); }
+
+      /* 文章內文 */
+      .prose { max-width: 680px; }
+      .prose h2 { font-size: 1.5rem; margin: 40px 0 16px; }
+      .prose h3 { font-size: 1.2rem; margin: 32px 0 12px; }
+      .prose p { color: var(--text); margin-bottom: 20px; }
+      .prose ul, .prose ol { color: var(--text); margin: 0 0 20px 1.4em; }
+      .prose li { margin-bottom: 8px; }
+      .prose a { color: var(--brand); }
+      .prose blockquote {
+        border-left: 4px solid var(--brand); background: var(--surface);
+        padding: 16px 20px; border-radius: 8px; margin: 0 0 20px;
+      }
+      .prose img { max-width: 100%; border-radius: 12px; }
+
+      /* 通用 meta 行、麵包屑、標籤 */
+      .post-meta { color: var(--muted); font-size: .9rem; margin-bottom: 8px; }
+      .tag { display: inline-block; color: var(--brand); font-size: .85rem; margin-right: 8px; }
+      .compliance-note {
+        background: var(--surface); border: 1px solid var(--border);
+        border-radius: 8px; padding: 12px 16px; font-size: .85rem;
+        color: var(--muted); margin-bottom: 24px;
+      }
+      .back-link { display: inline-block; margin-top: 8px; color: var(--brand); text-decoration: none; font-weight: 600; }
+    </style>
+  </head>
+  <body>
+    <slot />
+
+    <footer class="wrap">
+      <nav aria-label="網站導覽" style="margin-bottom:12px;">
+        <a href="/">首頁</a> · <a href="https://tedshen.link/">身分頁</a> · <a href="https://grow.tedshen.link/">財務教練</a>
+      </nav>
+      <p>Ted ｜ 軟體開發 · dev.tedshen.link</p>
+      <p style="margin-top:8px;">聯絡：<a href={`mailto:${EMAIL}`}>{EMAIL}</a></p>
+    </footer>
+  </body>
+</html>
