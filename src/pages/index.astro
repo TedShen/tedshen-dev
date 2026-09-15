@@ -1,7 +1,7 @@
 ---
 // dev.tedshen.link 首頁：軟體接案與技術顧問。
 // 流量來源：名片、社群簡介、搜尋、合作夥伴轉介。目的是讓對方快速確認「是這個人」，然後知道下一步怎麼聯絡。
-// CTA 以 Email 為主，LINE 為輔；財務教練那條線在 grow，這頁不混。
+// CTA 以 LINE 為主，Email 為輔；財務教練那條線在 grow，這頁不混。
 import Base from '../layouts/Base.astro';
 import OfficialChannels from '../components/OfficialChannels.astro';
 import { EMAIL, LINE_URL, SITE_URL, SITE_DESCRIPTION, HUB_URL, GROW_URL, RESUME_URL, KINDMAP_URL, PERSON } from '../consts';
@@ -50,7 +50,7 @@ const websiteSchema = {
       我是沈裕德 Ted，軟體工程師，十年以上。<br />
       軟體開發、機器視覺、工業自動化、系統串接、網站，技術顧問。
     </p>
-    <a class="btn btn-line" style="background:var(--brand);" href={mailto}>寫信談你的需求 →</a>
+    <a class="btn btn-line" href={LINE_URL}>加 LINE 聊一聊 →</a>
   </header>
 
   <!-- ② 能做什麼 -->
@@ -156,11 +156,10 @@ const websiteSchema = {
   <section class="wrap">
     <div class="cta">
       <h2>有想做的東西？</h2>
-      <p>寫信最快。把問題講清楚，我回你可行的做法。{LINE_URL && <><br />也可以加 LINE，但軟體的討論我習慣用信件留紀錄。</>}</p>
-      <a class="btn btn-line" style="background:var(--brand);" href={mailto}>寫信給我 →</a>
+      <p>加 LINE 最快。把問題講清楚，我回你可行的做法。<br />細節談定之後，我會用信件把結論留一份紀錄。</p>
+      <a class="btn btn-line" href={LINE_URL}>加 LINE 聊一聊 →</a>
       <p style="margin-top:16px;font-size:.9rem;">
-        <a href={mailto} style="color:var(--brand);">{EMAIL}</a>
-        {LINE_URL && <>・ <a href={LINE_URL} style="color:var(--muted);">LINE 官方帳號</a></>}
+        或寫信：<a href={mailto} style="color:var(--brand);">{EMAIL}</a>
         ・ 確認身分：<a href={HUB_URL} style="color:var(--muted);">tedshen.link</a>
       </p>
     </div>
