@@ -12,7 +12,7 @@ export const GROW_URL = 'https://grow.tedshen.link';
 
 // 官方聯絡管道
 // 軟體線只開 LINE 官方帳號，不開 Threads / IG。LINE 開好後把連結填進來，OfficialChannels 和 CTA 會自動顯示。
-export const LINE_URL = '';
+export const LINE_URL = 'https://lin.ee/XB3OxbQ';
 export const EMAIL = 'ted@tedshen.link';
 
 // 站主（Person 正本在 tedshen.link/#person，這裡只放顯示用的欄位）
