@@ -4,7 +4,7 @@
 // CTA 以 Email 為主，LINE 為輔；財務教練那條線在 grow，這頁不混。
 import Base from '../layouts/Base.astro';
 import OfficialChannels from '../components/OfficialChannels.astro';
-import { EMAIL, LINE_URL, SITE_URL, SITE_DESCRIPTION, HUB_URL, GROW_URL, PERSON } from '../consts';
+import { EMAIL, LINE_URL, SITE_URL, SITE_DESCRIPTION, HUB_URL, GROW_URL, RESUME_URL, KINDMAP_URL, PERSON } from '../consts';
 
 const abs = (p: string) => new URL(p, SITE_URL).href;
 const mailto = `mailto:${EMAIL}?subject=${encodeURIComponent('軟體合作洽詢')}`;
@@ -15,7 +15,7 @@ const serviceSchema = {
   '@id': abs('/#service'),
   name: '軟體開發與技術顧問',
   description: SITE_DESCRIPTION,
-  serviceType: ['網站與前端開發', '自動化與資料處理', '技術顧問'],
+  serviceType: ['自動化設備軟體', '系統串接與流程自動化', '網站與前端開發', '技術顧問與研究分析'],
   provider: { '@type': 'Person', '@id': `${HUB_URL}/#person`, name: PERSON.name, url: HUB_URL },
   areaServed: '台灣',
   availableLanguage: ['zh-Hant'],
@@ -37,7 +37,7 @@ const websiteSchema = {
   title="軟體開發與技術顧問 ｜ 沈裕德 Ted"
   description={SITE_DESCRIPTION}
   ogTitle="軟體開發與技術顧問 ｜ Ted"
-  ogDescription="網站與前端、自動化與資料處理、技術顧問。先把需求講清楚，再談怎麼做。"
+  ogDescription="十年以上軟體工程師。自動化設備軟體、系統串接、網站開發、技術顧問。先把需求講清楚，再談怎麼做。"
   path="/"
   schema={[serviceSchema, websiteSchema]}
 >
@@ -47,8 +47,8 @@ const websiteSchema = {
     <p class="brand-tag">DEV ｜ 軟體開發</p>
     <h1>把你想做的事<br />變成能跑的系統</h1>
     <p class="lead">
-      我是沈裕德 Ted，軟體工程師。<br />
-      接網站與前端、自動化與資料處理，也做技術顧問。
+      我是沈裕德 Ted，軟體工程師，十年以上。<br />
+      本業是機器視覺、工業自動化和資安軟體。接案做設備軟體、系統串接、網站，也做技術顧問。
     </p>
     <a class="btn btn-line" style="background:var(--brand);" href={mailto}>寫信談你的需求 →</a>
   </header>
@@ -56,27 +56,78 @@ const websiteSchema = {
   <!-- ② 能做什麼 -->
   <section class="wrap">
     <p class="zone-label">我能做的事</p>
-    <h2>三種工作，看你的需求落在哪一種</h2>
+    <h2>四種工作，看你的需求落在哪一種</h2>
     <div class="cards">
       <div class="card">
         <div class="num">01</div>
-        <h3>網站與前端</h3>
-        <p>形象網站、活動頁、部落格、內部工具的介面。重視載入速度、手機體驗，和搜尋引擎能不能正確讀到你的內容。</p>
+        <h3>自動化設備軟體</h3>
+        <p>產線設備的控制軟體、機器視覺量測與檢測、雷射加工自動化。這是我做了十年的本業：從演算法、相機校正到現場驗收，整套都經手過。</p>
       </div>
       <div class="card">
         <div class="num">02</div>
-        <h3>自動化與資料處理</h3>
-        <p>把重複的手工流程變成腳本或排程：報表整理、資料清洗與轉換、不同服務之間的串接。目標是讓你不用再每週做同一件事。</p>
+        <h3>系統串接與流程自動化</h3>
+        <p>把你手上的服務接起來：POS 機串接、LINE 官方帳號建置與串接、SharePoint 串接、報表與資料處理腳本。目標是讓你不用再每週做同一件事。</p>
       </div>
       <div class="card">
         <div class="num">03</div>
-        <h3>技術顧問</h3>
-        <p>不一定要寫程式。你有一個想法或一個現有系統，需要有人幫你看方向、選工具、評估做法和成本，或審視外包的交付品質。</p>
+        <h3>網站與小型產品</h3>
+        <p>形象網站、部落格、內部工具，到一個完整的小型產品。重視載入速度、手機體驗，和搜尋引擎能不能正確讀到你的內容。</p>
+      </div>
+      <div class="card">
+        <div class="num">04</div>
+        <h3>技術顧問與研究分析</h3>
+        <p>不一定要寫程式。幫你看方向、選工具、評估做法和成本、審視外包交付品質，或針對特定設備與技術做研究分析，例如半導體設備。</p>
       </div>
     </div>
   </section>
 
-  <!-- ③ 合作方式 -->
+  <!-- ③ 做過的案子 -->
+  <section class="wrap">
+    <p class="zone-label">做過的案子</p>
+    <h2>接案經歷</h2>
+    <ul class="pill-list">
+      <li>自動化設備軟體 — 設備控制與量測系統</li>
+      <li>POS 機串接 — 銷售系統與後端資料整合</li>
+      <li>LINE 官方帳號 — 建置與功能串接</li>
+      <li>SharePoint 串接 — 企業文件與流程整合</li>
+      <li>半導體設備研究分析 — 技術評估與分析報告</li>
+    </ul>
+    <p class="zone-note">
+      案子的細節多半有保密約定，能講的範圍我會在第一次聯絡時說清楚。
+    </p>
+  </section>
+
+  <!-- ④ 作品 -->
+  <section class="wrap">
+    <p class="zone-label">看得到的東西</p>
+    <h2>作品與履歷</h2>
+    <div class="cards">
+      <div class="card">
+        <h3>捐前一查</h3>
+        <p>
+          台灣公益單位查詢平台。彙整已立案的公益團體、官方捐款管道與使用者評價，資料以政府開放資料為基礎，捐款一律導向各單位官方管道，平台不經手款項。從零到上線的完整產品。
+        </p>
+        <p style="margin-top:14px;"><a class="btn btn-ghost" href={KINDMAP_URL}>kindmap.link →</a></p>
+      </div>
+      <div class="card">
+        <h3>這幾個網站</h3>
+        <p>
+          這站、<a href={HUB_URL} style="color:var(--brand);font-weight:600;">tedshen.link</a> 和
+          <a href={GROW_URL} style="color:var(--brand);font-weight:600;">grow.tedshen.link</a>
+          都是我用 Astro 做的靜態網站，同一套版型，部署在 GitHub Pages。零客戶端 JavaScript，SEO 照規矩做完，你可以直接看原始碼。
+        </p>
+      </div>
+      <div class="card">
+        <h3>完整履歷</h3>
+        <p>
+          英文版，含各段經歷、技術清單與研究背景。機器視覺、工業自動化、資安軟體，中央大學資工碩士與太空科學碩士。
+        </p>
+        <p style="margin-top:14px;"><a class="btn btn-ghost" href={RESUME_URL}>tedshen.github.io →</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑤ 合作方式 -->
   <section class="wrap">
     <p class="zone-label">合作方式</p>
     <h2>大小案子都談，但先講清楚</h2>
@@ -90,21 +141,7 @@ const websiteSchema = {
     </p>
   </section>
 
-  <!-- ④ 作品：這幾個網站 -->
-  <section class="wrap">
-    <p class="zone-label">一個看得到的例子</p>
-    <h2>你現在看的這個網站，和它的兄弟站</h2>
-    <p class="zone-intro">
-      這站、<a href={HUB_URL} style="color:var(--brand);font-weight:600;">tedshen.link</a> 和
-      <a href={GROW_URL} style="color:var(--brand);font-weight:600;">grow.tedshen.link</a>
-      都是我用 Astro 做的靜態網站，同一套版型，部署在 GitHub Pages，DNS 走 Cloudflare。零客戶端 JavaScript，手機打開不用等。
-    </p>
-    <p class="zone-intro">
-      SEO 也照規矩做完：每頁獨立的標題與描述、結構化資料、sitemap、分享預覽圖，加上舊網址的轉址。你可以直接看原始碼，或用任何 SEO 工具檢查。
-    </p>
-  </section>
-
-  <!-- ⑤ 另一條線 -->
+  <!-- ⑥ 另一條線 -->
   <section class="wrap">
     <p class="zone-label">另一條線</p>
     <h2>我同時也是財務教練</h2>
@@ -115,7 +152,7 @@ const websiteSchema = {
     </p>
   </section>
 
-  <!-- ⑥ CTA -->
+  <!-- ⑦ CTA -->
   <section class="wrap">
     <div class="cta">
       <h2>有想做的東西？</h2>
@@ -129,6 +166,6 @@ const websiteSchema = {
     </div>
   </section>
 
-  <!-- ⑦ 官方管道與防冒用 -->
+  <!-- ⑧ 官方管道與防冒用 -->
   <OfficialChannels />
 </Base>
