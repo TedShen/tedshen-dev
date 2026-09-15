@@ -119,11 +119,11 @@ const websiteSchema = {
   <section class="wrap">
     <div class="cta">
       <h2>有想做的東西？</h2>
-      <p>寫信最快。把問題講清楚，我回你可行的做法。<br />也可以加 LINE，但軟體的討論我習慣用信件留紀錄。</p>
+      <p>寫信最快。把問題講清楚，我回你可行的做法。{LINE_URL && <><br />也可以加 LINE，但軟體的討論我習慣用信件留紀錄。</>}</p>
       <a class="btn btn-line" style="background:var(--brand);" href={mailto}>寫信給我 →</a>
       <p style="margin-top:16px;font-size:.9rem;">
         <a href={mailto} style="color:var(--brand);">{EMAIL}</a>
-        ・ <a href={LINE_URL} style="color:var(--muted);">LINE 官方帳號</a>
+        {LINE_URL && <>・ <a href={LINE_URL} style="color:var(--muted);">LINE 官方帳號</a></>}
         ・ 確認身分：<a href={HUB_URL} style="color:var(--muted);">tedshen.link</a>
       </p>
     </div>

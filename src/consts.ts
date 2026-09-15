@@ -11,9 +11,8 @@ export const HUB_URL = 'https://tedshen.link';
 export const GROW_URL = 'https://grow.tedshen.link';
 
 // 官方聯絡管道
-export const LINE_URL = 'https://lin.ee/TWsPv3R';
-export const THREADS_URL = 'https://www.threads.com/@tedshen.grow';
-export const INSTAGRAM_URL = 'https://www.instagram.com/tedshen.grow';
+// 軟體線只開 LINE 官方帳號，不開 Threads / IG。LINE 開好後把連結填進來，OfficialChannels 和 CTA 會自動顯示。
+export const LINE_URL = '';
 export const EMAIL = 'ted@tedshen.link';
 
 // 站主（Person 正本在 tedshen.link/#person，這裡只放顯示用的欄位）
@@ -22,5 +21,5 @@ export const PERSON = {
   alternateName: 'Ted Shen',
   jobTitle: '軟體工程師',
   image: '/avatar.jpg',
-  sameAs: [HUB_URL, GROW_URL, THREADS_URL, INSTAGRAM_URL, LINE_URL],
+  sameAs: [HUB_URL, GROW_URL, ...(LINE_URL ? [LINE_URL] : [])],
 };
