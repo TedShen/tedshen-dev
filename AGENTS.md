@@ -57,6 +57,11 @@
 
 ## 6. 作業紀錄
 
+### 2026-09-18 — 修 SEO 稽核的 4 個 Warning
+- 範圍：`src/pages/index.astro`（h1 加 `h1-kicker` 關鍵字行、站外連結補尾斜線、內文連結改 `brand-dark`）、`src/layouts/Base.astro`（小字連結/標籤改 `brand-dark`、`h1-kicker` 樣式、`.card p` 與 `.zone-note` 改 1rem）、`src/components/OfficialChannels.astro`（連結補尾斜線、列表連結與 × 符號改 `brand-dark`）
+- 原因：同日 SEO 稽核報告的 Warnings 全修；h1 文案採站主選的「h1 加關鍵字行」方案
+- 驗證：`npm run build` 通過；`dist/index.html` 已確認 h1 含關鍵字行、hub/grow/dev 連結皆帶尾斜線、CSS 用 `brand-dark`
+
 ### 2026-09-18 — SEO 稽核（純研究，未改程式碼，86/100）
 - 範圍：未改任何原始碼；稽核 `src/pages/index.astro`、`src/layouts/Base.astro`、`src/components/OfficialChannels.astro`、`src/consts.ts`、`public/robots.txt`、`astro.config.mjs`，並抓取線上站驗證 HTML、robots.txt、sitemap-index → sitemap-0 → 首頁鏈完整、hub/grow 對外連結有效
 - 原因：使用者指示執行 SEO Audit skill

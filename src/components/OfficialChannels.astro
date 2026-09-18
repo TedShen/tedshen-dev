@@ -11,15 +11,15 @@ import { LINE_URL, EMAIL, SITE_URL, GROW_URL, HUB_URL } from '../consts';
 
   <p class="channels-intro">
     以下是我在軟體這條線使用的聯絡方式。其他線的帳號和完整總表在
-    <a href={HUB_URL} style="color:var(--brand);">tedshen.link</a>。如果你在其他地方看到我的名字或照片，請先對照。
+    <a href={`${HUB_URL}/`} style="color:var(--brand-dark);">tedshen.link</a>。如果你在其他地方看到我的名字或照片，請先對照。
   </p>
 
   <ul class="channel-list">
-    <li><span>網站</span><a href={SITE_URL}>{SITE_URL.replace('https://', '')}</a></li>
+    <li><span>網站</span><a href={`${SITE_URL}/`}>{SITE_URL.replace('https://', '')}</a></li>
     <li><span>Email</span><a href={`mailto:${EMAIL}`}>{EMAIL}</a></li>
     {LINE_URL && <li><span>LINE 官方帳號</span><a href={LINE_URL}>加入好友</a></li>}
-    <li><span>財務教練</span><a href={GROW_URL}>{GROW_URL.replace('https://', '')}</a></li>
-    <li><span>官方帳號總表</span><a href={HUB_URL}>{HUB_URL.replace('https://', '')}</a></li>
+    <li><span>財務教練</span><a href={`${GROW_URL}/`}>{GROW_URL.replace('https://', '')}</a></li>
+    <li><span>官方帳號總表</span><a href={`${HUB_URL}/`}>{HUB_URL.replace('https://', '')}</a></li>
   </ul>
 
   <div class="never-box">
@@ -64,7 +64,7 @@ import { LINE_URL, EMAIL, SITE_URL, GROW_URL, HUB_URL } from '../consts';
     min-width: 104px;
   }
   .channel-list a {
-    color: var(--brand);
+    color: var(--brand-dark);
     text-decoration: none;
     font-weight: 600;
     word-break: break-all;
@@ -95,7 +95,7 @@ import { LINE_URL, EMAIL, SITE_URL, GROW_URL, HUB_URL } from '../consts';
     content: "×";
     position: absolute;
     left: 0;
-    color: var(--brand);
+    color: var(--brand-dark);
     font-weight: 700;
   }
   .never-note {
