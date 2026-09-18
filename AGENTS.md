@@ -34,7 +34,7 @@
 - `src/pages/index.astro` — 全站唯一頁面，含 Service + WebSite JSON-LD，8 個區塊順序固定（見檔頭註解 ①–⑧）。
 - `src/layouts/Base.astro` — head（canonical / OG / Twitter / JSON-LD）、全域 CSS（含深色模式）、footer 導覽三站連結。
 - `src/components/OfficialChannels.astro` — 官方管道與防冒用聲明（「我不會做的事」5 條不可擅自增刪）。
-- `public/` — `avatar.jpg`、`og.jpg`（1200×630）、`favicon.*`、`robots.txt`（sitemap 指向本網域）。
+- `public/` — `avatar.jpg`＋`avatar.webp`（首屏頭像用 `<picture>`，webp 優先、jpg fallback）、`og.jpg`（1200×630；og:image 沿用 jpg 保分享相容）、`favicon.*`、`robots.txt`（sitemap 指向本網域）。
 
 ## 5. 作業紀錄規範（強制）
 
@@ -56,6 +56,12 @@
 不用另開 CHANGELOG、工作日誌檔或 issue 來代替本節；§6 就是唯一的作業流水帳。
 
 ## 6. 作業紀錄
+
+### 2026-09-18 — 修 SEO 稽核的 Opportunities（5 項全做）
+- 範圍：`public/avatar.webp`（新增，sharp webp q82，101KB→62KB）、`src/pages/index.astro`（頭像改 `<picture>` webp 優先＋jpg fallback＋`fetchpriority="high"`、WebSite schema `url` 改 `abs('/')`）、`src/layouts/Base.astro`（加 `twitter:image:alt`、加深淺色 `theme-color`、刪非標準 `<link rel="sitemap">`）、`AGENTS.md` §4（補 avatar.webp 說明）
+- 原因：同日 SEO 稽核報告的 Opportunities 全修
+- 驗證：`npm run build` 通過；`dist/index.html` 已確認 picture/twitter:image:alt/theme-color/schema url 尾斜線、無 `rel="sitemap"`；og:image 維持 `og.jpg`（分享爬蟲相容），轉好的 `og.webp` 未用已刪
+- 備註：轉檔用暫存區 `sharp`（`Temp\opencode\webpconv`），未進專案依賴
 
 ### 2026-09-18 — 修 SEO 稽核的 4 個 Warning
 - 範圍：`src/pages/index.astro`（h1 加 `h1-kicker` 關鍵字行、站外連結補尾斜線、內文連結改 `brand-dark`）、`src/layouts/Base.astro`（小字連結/標籤改 `brand-dark`、`h1-kicker` 樣式、`.card p` 與 `.zone-note` 改 1rem）、`src/components/OfficialChannels.astro`（連結補尾斜線、列表連結與 × 符號改 `brand-dark`）

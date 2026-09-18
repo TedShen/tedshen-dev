@@ -26,7 +26,7 @@ const websiteSchema = {
   '@type': 'WebSite',
   '@id': abs('/#website'),
   name: '沈裕德 Ted ｜ 軟體開發',
-  url: SITE_URL,
+  url: abs('/'),
   description: SITE_DESCRIPTION,
   inLanguage: 'zh-Hant',
   author: { '@id': `${HUB_URL}/#person` },
@@ -43,7 +43,10 @@ const websiteSchema = {
 >
   <!-- ① Hero -->
   <header class="hero wrap">
-    <img class="avatar" src="/avatar.jpg" alt={`${PERSON.name} ${PERSON.alternateName}，軟體工程師`} width="96" height="96" />
+    <picture>
+      <source srcset="/avatar.webp" type="image/webp" />
+      <img class="avatar" src="/avatar.jpg" alt={`${PERSON.name} ${PERSON.alternateName}，軟體工程師`} width="96" height="96" fetchpriority="high" />
+    </picture>
     <p class="brand-tag">DEV ｜ 軟體開發</p>
     <h1><span class="h1-kicker">軟體開發與技術顧問</span>把你想做的事<br />變成能跑的系統</h1>
     <p class="lead">

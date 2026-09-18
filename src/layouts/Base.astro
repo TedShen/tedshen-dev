@@ -63,11 +63,12 @@ const schemas = [
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f1512" media="(prefers-color-scheme: dark)" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <link rel="sitemap" href="/sitemap-index.xml" />
 
     <!-- Open Graph：分享到 LINE / FB 時的預覽 -->
     <meta property="og:title" content={ogTitle ?? title} />
@@ -95,6 +96,7 @@ const schemas = [
     <meta name="twitter:title" content={ogTitle ?? title} />
     <meta name="twitter:description" content={ogDescription ?? description} />
     <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={`${PERSON.name} ${PERSON.alternateName}，${PERSON.jobTitle}`} />
 
     <!-- 結構化資料：Person / WebSite / BlogPosting / BreadcrumbList，由各頁透過 props 傳入 -->
     {schemas.map((s) => (
