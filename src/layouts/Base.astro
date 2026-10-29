@@ -237,6 +237,30 @@ const schemas = [
         color: var(--muted); margin-bottom: 24px;
       }
       .back-link { display: inline-block; margin-top: 8px; color: var(--brand-dark); text-decoration: none; font-weight: 600; }
+
+      /* 內頁導覽與頁首（服務／作品／筆記） */
+      .site-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 20px; padding-bottom: 12px; flex-wrap: wrap; }
+      .site-nav-brand { color: var(--text); font-weight: 700; text-decoration: none; }
+      .site-nav ul { list-style: none; display: flex; gap: 18px; }
+      .site-nav a { color: var(--muted); text-decoration: none; font-weight: 600; font-size: .95rem; }
+      .site-nav a[aria-current="page"], .site-nav a:hover { color: var(--brand-dark); }
+      .page-head { padding-top: 40px; padding-bottom: 24px; }
+      .page-head h1 { margin: 6px 0 12px; }
+      .page-head .lead { font-size: 1.05rem; }
+      .card-link { display: block; text-decoration: none; color: inherit; transition: transform .15s ease, box-shadow .15s ease; }
+      .card-link:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+      .card-link h3 { color: var(--text); }
+      .card-cover { width: 100%; height: auto; border-radius: 10px; margin-bottom: 14px; display: block; }
+      .work-facts { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; margin-bottom: 28px; }
+      .work-facts p { margin: 4px 0 !important; font-size: .95rem; }
+      .work-facts strong { color: var(--text); }
+      .prose pre { background: #0f1512; color: #eaf1ec; padding: 16px 18px; border-radius: 10px; overflow-x: auto; margin: 0 0 20px; font-size: .88rem; line-height: 1.55; }
+      .prose code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: .92em; }
+      .prose :not(pre) > code { background: var(--surface); border: 1px solid var(--border); padding: 1px 6px; border-radius: 6px; }
+      .prose table { width: 100%; border-collapse: collapse; margin: 0 0 20px; font-size: .95rem; display: block; overflow-x: auto; }
+      .prose th, .prose td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; color: var(--text); vertical-align: top; }
+      .prose th { background: var(--surface); }
+      .home-more { display: grid; gap: 12px; }
     </style>
   </head>
   <body>
@@ -244,7 +268,7 @@ const schemas = [
 
     <footer class="wrap">
       <nav aria-label="網站導覽" style="margin-bottom:12px;">
-        <a href="/">首頁</a> · <a href="https://tedshen.link/">身分頁</a> · <a href="https://grow.tedshen.link/">財務教練</a>
+        <a href="/">首頁</a> · <a href="/services/">服務</a> · <a href="/works/">作品</a> · <a href="/notes/">技術筆記</a> · <a href="https://tedshen.link/">身分頁</a> · <a href="https://grow.tedshen.link/">財務教練</a>
       </nav>
       <p>Ted ｜ 軟體開發 · dev.tedshen.link</p>
       <p style="margin-top:8px;">聯絡：<a href={`mailto:${EMAIL}`}>{EMAIL}</a></p>

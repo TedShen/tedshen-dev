@@ -1,0 +1,22 @@
+---
+// 內頁頂部導覽。首頁不用（首頁有自己的 Hero）。
+import { SECTIONS } from '../lib/sections';
+
+interface Props {
+  current?: string;
+}
+const { current } = Astro.props;
+const links = [
+  { name: '首頁', path: '/' },
+  ...Object.values(SECTIONS).map((s) => ({ name: s.name, path: s.path })),
+];
+---
+
+<nav class="site-nav wrap" aria-label="主要導覽">
+  <a class="site-nav-brand" href="/">Ted ｜ 軟體開發</a>
+  <ul>
+    {links.slice(1).map((l) => (
+      <li><a href={l.path} aria-current={current === l.path ? 'page' : undefined}>{l.name}</a></li>
+    ))}
+  </ul>
+</nav>

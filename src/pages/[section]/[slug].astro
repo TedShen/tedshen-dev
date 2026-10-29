@@ -1,0 +1,91 @@
+---
+// 三個內容區的內頁。schema 依區塊不同：服務頁 Service、作品 CreativeWork、筆記 TechArticle。
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import SiteNav from '../../components/SiteNav.astro';
+import ContactCTA from '../../components/ContactCTA.astro';
+import { SECTIONS, getPublished, entryPath, formatDate, type SectionKey } from '../../lib/sections';
+import { SITE_URL, HUB_URL, PERSON } from '../../consts';
+
+export async function getStaticPaths() {
+  const paths = [];
+  for (const section of Object.keys(SECTIONS) as SectionKey[]) {
+    const items = await getPublished(section);
+    for (const entry of items) paths.push({ params: { section, slug: entry.id }, props: { section, entry } });
+  }
+  return paths;
+}
+
+const { section, entry } = Astro.props as { section: SectionKey; entry: any };
+const meta = SECTIONS[section];
+const { Content } = await render(entry);
+const d = entry.data;
+const path = entryPath(section, entry.id);
+const abs = (p: string) => new URL(p, SITE_URL).href;
+const author = { '@type': 'Person', '@id': `${HUB_URL}/#person`, name: PERSON.name, url: HUB_URL };
+
+const schema =
+  section === 'services'
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'Service',
+        '@id': abs(`${path}#service`),
+        name: d.title,
+        description: d.description,
+        provider: author,
+        areaServed: '台灣',
+        availableLanguage: ['zh-Hant'],
+        url: abs(path),
+      }
+    : {
+        '@context': 'https://schema.org',
+        '@type': section === 'notes' ? 'TechArticle' : 'CreativeWork',
+        headline: d.title,
+        name: d.title,
+        description: d.description,
+        author,
+        datePublished: d.pubDate.toISOString(),
+        dateModified: (d.updated ?? d.pubDate).toISOString(),
+        inLanguage: 'zh-Hant',
+        url: abs(path),
+        mainEntityOfPage: abs(path),
+        ...(d.cover ? { image: abs(d.cover) } : {}),
+        ...(d.tags?.length ? { keywords: d.tags.join(', ') } : {}),
+      };
+---
+
+<Base
+  title={`${d.shortTitle ?? d.title} ｜ 沈裕德 Ted`}
+  description={d.description}
+  ogTitle={d.title}
+  path={path}
+  image={d.image ?? '/og.jpg'}
+  type={section === 'services' ? 'website' : 'article'}
+  publishedTime={d.pubDate}
+  modifiedTime={d.updated ?? d.pubDate}
+  breadcrumbs={[{ name: meta.name, path: meta.path }, { name: d.shortTitle ?? d.title, path }]}
+  schema={schema}
+>
+  <SiteNav current={meta.path} />
+  <article class="wrap prose page-head">
+    <p class="brand-tag">{meta.label}</p>
+    <h1>{d.title}</h1>
+    <p class="post-meta">
+      {section === 'works' && d.kind && <span class="tag">{d.kind}</span>}
+      {d.updated ? `更新於 ${formatDate(d.updated)}` : formatDate(d.pubDate)}
+    </p>
+    {d.tags.length > 0 && <p style="margin-bottom:24px;">{d.tags.map((t: string) => <span class="tag">#{t}</span>)}</p>}
+    {section === 'works' && d.cover && (
+      <img src={d.cover} alt={d.coverAlt ?? d.title} width="1200" height="900" style="margin-bottom:24px;" />
+    )}
+    {section === 'works' && (d.stack?.length || d.link) && (
+      <div class="work-facts">
+        {d.stack?.length > 0 && <p><strong>技術</strong>　{d.stack.join('、')}</p>}
+        {d.link && <p><strong>連結</strong>　<a href={d.link}>{d.linkLabel ?? d.link}</a></p>}
+      </div>
+    )}
+    <Content />
+    <p><a class="back-link" href={meta.path}>← 回到{meta.name}</a></p>
+  </article>
+  <ContactCTA subject={`洽詢：${d.shortTitle ?? d.title}`} />
+</Base>

@@ -1,0 +1,66 @@
+---
+// 三個內容區的列表頁：/services/、/works/、/notes/
+import Base from '../../layouts/Base.astro';
+import SiteNav from '../../components/SiteNav.astro';
+import ContactCTA from '../../components/ContactCTA.astro';
+import { SECTIONS, getPublished, entryPath, formatDate, type SectionKey } from '../../lib/sections';
+import { SITE_URL, HUB_URL } from '../../consts';
+
+export async function getStaticPaths() {
+  return (Object.keys(SECTIONS) as SectionKey[]).map((section) => ({ params: { section } }));
+}
+
+const section = Astro.params.section as SectionKey;
+const meta = SECTIONS[section];
+const items = await getPublished(section);
+const abs = (p: string) => new URL(p, SITE_URL).href;
+
+const listSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  '@id': abs(meta.path),
+  name: `${meta.title}｜${meta.name}`,
+  url: abs(meta.path),
+  inLanguage: 'zh-Hant',
+  isPartOf: { '@id': abs('/#website') },
+  author: { '@id': `${HUB_URL}/#person` },
+  hasPart: items.map((e) => ({ '@type': 'CreativeWork', name: e.data.title, url: abs(entryPath(section, e.id)) })),
+};
+---
+
+<Base
+  title={`${meta.title}｜${meta.name} ｜ 沈裕德 Ted`}
+  description={meta.intro}
+  path={meta.path}
+  breadcrumbs={[{ name: meta.name, path: meta.path }]}
+  schema={listSchema}
+>
+  <SiteNav current={meta.path} />
+  <header class="wrap page-head">
+    <p class="brand-tag">{meta.label}</p>
+    <h1>{meta.title}</h1>
+    <p class="lead">{meta.intro}</p>
+  </header>
+
+  <section class="wrap" style="padding-top:8px;">
+    {items.length === 0 ? (
+      <p>內容整理中。</p>
+    ) : (
+      <div class="cards">
+        {items.map((e) => (
+          <a class="card card-link" href={entryPath(section, e.id)}>
+            {section === 'works' && 'cover' in e.data && e.data.cover && (
+              <img class="card-cover" src={e.data.cover} alt={e.data.coverAlt ?? e.data.title} width="1200" height="900" loading="lazy" />
+            )}
+            {section === 'works' && 'kind' in e.data && <span class="tag">{e.data.kind}</span>}
+            <h3>{e.data.shortTitle ?? e.data.title}</h3>
+            <p>{e.data.description}</p>
+            <p class="post-meta" style="margin:10px 0 0;">{formatDate(e.data.updated ?? e.data.pubDate)}{e.data.tags.length > 0 && ` ・ ${e.data.tags.join('、')}`}</p>
+          </a>
+        ))}
+      </div>
+    )}
+  </section>
+
+  <ContactCTA />
+</Base>

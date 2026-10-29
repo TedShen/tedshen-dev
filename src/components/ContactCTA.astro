@@ -1,0 +1,22 @@
+---
+// 內頁結尾的聯絡區塊。LINE 為主、Email 為輔，跟首頁 CTA 一致。
+import { EMAIL, LINE_URL } from '../consts';
+
+interface Props {
+  /** 寄信主旨，方便辨識是從哪一頁來的 */
+  subject?: string;
+}
+const { subject = '軟體合作洽詢' } = Astro.props;
+const mailto = `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}`;
+---
+
+<section class="wrap">
+  <div class="cta">
+    <h2>你的情況也類似？</h2>
+    <p>加 LINE 最快。說說你現在怎麼做、想變成什麼樣子，<br />我回你可行的做法和需要釐清的問題。</p>
+    <a class="btn btn-line" href={LINE_URL}>加 LINE 聊一聊 →</a>
+    <p style="margin-top:16px;font-size:.9rem;">
+      或寫信：<a href={mailto} style="color:var(--brand-dark);">{EMAIL}</a>
+    </p>
+  </div>
+</section>
