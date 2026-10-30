@@ -23,7 +23,7 @@ export const SECTIONS: Record<SectionKey, { name: string; path: string; label: s
     path: '/notes/',
     label: 'NOTES ｜ 技術筆記',
     title: '做過才寫的筆記',
-    intro: '實作時遇到的問題和解法。程式碼與接線都是實際跑過的版本。',
+    intro: '實作時遇到的問題和解法。每篇會註明是實機驗證，還是只用模擬測試驗證過。',
   },
 };
 

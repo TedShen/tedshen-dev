@@ -8,6 +8,8 @@ tags: [樹莓派, Python, 步進馬達, gpiozero]
 
 這篇是[樹莓派步進馬達控制](/works/raspberry-pi-stepper/)的實作筆記。完整程式碼在 [GitHub](https://github.com/TedShen/tedshen-dev/tree/main/demos/raspberry-pi-stepper)。
 
+> 驗證狀態：程式以模擬測試驗證；接線表依驅動板與樹莓派腳位規格整理，尚未實機測試。實機測過後會更新這篇。
+
 ## 先選驅動方式
 
 樹莓派的 GPIO 電流很小，**不能直接接馬達**，中間一定要有驅動板。常見兩種：
