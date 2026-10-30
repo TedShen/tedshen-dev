@@ -4,7 +4,7 @@ shortTitle: 樹莓派步進馬達控制
 description: 用 Python 在樹莓派上驅動步進馬達正轉、反轉，可指定步數、角度、圈數與轉速。支援 ULN2003＋28BYJ-48 與 A4988／TMC2209 兩種常見接法，附不接硬體也能跑的測試。
 pubDate: 2026-10-29
 tags: [樹莓派, Python, 步進馬達, 自動控制]
-order: 3
+order: 4
 kind: 自有作品
 stack: [Python, gpiozero, Raspberry Pi]
 link: https://github.com/TedShen/tedshen-dev/tree/main/demos/raspberry-pi-stepper
@@ -17,7 +17,7 @@ coverAlt: 指令、Python、驅動板、步進馬達的流程圖
 
 這個示範把它整理成一支可以直接用的程式。
 
-> 驗證狀態：程式邏輯以 11 項模擬測試驗證（不接硬體）；接線與參數依驅動板規格整理，尚未在實機上跑過。我實際做過的樹莓派案子是用 Python 連接 POS 出單機，同樣是樹莓派接周邊設備，差別在介面與電氣部分。
+> 驗證狀態：程式邏輯以 11 項模擬測試驗證（不接硬體）；接線與參數依驅動板規格整理，尚未在實機上跑過。我實際交付過的樹莓派案子是[小吃店點餐出單機](/works/raspberry-pi-pos/)，同樣是樹莓派接周邊設備，差別在介面與電氣部分。
 
 ## 功能
 
