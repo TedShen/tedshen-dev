@@ -1,6 +1,10 @@
 # dev.tedshen.link
 
-沈裕德 Ted 的軟體開發與技術顧問接案站。一頁式：能做什麼、合作方式、作品、聯絡方式、官方管道。
+沈裕德 Ted 的軟體開發與技術顧問接案站。首頁一頁式（能做什麼、合作方式、作品、聯絡方式、官方管道），另有三個內容區：
+
+- `/services/` 服務頁、`/works/` 作品與 Demo、`/notes/` 技術筆記
+- 新增文章：在 `src/content/<services|works|notes>/` 加一個 Markdown 檔，欄位見 `src/content.config.ts`
+- Demo 原始碼放在 `demos/`，不進網站 build
 
 - 身分頁：<https://tedshen.link>（`TedShen/tedshen-hub`）
 - 財務教練：<https://grow.tedshen.link>（`TedShen/grow`）

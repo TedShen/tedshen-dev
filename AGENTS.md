@@ -4,8 +4,12 @@
 
 ## 1. 這是什麼專案
 
-- `dev.tedshen.link`：沈裕德 Ted 的軟體開發與技術顧問接案站，一頁式（Hero → 能做什麼 → 接案經歷 → 作品 → 合作方式 → 另一條線 → CTA → 官方管道）。
-- 定位：讓對方快速確認「是這個人」，然後用 LINE 或 Email 聯絡。CTA 以 LINE 為主、Email 為輔。
+- `dev.tedshen.link`：沈裕德 Ted 的軟體開發與技術顧問接案站。首頁是一頁式（Hero → 能做什麼 → 接案經歷 → 作品 → 合作方式 → 另一條線 → CTA → 官方管道），另有三個內容區：
+  - `/services/`：服務頁，一個問題一頁（能解決什麼、怎麼做、怎麼開始）
+  - `/works/`：作品與 Demo（自有作品、去識別化案例，不寫客戶名稱）
+  - `/notes/`：技術筆記
+- 定位：軟體為主、遠端為主（系統串接、流程自動化、網站與內部工具），機器視覺與設備軟體是加分背景。讓對方快速確認「是這個人」，然後用 LINE 或 Email 聯絡。CTA 以 LINE 為主、Email 為輔。
+- 內容策略：打具體問題的長尾關鍵字，讓準備發案、先上網查的人找到本站。規劃見專案文件 `claude/dev-seo-plan-2026-10-29.md`（claude.ai 專案「個人-網路相關」）。
 - Repo：`TedShen/tedshen-dev`，`main` 分支即正式站。
 
 ## 2. 技術與部署
@@ -31,7 +35,14 @@
 ## 4. 關鍵檔案
 
 - `src/consts.ts` — 網站名稱、描述、對外連結（LINE / Email / HUB / GROW / 履歷 / kindmap）、PERSON 顯示欄位。改聯絡方式只改這裡。
-- `src/pages/index.astro` — 全站唯一頁面，含 Service + WebSite JSON-LD，8 個區塊順序固定（見檔頭註解 ①–⑧）。
+- `src/pages/index.astro` — 首頁，含 Service + WebSite JSON-LD，8 個區塊順序固定（見檔頭註解 ①–⑧）；② 與 ④ 結尾有連到 `/services/`、`/works/`、`/notes/` 的按鈕。
+- `src/content.config.ts` — 三個內容集合 `services`、`works`、`notes` 的欄位定義。`works` 多了 `kind`（自有作品／案例）、`stack`、`link`、`cover`。`draft: true` 不進 build。
+- `src/content/<集合>/<slug>.md` — 內容本體，檔名就是網址 slug。新增文章只要加一個 md 檔。
+- `src/lib/sections.ts` — 三區的名稱、網址、列表說明，以及排序（`order` 小在前，再依日期新到舊）。
+- `src/pages/[section]/index.astro`、`[slug].astro` — 列表頁與內頁共用模板。內頁 schema：服務頁 `Service`、作品 `CreativeWork`、筆記 `TechArticle`，都用 `@id` 引用 hub 的 Person；Base 自動加 BreadcrumbList。
+- `src/components/SiteNav.astro` — 內頁頂部導覽；`ContactCTA.astro` — 內頁結尾 LINE／Email 聯絡區。
+- `public/works/` — 作品封面（1200×900 webp，深藍底＋一句標題＋流程圖的統一版型）。
+- `demos/` — Demo 原始碼，不進 Astro build，作品頁連到 GitHub 上的資料夾。每個 demo 自帶 README 與測試。
 - `src/layouts/Base.astro` — head（canonical / OG / Twitter / JSON-LD）、全域 CSS（含深色模式）、footer 導覽三站連結。
 - `src/components/OfficialChannels.astro` — 官方管道與防冒用聲明（「我不會做的事」5 條不可擅自增刪）。
 - `public/` — `avatar.jpg`＋`avatar.webp`（首屏頭像用 `<picture>`，webp 優先、jpg fallback）、`og.jpg`（1200×630；og:image 沿用 jpg 保分享相容）、`favicon.*`、`robots.txt`（sitemap 指向本網域）。
@@ -56,6 +67,33 @@
 不用另開 CHANGELOG、工作日誌檔或 issue 來代替本節；§6 就是唯一的作業流水帳。
 
 ## 6. 作業紀錄
+
+### 2026-10-30 — 新增作品〈訂單揀貨單產生器〉與服務頁〈電商訂單與出貨自動化〉
+- 範圍：`src/content/works/order-picking.md`（order 5；kindmap 改 6、raspberry-pi-stepper 改 7）、`src/content/services/ecommerce-order-automation.md`（order 4）、`public/works/cover-order-picking.webp`、`public/samples/order-picking.html`（虛構資料的範例，`noindex`）
+- 原因：關鍵字分析的利基「電商訂單匯出 → 揀貨單」；依站主指示以產品化版本為主，原始碼不放公開 repo
+- 驗證：`npm run build` 通過；產品版 9 項測試在 Python 3.10／3.13 通過；範例 HTML 在 390px 無橫向捲動
+- 備註：蝦皮欄位名稱是推測的範例，尚未用真實匯出檔核對，頁面文案已避免宣稱「支援蝦皮格式」
+
+### 2026-10-30 — 新增作品〈測試報告產生器〉與服務頁〈測試紀錄自動產生報告〉；生產日報作品頁加「可以直接導入」
+- 範圍：`src/content/works/test-report.md`（order 4；kindmap 改 5、raspberry-pi-stepper 改 6）、`src/content/services/test-log-report-automation.md`（order 3）、`src/content/works/production-daily-report.md`（加「可以直接導入」段）、`public/works/cover-test-report.webp`、`public/samples/test-report.html`（虛構資料的範例報告，`noindex`）
+- 原因：站主 2026-10-30 指示 demo 一律以產品化、可直接售出為主；測試報告是關鍵字分析中 A 級利基（測試紀錄自動產生報告）。產品版原始碼（設定檔、手冊、exe 打包）不放公開 repo，網站只放範例輸出
+- 驗證：`npm run build` 通過；範例報告由產品版以虛構的 120 台電源模組資料產生，產品版 12 項測試在 Python 3.10／3.13 通過
+
+### 2026-10-30 — 新增 demo〈生產日報自動彙整〉與服務頁〈工廠 Excel 報表自動化〉
+- 範圍：`demos/production-daily-report/`（daily_report.py、make_sample.py、test_daily_report.py、README）、`src/content/works/production-daily-report.md`（order 3）、`src/content/services/factory-excel-report-automation.md`（order 2）、`public/works/cover-production-daily-report.webp`
+- 原因：關鍵字分析的 A 級利基「工廠 Excel 報表自動化」
+- 驗證：`npm run build` 通過；9 項測試通過；範例資料跑出的 Excel 已開檔檢查
+
+### 2026-10-29 — 新增作品〈小吃店點餐出單機〉（去識別化案例）
+- 範圍：`src/content/works/raspberry-pi-pos.md`（kind 案例）、`public/works/cover-raspberry-pi-pos.webp`；`works/raspberry-pi-stepper.md` 與筆記加「驗證狀態」，註明只用模擬驗證
+- 原因：站主說明實際做過的樹莓派專案是 POS 出單機，步進馬達 demo 沒有實機
+- 驗證：`npm run build` 通過；頁面不含客戶名稱、店名、品牌、密碼與 IP
+
+### 2026-10-29 — 從一頁式擴充為服務／作品／筆記三區，加第一批內容與步進馬達 demo
+- 範圍：新增 `src/content.config.ts`、`src/lib/sections.ts`、`src/pages/[section]/index.astro`、`src/pages/[section]/[slug].astro`、`src/components/SiteNav.astro`、`src/components/ContactCTA.astro`；`src/layouts/Base.astro`（內頁導覽、卡片連結、程式碼與表格樣式，footer 導覽加三區）；`src/pages/index.astro`（② 服務卡片改為系統串接、網站在前，設備軟體移到第三；② ④ 加三區入口按鈕）；內容 5 篇：`services/line-google-sheets`、`works/line-assistant`、`works/kindmap`、`works/raspberry-pi-stepper`、`notes/raspberry-pi-stepper-python`；`public/works/` 三張封面；`demos/raspberry-pi-stepper/`（stepper.py、cli.py、test_stepper.py、README）
+- 原因：站主 2026-10-29 決定接案定位改為軟體為主、遠端為主，並以長尾關鍵字讓發案者從搜尋找到本站；出任務上低價案改做成通用 demo 當作品
+- 驗證：`npm run build` 通過（9 頁），sitemap 含全部新網址；本機 preview 以 1280px 與 390px 截圖檢查，無橫向捲動；`python3 -m unittest -v` 11 項測試通過，`cli.py --driver mock` 試跑正常
+- 備註：demo 原始碼的 GitHub 連結（`tree/main/demos/raspberry-pi-stepper`）要合併到 main 後才會生效
 
 ### 2026-09-18 — 修 SEO 稽核的 Opportunities（5 項全做）
 - 範圍：`public/avatar.webp`（新增，sharp webp q82，101KB→62KB）、`src/pages/index.astro`（頭像改 `<picture>` webp 優先＋jpg fallback＋`fetchpriority="high"`、WebSite schema `url` 改 `abs('/')`）、`src/layouts/Base.astro`（加 `twitter:image:alt`、加深淺色 `theme-color`、刪非標準 `<link rel="sitemap">`）、`AGENTS.md` §4（補 avatar.webp 說明）
