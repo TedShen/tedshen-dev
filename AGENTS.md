@@ -68,6 +68,21 @@
 
 ## 6. 作業紀錄
 
+### 2026-10-30 — 新增作品〈測試報告產生器〉與服務頁〈測試紀錄自動產生報告〉；生產日報作品頁加「可以直接導入」
+- 範圍：`src/content/works/test-report.md`（order 4；kindmap 改 5、raspberry-pi-stepper 改 6）、`src/content/services/test-log-report-automation.md`（order 3）、`src/content/works/production-daily-report.md`（加「可以直接導入」段）、`public/works/cover-test-report.webp`、`public/samples/test-report.html`（虛構資料的範例報告，`noindex`）
+- 原因：站主 2026-10-30 指示 demo 一律以產品化、可直接售出為主；測試報告是關鍵字分析中 A 級利基（測試紀錄自動產生報告）。產品版原始碼（設定檔、手冊、exe 打包）不放公開 repo，網站只放範例輸出
+- 驗證：`npm run build` 通過；範例報告由產品版以虛構的 120 台電源模組資料產生，產品版 12 項測試在 Python 3.10／3.13 通過
+
+### 2026-10-30 — 新增 demo〈生產日報自動彙整〉與服務頁〈工廠 Excel 報表自動化〉
+- 範圍：`demos/production-daily-report/`（daily_report.py、make_sample.py、test_daily_report.py、README）、`src/content/works/production-daily-report.md`（order 3）、`src/content/services/factory-excel-report-automation.md`（order 2）、`public/works/cover-production-daily-report.webp`
+- 原因：關鍵字分析的 A 級利基「工廠 Excel 報表自動化」
+- 驗證：`npm run build` 通過；9 項測試通過；範例資料跑出的 Excel 已開檔檢查
+
+### 2026-10-29 — 新增作品〈小吃店點餐出單機〉（去識別化案例）
+- 範圍：`src/content/works/raspberry-pi-pos.md`（kind 案例）、`public/works/cover-raspberry-pi-pos.webp`；`works/raspberry-pi-stepper.md` 與筆記加「驗證狀態」，註明只用模擬驗證
+- 原因：站主說明實際做過的樹莓派專案是 POS 出單機，步進馬達 demo 沒有實機
+- 驗證：`npm run build` 通過；頁面不含客戶名稱、店名、品牌、密碼與 IP
+
 ### 2026-10-29 — 從一頁式擴充為服務／作品／筆記三區，加第一批內容與步進馬達 demo
 - 範圍：新增 `src/content.config.ts`、`src/lib/sections.ts`、`src/pages/[section]/index.astro`、`src/pages/[section]/[slug].astro`、`src/components/SiteNav.astro`、`src/components/ContactCTA.astro`；`src/layouts/Base.astro`（內頁導覽、卡片連結、程式碼與表格樣式，footer 導覽加三區）；`src/pages/index.astro`（② 服務卡片改為系統串接、網站在前，設備軟體移到第三；② ④ 加三區入口按鈕）；內容 5 篇：`services/line-google-sheets`、`works/line-assistant`、`works/kindmap`、`works/raspberry-pi-stepper`、`notes/raspberry-pi-stepper-python`；`public/works/` 三張封面；`demos/raspberry-pi-stepper/`（stepper.py、cli.py、test_stepper.py、README）
 - 原因：站主 2026-10-29 決定接案定位改為軟體為主、遠端為主，並以長尾關鍵字讓發案者從搜尋找到本站；出任務上低價案改做成通用 demo 當作品
