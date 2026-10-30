@@ -68,6 +68,12 @@
 
 ## 6. 作業紀錄
 
+### 2026-10-30 — 新增作品〈訂單揀貨單產生器〉與服務頁〈電商訂單與出貨自動化〉
+- 範圍：`src/content/works/order-picking.md`（order 5；kindmap 改 6、raspberry-pi-stepper 改 7）、`src/content/services/ecommerce-order-automation.md`（order 4）、`public/works/cover-order-picking.webp`、`public/samples/order-picking.html`（虛構資料的範例，`noindex`）
+- 原因：關鍵字分析的利基「電商訂單匯出 → 揀貨單」；依站主指示以產品化版本為主，原始碼不放公開 repo
+- 驗證：`npm run build` 通過；產品版 9 項測試在 Python 3.10／3.13 通過；範例 HTML 在 390px 無橫向捲動
+- 備註：蝦皮欄位名稱是推測的範例，尚未用真實匯出檔核對，頁面文案已避免宣稱「支援蝦皮格式」
+
 ### 2026-10-30 — 新增作品〈測試報告產生器〉與服務頁〈測試紀錄自動產生報告〉；生產日報作品頁加「可以直接導入」
 - 範圍：`src/content/works/test-report.md`（order 4；kindmap 改 5、raspberry-pi-stepper 改 6）、`src/content/services/test-log-report-automation.md`（order 3）、`src/content/works/production-daily-report.md`（加「可以直接導入」段）、`public/works/cover-test-report.webp`、`public/samples/test-report.html`（虛構資料的範例報告，`noindex`）
 - 原因：站主 2026-10-30 指示 demo 一律以產品化、可直接售出為主；測試報告是關鍵字分析中 A 級利基（測試紀錄自動產生報告）。產品版原始碼（設定檔、手冊、exe 打包）不放公開 repo，網站只放範例輸出

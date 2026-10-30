@@ -4,7 +4,7 @@ shortTitle: 捐前一查 kindmap.link
 description: 台灣公益單位查詢平台。從政府開放資料匯入，依主管機關的官方名冊逐筆核對，整理成可搜尋的網站。資料蒐集、查證流程、網站開發與部署都由我一人完成。
 pubDate: 2026-10-29
 tags: [資料整合, 開放資料, 網站架設, SEO]
-order: 5
+order: 6
 kind: 自有作品
 stack: [Next.js, Cloudflare Pages, Supabase, 政府開放資料]
 link: https://kindmap.link/
