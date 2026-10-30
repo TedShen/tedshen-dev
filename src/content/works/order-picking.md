@@ -4,7 +4,7 @@ shortTitle: 訂單揀貨單產生器
 description: 把各平台匯出的訂單檔合在一起，產生依儲位排序的揀貨單、依物流分組的包貨單，並提醒商品沒對照、收件資料缺漏、庫存不足與可合併出貨的訂單。組合商品自動拆成實際要撿的品項。
 pubDate: 2026-10-30
 tags: [電商出貨, 揀貨單, Excel 自動化, Python]
-order: 5
+order: 6
 kind: 自有作品
 stack: [Python, openpyxl, HTML]
 link: /samples/order-picking.html

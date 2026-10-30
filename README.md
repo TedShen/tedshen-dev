@@ -5,6 +5,7 @@
 - `/services/` 服務頁、`/works/` 作品與 Demo、`/notes/` 技術筆記
 - 新增文章：在 `src/content/<services|works|notes>/` 加一個 Markdown 檔，欄位見 `src/content.config.ts`
 - Demo 原始碼放在 `demos/`，不進網站 build
+- 可直接在瀏覽器試用的網頁 Demo 放在 `public/demos/<名稱>/index.html`（純前端、虛構資料、`noindex`，資料只存在訪客瀏覽器）
 
 - 身分頁：<https://tedshen.link>（`TedShen/tedshen-hub`）
 - 財務教練：<https://grow.tedshen.link>（`TedShen/grow`）

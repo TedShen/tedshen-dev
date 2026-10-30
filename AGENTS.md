@@ -43,6 +43,7 @@
 - `src/components/SiteNav.astro` — 內頁頂部導覽；`ContactCTA.astro` — 內頁結尾 LINE／Email 聯絡區。
 - `public/works/` — 作品封面（1200×900 webp，深藍底＋一句標題＋流程圖的統一版型）。
 - `demos/` — Demo 原始碼，不進 Astro build，作品頁連到 GitHub 上的資料夾。每個 demo 自帶 README 與測試。
+- `public/demos/<名稱>/index.html` — 可直接試用的網頁 Demo（純前端單檔、虛構資料、`noindex`、資料只存訪客瀏覽器的 localStorage）。不進 sitemap。
 - `src/layouts/Base.astro` — head（canonical / OG / Twitter / JSON-LD）、全域 CSS（含深色模式）、footer 導覽三站連結。
 - `src/components/OfficialChannels.astro` — 官方管道與防冒用聲明（「我不會做的事」5 條不可擅自增刪）。
 - `public/` — `avatar.jpg`＋`avatar.webp`（首屏頭像用 `<picture>`，webp 優先、jpg fallback）、`og.jpg`（1200×630；og:image 沿用 jpg 保分享相容）、`favicon.*`、`robots.txt`（sitemap 指向本網域）。
@@ -67,6 +68,11 @@
 不用另開 CHANGELOG、工作日誌檔或 issue 來代替本節；§6 就是唯一的作業流水帳。
 
 ## 6. 作業紀錄
+
+### 2026-10-30 — 新增作品〈手機回報表單〉（案例）與兩個可試填的網頁 Demo
+- 範圍：`src/content/works/mobile-report-form.md`（kind 案例，order 2；raspberry-pi-pos、production-daily-report、test-report、order-picking、kindmap、raspberry-pi-stepper 各往後 +1）、`public/works/cover-mobile-report-form.webp`、`public/demos/field-report/index.html`（外勤維修回報：逐題版、區域連動、姓名遮罩、草稿、確認清單、可改設定表、模擬 LINE 開啟）、`public/demos/hours-approval/index.html`（工時申報＋主管審核、核定工時、模擬通知信）、`src/content/services/line-google-sheets.md`（實際例子段加連結）、`README.md` 與本檔 §4（說明 `public/demos/`）
+- 原因：站主實際做過、已在使用中的 GAS 手機回報表單要當作品；站主指示可寫「已在實際組織使用」，但原單位名稱、期數、獎學金、慰訪、稱謂、行政區等可回推的設定一律不放，情境全部換成虛構
+- 驗證：`npm run build` 通過（17 頁），sitemap 不含 demos；Playwright 以 390px 跑完兩個 Demo 完整流程（必填驗證、數字驗證、連動清除、草稿重新整理後接回、遮罩顯示與全名寫入、設定表新增區域、審核寄信與累計），無 console 錯誤、無橫向捲動；作品頁 1280px／390px 截圖檢查；禁用詞掃描（獎學金、慰訪、師兄師姐、期數、基金會、行政區等）無命中
 
 ### 2026-10-30 — 年資統一為「15 年」；sitemap 加 lastmod
 - 範圍：`src/consts.ts`、`src/pages/index.astro`（「十年以上」→「15 年資歷」，含 og 描述與 ① 設備軟體卡片）；`astro.config.mjs`（sitemap `serialize` 依 content frontmatter 的 updated／pubDate 填 lastmod，區塊頁取該區最新、首頁取全站最新）

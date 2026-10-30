@@ -4,7 +4,7 @@ shortTitle: 測試報告產生器
 description: 讀測試治具輸出的 CSV／TXT，依規格檔判定每一台、每一項 PASS 或 FAIL，產生 HTML 報告與 Excel 明細：不良項目排行、Cpk、一次通過率、FAIL 清單。寬表、長表、Big5 都能讀，重測自動取最後一次。
 pubDate: 2026-10-30
 tags: [測試報告, 自動化測試, Python, 品質管理]
-order: 4
+order: 5
 kind: 自有作品
 stack: [Python, openpyxl, HTML]
 link: /samples/test-report.html

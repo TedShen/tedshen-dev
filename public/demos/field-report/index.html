@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>外勤維修回報｜手機表單 Demo</title>
+<style>
+:root{
+  --bg:#f5f7f6;--card:#fff;--ink:#1c2420;--mute:#5d6a63;--line:#dbe2de;
+  --brand:#1f9d6b;--brand-dark:#157a52;--brand-soft:#e6f4ee;--err:#b3261e;--err-soft:#fdecea;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0f1512;--card:#17201b;--ink:#e6ece8;--mute:#9aa8a0;--line:#2a3630;
+  --brand:#2fbd85;--brand-dark:#26a271;--brand-soft:#173327;--err:#f2867e;--err-soft:#3a1d1b;
+}}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Segoe UI","PingFang TC","Microsoft JhengHei",sans-serif;
+  background:var(--bg);color:var(--ink);line-height:1.6}
+.banner{background:var(--ink);color:var(--bg);font-size:13px;padding:8px 16px;text-align:center}
+.banner a{color:inherit}
+.wrap{max-width:560px;margin:0 auto;padding:16px}
+header h1{font-size:20px;margin:8px 0 2px}
+header p{margin:0;color:var(--mute);font-size:14px}
+.progress{margin:16px 0 4px;height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+.progress i{display:block;height:100%;background:var(--brand);width:0;transition:width .25s}
+.count{font-size:13px;color:var(--mute)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 18px;margin-top:12px}
+.q{font-size:18px;font-weight:700;margin:0 0 4px}
+.req{color:var(--err);font-size:13px;margin-left:4px}
+.hint{color:var(--mute);font-size:13px;margin:0 0 14px}
+.opts{display:grid;gap:10px}
+.opts.cols2{grid-template-columns:1fr 1fr}
+.opt{display:flex;align-items:center;gap:10px;padding:13px 14px;border:1.5px solid var(--line);border-radius:12px;cursor:pointer;
+  background:var(--card);font-size:16px}
+.opt input{accent-color:var(--brand);width:18px;height:18px;margin:0}
+.opt:has(input:checked){border-color:var(--brand);background:var(--brand-soft);font-weight:600}
+.field{margin-top:14px}
+.field label{display:block;font-size:14px;font-weight:600;margin-bottom:6px}
+input[type=text],input[type=number],input[type=date],select,textarea{
+  width:100%;font:inherit;font-size:16px;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;
+  background:var(--card);color:var(--ink)}
+textarea{min-height:84px;resize:vertical}
+.sub{margin-top:14px;padding:14px;border-radius:12px;background:var(--brand-soft)}
+.mask-note{font-size:13px;color:var(--brand-dark);margin-top:6px}
+.empty{font-size:14px;color:var(--mute);padding:10px 12px;border:1px dashed var(--line);border-radius:10px}
+.invalid{outline:2px solid var(--err);outline-offset:2px;border-radius:12px}
+.err{color:var(--err);font-size:14px;margin-top:10px;display:none}
+.err.on{display:block}
+.nav{display:flex;gap:10px;margin-top:16px}
+button{font:inherit;font-size:16px;border-radius:12px;padding:13px 16px;cursor:pointer;border:0}
+.primary{flex:1;background:var(--brand);color:#fff;font-weight:700}
+.ghost{background:transparent;color:var(--brand-dark);border:1.5px solid var(--brand-dark)}
+.link{background:none;color:var(--brand-dark);padding:4px 0;text-decoration:underline;font-size:14px}
+.review{width:100%;border-collapse:collapse;font-size:15px}
+.review tr{cursor:pointer}
+.review td{padding:10px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+.review td:first-child{color:var(--mute);width:38%}
+.review tr:hover td{background:var(--brand-soft)}
+.done{text-align:center;padding:28px 10px}
+.done .big{font-size:44px}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);
+  padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90vw}
+.toast.on{opacity:1}
+details{margin-top:20px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+summary{cursor:pointer;font-weight:700}
+.sheet{overflow-x:auto;margin-top:10px}
+.sheet table{border-collapse:collapse;font-size:13px;white-space:nowrap}
+.sheet th,.sheet td{border:1px solid var(--line);padding:5px 8px;text-align:left}
+.sheet th{background:var(--brand-soft)}
+.small{font-size:13px;color:var(--mute)}
+.line-sim{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px;font-size:13px;color:var(--mute)}
+.pill{display:inline-block;padding:2px 10px;border-radius:99px;background:var(--brand-soft);color:var(--brand-dark);font-weight:600}
+</style>
+</head>
+<body>
+<div class="banner">這是示範頁，公司、人名、資料全是虛構的；你填的內容只存在你自己的瀏覽器。<a href="/works/mobile-report-form/">← 回作品說明</a></div>
+
+<div class="wrap">
+  <header>
+    <h1>外勤維修回報</h1>
+    <p>示範設備維修有限公司（虛構）</p>
+  </header>
+
+  <div id="bar" class="progress" aria-hidden="true"><i></i></div>
+  <div id="count" class="count"></div>
+
+  <main id="stage"></main>
+
+  <div class="line-sim" id="lineSim">
+    <span>模擬從 LINE 圖文選單開啟：</span>
+    <button class="link" id="lineBtn" type="button">以「陳建宏」身分開啟</button>
+    <span id="lineState"></span>
+  </div>
+
+  <details id="sheetBox">
+    <summary>送出後的試算表（回報紀錄）</summary>
+    <p class="small">實際部署時資料寫進你自己的 Google 試算表。這裡只存在這個瀏覽器，重新整理不會消失。</p>
+    <div class="sheet" id="sheet"></div>
+    <p><button class="link" id="clearSheet" type="button">清空示範資料</button></p>
+  </details>
+
+  <details>
+    <summary>管理者設定：區域、服務站、技師</summary>
+    <p class="small">實際部署時這是試算表的一個分頁。一列一個服務站，技師欄數不限；改完表單下次開啟就更新，不用改程式。試著加一列再按「套用」。</p>
+    <textarea id="cfg" rows="7" spellcheck="false"></textarea>
+    <p><button class="ghost" id="applyCfg" type="button">套用</button> <button class="link" id="resetCfg" type="button">還原預設</button></p>
+  </details>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- 示範設定（實際部署時都從試算表分頁讀） ---------- */
+const DEFAULT_CFG = [
+  '區域,服務站,技師1,技師2,技師3',
+  '北區,中山站,陳建宏,林雅婷',
+  '北區,內湖站,張志豪',
+  '北區,內湖站,吳佳穎,陳建宏',
+  '中區,西屯站,黃俊傑,李宜蓁',
+  '南區,前鎮站,'
+].join('\n');
+const CUSTOMERS = ['王大明','李小華','歐陽春美','陳家豪','林'];
+const DEVICES   = ['冷氣','熱水器','淨水器','洗衣機'];
+const FAULTS    = ['不運轉','漏水','異音','效能變差','定期保養'];
+const RESULTS   = ['當場完修','待料，需再訪','建議更換整機'];
+const OTHER = '__other__';
+
+const LS_DRAFT='fr-demo-draft', LS_ROWS='fr-demo-rows', LS_CFG='fr-demo-cfg', DRAFT_DAYS=7;
+const store = {
+  get(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } },
+  set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} },
+  del(k){ try{ localStorage.removeItem(k); }catch(e){} }
+};
+
+/* ---------- 姓名顯示遮罩：只遮顯示，存的是全名 ---------- */
+function maskName(n){
+  n=String(n||'').trim(); const c=[...n];
+  if(c.length<=1) return n;
+  if(c.length===2) return c[0]+'*';
+  if(c.length===3) return c[0]+'*'+c[2];
+  return c[0]+'*'.repeat(c.length-2)+c[c.length-1];
+}
+
+/* ---------- 讀設定表：同區域＋服務站分散多列會自動合併去重 ---------- */
+let areaMap;
+function parseCfg(text){
+  const map=new Map();
+  text.split(/\r?\n/).slice(1).forEach(line=>{
+    const c=line.split(',').map(s=>s.trim());
+    if(!c[0]||!c[1]) return;             // 區域、服務站缺一就略過
+    if(!map.has(c[0])) map.set(c[0],new Map());
+    const st=map.get(c[0]);
+    if(!st.has(c[1])) st.set(c[1],[]);
+    c.slice(2).filter(Boolean).forEach(t=>{ if(!st.get(c[1]).includes(t)) st.get(c[1]).push(t); });
+  });
+  return map;
+}
+
+/* ---------- 題目定義：改順序或加題只動這個陣列 ---------- */
+const today=()=>{const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10);};
+const STEPS=[
+  {key:'date',  q:'服務日期', type:'date'},
+  {key:'area',  q:'區域', type:'radio', opts:()=>[...areaMap.keys()], clears:['station','tech','techOther']},
+  {key:'station',q:'服務站', type:'radio', opts:d=>[...(areaMap.get(d.area)||new Map()).keys()], clears:['tech','techOther'], cols:2},
+  {key:'tech',  q:'填報技師', type:'radio', other:'techOther', cols:2,
+     opts:d=>(areaMap.get(d.area)?.get(d.station))||[], emptyMsg:'這個服務站還沒登錄技師，請直接填寫姓名。'},
+  {key:'customer', q:'客戶姓名', type:'customer', hint:'選單只顯示遮罩後的姓名；試算表存的是全名。'},
+  {key:'device',q:'設備類型', type:'radio', opts:()=>DEVICES, cols:2},
+  {key:'fault', q:'故障狀況', type:'radio', opts:()=>FAULTS, note:'faultNote', noteLabel:'補充說明（選填）'},
+  {key:'parts', q:'是否更換零件', type:'yesno', sub:[
+     {key:'partName',label:'更換了什麼',type:'text'},
+     {key:'partFee', label:'零件費（元）',type:'number'}]},
+  {key:'charge',q:'是否向客戶收費', type:'yesno', sub:[
+     {key:'amount',label:'收費金額（元）',type:'number'}]},
+  {key:'result',q:'處理結果', type:'radio', opts:()=>RESULTS, note:'memo', noteLabel:'備註（選填）'}
+];
+const LABEL={date:'服務日期',area:'區域',station:'服務站',tech:'技師',customer:'客戶',device:'設備',fault:'故障狀況',
+  faultNote:'故障補充',parts:'更換零件',partName:'零件',partFee:'零件費',charge:'收費',amount:'收費金額',result:'處理結果',memo:'備註'};
+
+/* ---------- 狀態 ---------- */
+let data={date:today()}, idx=0, lineUser=null;
+const $=s=>document.querySelector(s);
+const stage=$('#stage');
+
+function loadDraft(){
+  const d=store.get(LS_DRAFT);
+  if(!d||!d.savedAt) return;
+  if(Date.now()-d.savedAt>DRAFT_DAYS*864e5){ store.del(LS_DRAFT); return; }
+  data=d.data; idx=Math.min(d.idx,STEPS.length); toast('已接回上次沒填完的草稿');
+}
+function saveDraft(){ store.set(LS_DRAFT,{data,idx,savedAt:Date.now()}); }
+
+/* ---------- 共用元件 ---------- */
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function radios(name,opts,val,cols){
+  return `<div class="opts${cols===2?' cols2':''}" role="radiogroup">`+
+    opts.map(o=>`<label class="opt"><input type="radio" name="${name}" value="${esc(o.value)}"${o.value===val?' checked':''}>${esc(o.label)}</label>`).join('')+
+    `</div>`;
+}
+function textField(key,label,type){
+  return `<div class="field"><label for="f-${key}">${esc(label)}</label>`+
+    `<input id="f-${key}" data-k="${key}" type="${type}" ${type==='number'?'inputmode="numeric" min="0"':''} value="${esc(data[key]??'')}"></div>`;
+}
+function noteField(key,label){
+  return `<div class="field"><label for="f-${key}">${esc(label)}</label><textarea id="f-${key}" data-k="${key}">${esc(data[key]??'')}</textarea></div>`;
+}
+
+/* ---------- 每一題 ---------- */
+function renderStep(){
+  const s=STEPS[idx];
+  $('#bar i').style.width=(idx/STEPS.length*100)+'%';
+  $('#count').textContent=`第 ${idx+1} / ${STEPS.length} 題`;
+  let body='';
+  if(s.type==='date'){
+    body=`<input type="date" data-k="date" value="${esc(data.date||today())}">`;
+  }else if(s.type==='radio'){
+    const opts=s.opts(data);
+    // LINE 已綁定：名單裡有同一個人就自動選起來
+    if(s.key==='tech'&&lineUser&&!data.tech&&opts.includes(lineUser)) data.tech=lineUser;
+    if(!opts.length&&s.other){
+      data[s.key]=OTHER;
+      body=`<div class="empty">${esc(s.emptyMsg)}</div>`+textField(s.other,'姓名','text');
+    }else{
+      const list=opts.map(o=>({value:o,label:o}));
+      if(s.other) list.push({value:OTHER,label:'其他（名單外，手動填寫）'});
+      body=radios(s.key,list,data[s.key],s.cols);
+      if(s.other) body+=`<div id="otherBox"${data[s.key]===OTHER?'':' hidden'}>${textField(s.other,'姓名','text')}</div>`;
+    }
+    if(s.note) body+=noteField(s.note,s.noteLabel);
+  }else if(s.type==='customer'){
+    body=`<select data-k="customer"><option value="">請選擇</option>`+
+      CUSTOMERS.map(c=>`<option value="${esc(c)}"${data.customer===c?' selected':''}>${esc(maskName(c))}</option>`).join('')+
+      `<option value="${OTHER}"${data.customer===OTHER?' selected':''}>其他（名單外）</option></select>`+
+      `<div id="otherBox"${data.customer===OTHER?'':' hidden'}>${textField('customerOther','客戶姓名','text')}`+
+      `<div class="mask-note" id="maskNote"></div></div>`;
+  }else if(s.type==='yesno'){
+    body=radios(s.key,[{value:'無',label:'無'},{value:'有',label:'有'}],data[s.key],2)+
+      `<div class="sub" id="subBox"${data[s.key]==='有'?'':' hidden'}>`+s.sub.map(f=>textField(f.key,f.label,f.type)).join('')+`</div>`;
+  }
+  stage.innerHTML=`<section class="card"><p class="q">${esc(s.q)}<span class="req">${s.type==='date'?'':'必填'}</span></p>`+
+    (s.hint?`<p class="hint">${esc(s.hint)}</p>`:'<p class="hint"></p>')+body+
+    `<div class="err" id="err"></div>`+
+    `<div class="nav">${idx>0?'<button class="ghost" id="prev" type="button">上一題</button>':''}`+
+    `<button class="primary" id="next" type="button">完成，下一題</button></div></section>`;
+  bindStep(s);
+  updateMaskNote();
+}
+
+function bindStep(s){
+  stage.querySelectorAll('input[type=radio]').forEach(r=>r.addEventListener('change',()=>{
+    if(data[r.name]!==r.value&&s.clears) s.clears.forEach(k=>delete data[k]); // 上層改選，下層清掉
+    data[r.name]=r.value;
+    const ob=$('#otherBox'); if(ob&&s.other) ob.hidden=r.value!==OTHER;
+    const sb=$('#subBox'); if(sb) sb.hidden=r.value!=='有';
+    clearErr(); saveDraft();
+  }));
+  stage.querySelectorAll('[data-k]').forEach(el=>el.addEventListener('input',()=>{
+    data[el.dataset.k]=el.value;
+    if(el.dataset.k==='customer'){ const ob=$('#otherBox'); if(ob) ob.hidden=el.value!==OTHER; }
+    updateMaskNote(); clearErr(); saveDraft();
+  }));
+  $('#next').addEventListener('click',next);
+  const p=$('#prev'); if(p) p.addEventListener('click',()=>{idx--;saveDraft();renderStep();});
+}
+function updateMaskNote(){
+  const n=$('#maskNote'); if(!n) return;
+  const v=(data.customerOther||'').trim();
+  n.textContent=v?`顯示時會遮罩為「${maskName(v)}」`:'';
+}
+
+/* ---------- 驗證（實際部署時後端會再驗一次） ---------- */
+function clearErr(){ const e=$('#err'); if(e) e.classList.remove('on'); stage.querySelector('.card')?.classList.remove('invalid'); }
+function fail(msg){
+  const e=$('#err'); e.textContent=msg; e.classList.add('on');
+  stage.querySelector('.card').classList.add('invalid');
+  stage.querySelector('.card').scrollIntoView({behavior:'smooth',block:'start'});
+  return false;
+}
+function validStep(s){
+  const v=data[s.key];
+  if(s.type==='date') return v?true:fail('請選日期');
+  if(s.type==='customer'){
+    if(!v) return fail('請選客戶');
+    if(v===OTHER&&!(data.customerOther||'').trim()) return fail('請填客戶姓名');
+    return true;
+  }
+  if(!v) return fail('請選一個選項');
+  if(s.other&&v===OTHER&&!(data[s.other]||'').trim()) return fail('請填姓名');
+  if(s.type==='yesno'&&v==='有'){
+    for(const f of s.sub){
+      const x=(data[f.key]??'').toString().trim();
+      if(!x) return fail(`請填「${f.label}」`);
+      if(f.type==='number'&&(!/^\d+(\.\d+)?$/.test(x))) return fail(`「${f.label}」要填 0 以上的數字`);
+    }
+  }
+  return true;
+}
+function next(){
+  if(!validStep(STEPS[idx])) return;
+  idx++; saveDraft();
+  idx<STEPS.length?renderStep():renderReview();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ---------- 確認清單 ---------- */
+function finalRow(){
+  const r={};
+  r.date=data.date; r.area=data.area; r.station=data.station;
+  r.tech=data.tech===OTHER?(data.techOther||'').trim():data.tech;
+  r.customer=data.customer===OTHER?(data.customerOther||'').trim():data.customer;
+  r.device=data.device; r.fault=data.fault; r.faultNote=data.faultNote||'';
+  r.parts=data.parts; r.partName=data.parts==='有'?data.partName:''; r.partFee=data.parts==='有'?Number(data.partFee):'';
+  r.charge=data.charge; r.amount=data.charge==='有'?Number(data.amount):'';
+  r.result=data.result; r.memo=data.memo||'';
+  return r;
+}
+const STEP_OF={date:0,area:1,station:2,tech:3,customer:4,device:5,fault:6,faultNote:6,parts:7,partName:7,partFee:7,charge:8,amount:8,result:9,memo:9};
+function renderReview(){
+  $('#bar i').style.width='100%';
+  $('#count').textContent='最後確認';
+  const r=finalRow();
+  const rows=Object.keys(LABEL).filter(k=>r[k]!==''&&r[k]!=null).map(k=>{
+    const v=k==='customer'?maskName(r[k]):r[k];
+    return `<tr data-step="${STEP_OF[k]}"><td>${LABEL[k]}</td><td>${esc(v)}</td></tr>`;
+  }).join('');
+  stage.innerHTML=`<section class="card"><p class="q">確認一下再送出</p><p class="hint">點任一列可以回去改。</p>`+
+    `<table class="review">${rows}</table>`+
+    `<div class="nav"><button class="ghost" id="prev" type="button">上一題</button><button class="primary" id="submit" type="button">確認送出</button></div></section>`;
+  stage.querySelectorAll('tr[data-step]').forEach(tr=>tr.addEventListener('click',()=>{idx=+tr.dataset.step;saveDraft();renderStep();}));
+  $('#prev').addEventListener('click',()=>{idx=STEPS.length-1;saveDraft();renderStep();});
+  $('#submit').addEventListener('click',submit);
+}
+
+/* ---------- 送出：寫一列進「試算表」，清掉草稿 ---------- */
+function submit(){
+  const r=finalRow();
+  const now=new Date();
+  r.ts=`${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()} ${now.toTimeString().slice(0,8)}`;
+  r.lineUid=lineUser?'U-demo-0001':'';
+  const rows=store.get(LS_ROWS)||[]; rows.push(r); store.set(LS_ROWS,rows);
+  store.del(LS_DRAFT);
+  stage.innerHTML=`<section class="card done"><div class="big">✅</div><p class="q">已送出</p>`+
+    `<p class="hint">這一筆已寫進下方的試算表。</p><div class="nav"><button class="primary" id="again" type="button">再填一筆</button></div></section>`;
+  $('#again').addEventListener('click',()=>{data={date:today()};idx=0;renderStep();});
+  renderSheet(); $('#sheetBox').open=true;
+}
+
+const SHEET_COLS=['ts','lineUid','date','area','station','tech','customer','device','fault','faultNote','parts','partName','partFee','charge','amount','result','memo'];
+const SHEET_HEAD=['時間戳記','LINE UID','服務日期','區域','服務站','技師','客戶姓名','設備','故障狀況','故障補充','更換零件','零件','零件費','收費','金額','處理結果','備註'];
+function renderSheet(){
+  const rows=store.get(LS_ROWS)||[];
+  $('#sheet').innerHTML=rows.length?
+    `<table><tr>${SHEET_HEAD.map(h=>`<th>${h}</th>`).join('')}</tr>`+
+    rows.map(r=>`<tr>${SHEET_COLS.map(c=>`<td>${esc(r[c])}</td>`).join('')}</tr>`).join('')+`</table>`:
+    '<p class="small">還沒有資料，填一筆試試看。</p>';
+}
+
+/* ---------- 其他 ---------- */
+let tt; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(tt); tt=setTimeout(()=>t.classList.remove('on'),2400); }
+
+function applyCfg(text,silent){
+  areaMap=parseCfg(text); store.set(LS_CFG,text); $('#cfg').value=text;
+  if(data.area&&!areaMap.has(data.area)){ delete data.area; delete data.station; delete data.tech; }
+  if(idx<STEPS.length) renderStep();
+  if(!silent) toast(`已套用：${areaMap.size} 個區域`);
+}
+$('#applyCfg').addEventListener('click',()=>applyCfg($('#cfg').value));
+$('#resetCfg').addEventListener('click',()=>applyCfg(DEFAULT_CFG));
+$('#clearSheet').addEventListener('click',()=>{store.del(LS_ROWS);renderSheet();toast('示範資料已清空');});
+$('#lineBtn').addEventListener('click',()=>{
+  lineUser='陳建宏';
+  $('#lineState').innerHTML='<span class="pill">已綁定：陳建宏</span> 選到他所屬的服務站時，技師會自動帶入';
+  if(idx<STEPS.length) renderStep();
+});
+
+applyCfg(store.get(LS_CFG)||DEFAULT_CFG,true);
+loadDraft();
+renderSheet();
+idx<STEPS.length?renderStep():renderReview();
+})();
+</script>
+</body>
+</html>

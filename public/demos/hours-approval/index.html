@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>工時申報與主管審核｜手機表單 Demo</title>
+<style>
+:root{
+  --bg:#f5f7f6;--card:#fff;--ink:#1c2420;--mute:#5d6a63;--line:#dbe2de;
+  --brand:#1f9d6b;--brand-dark:#157a52;--brand-soft:#e6f4ee;--err:#b3261e;
+  --s-pass:#e3f3ea;--s-fix:#fff4d6;--s-reject:#fbe4e2;--s-pend:#eef1f4;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0f1512;--card:#17201b;--ink:#e6ece8;--mute:#9aa8a0;--line:#2a3630;
+  --brand:#2fbd85;--brand-dark:#26a271;--brand-soft:#173327;--err:#f2867e;
+  --s-pass:#183a2a;--s-fix:#3a3215;--s-reject:#3c1f1d;--s-pend:#222b27;
+}}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Segoe UI","PingFang TC","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+.banner{background:var(--ink);color:var(--bg);font-size:13px;padding:8px 16px;text-align:center}
+.banner a{color:inherit}
+.wrap{max-width:760px;margin:0 auto;padding:16px}
+h1{font-size:20px;margin:8px 0 2px}
+.sub{margin:0;color:var(--mute);font-size:14px}
+.tabs{display:flex;gap:6px;margin:16px 0 0;background:var(--line);padding:4px;border-radius:12px}
+.tabs button{flex:1;border:0;background:transparent;font:inherit;font-size:15px;padding:10px;border-radius:9px;cursor:pointer;color:var(--ink)}
+.tabs button[aria-selected=true]{background:var(--card);font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-top:12px}
+.card h2{font-size:17px;margin:0 0 12px}
+label.l{display:block;font-size:14px;font-weight:600;margin:14px 0 6px}
+label.l:first-child{margin-top:0}
+input[type=text],input[type=date],select,textarea{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}
+textarea{min-height:70px;resize:vertical}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.grid label{display:flex;justify-content:center;align-items:center;border:1.5px solid var(--line);border-radius:10px;padding:10px 0;cursor:pointer;font-variant-numeric:tabular-nums}
+.grid input{position:absolute;opacity:0;pointer-events:none}
+.grid label:has(input:checked){border-color:var(--brand);background:var(--brand-soft);font-weight:700}
+.grid label:has(input:focus-visible){outline:2px solid var(--brand);outline-offset:2px}
+.invalid{outline:2px solid var(--err);outline-offset:3px;border-radius:10px}
+button.primary{width:100%;margin-top:16px;font:inherit;font-size:16px;font-weight:700;border:0;border-radius:12px;padding:13px;background:var(--brand);color:#fff;cursor:pointer}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.kpi{border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.kpi b{display:block;font-size:24px;font-variant-numeric:tabular-nums}
+.kpi span{font-size:12px;color:var(--mute)}
+.bars{margin-top:14px;display:grid;gap:8px}
+.bars div{display:grid;grid-template-columns:72px 1fr 52px;gap:8px;align-items:center;font-size:13px}
+.bars i{display:block;height:12px;border-radius:3px;background:var(--brand)}
+.bars em{font-style:normal;text-align:right;font-variant-numeric:tabular-nums}
+.list{display:grid;gap:8px;margin-top:4px}
+.item{border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14px}
+.item .top{display:flex;justify-content:space-between;gap:8px}
+.badge{font-size:12px;padding:2px 9px;border-radius:99px;white-space:nowrap}
+.b-pass{background:var(--s-pass)}.b-fix{background:var(--s-fix)}.b-reject{background:var(--s-reject)}.b-pend{background:var(--s-pend)}
+.muted{color:var(--mute);font-size:13px}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+th{font-size:12px;color:var(--mute);font-weight:600;white-space:nowrap}
+td.n{text-align:right;font-variant-numeric:tabular-nums}
+tr.st-pass td{background:var(--s-pass)}tr.st-fix td{background:var(--s-fix)}tr.st-reject td{background:var(--s-reject)}
+td select,td input{font-size:14px;padding:6px 8px;min-width:96px}
+td input.hrs{width:72px;min-width:72px}
+.mail{margin-top:12px;border:1px dashed var(--line);border-radius:12px;padding:12px;font-size:14px;display:none}
+.mail.on{display:block}
+.mail b{display:block;margin-bottom:4px}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90vw}
+.toast.on{opacity:1}
+.linkbtn{background:none;border:0;color:var(--brand-dark);text-decoration:underline;font:inherit;font-size:14px;cursor:pointer;padding:0}
+[hidden]{display:none!important}
+td,th{white-space:nowrap}
+td:nth-child(3){white-space:normal;min-width:120px}
+@media (max-width:600px){
+  #review,#review tbody{display:block}
+  #review tr:first-child{display:none}
+  #review tr{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;padding:12px;border:1px solid var(--line);border-radius:12px;margin-bottom:10px}
+  #review td{border:0;padding:0;background:transparent!important;white-space:normal}
+  #review td::before{content:attr(data-l);display:block;font-size:12px;color:var(--mute)}
+  #review td:nth-child(1)::before,#review td:nth-child(2)::before{display:none}
+  #review td:nth-child(1){font-weight:700}
+  #review td:nth-child(2){text-align:right;color:var(--mute)}
+  #review td:nth-child(3),#review td:nth-child(7),#review td:nth-child(8){grid-column:1/-1}
+  #review td.n{text-align:left}
+  #review td select,#review td input{width:100%}
+  #review td input.hrs{width:100%}
+  #review tr.st-pass{background:var(--s-pass)}#review tr.st-fix{background:var(--s-fix)}#review tr.st-reject{background:var(--s-reject)}
+}
+</style>
+</head>
+<body>
+<div class="banner">這是示範頁，公司、人名、資料全是虛構的；不會真的寄信，資料只存在你自己的瀏覽器。<a href="/works/mobile-report-form/">← 回作品說明</a></div>
+<div class="wrap">
+  <h1>工時申報</h1>
+  <p class="sub">示範設計工作室（虛構）</p>
+
+  <div class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-tab="staff" type="button">員工：申報</button>
+    <button role="tab" aria-selected="false" data-tab="boss" type="button">主管：審核</button>
+  </div>
+
+  <!-- 員工 -->
+  <section id="tab-staff">
+    <div class="card">
+      <h2>填一筆工時</h2>
+      <label class="l" for="who">我是</label>
+      <select id="who"></select>
+      <label class="l" for="day">日期</label>
+      <input type="date" id="day">
+      <label class="l" for="proj">專案</label>
+      <select id="proj"></select>
+      <span class="l" style="display:block;font-size:14px;font-weight:600;margin:14px 0 6px">工時（小時）</span>
+      <div class="grid" id="hrs" role="radiogroup" aria-label="工時"></div>
+      <label class="l" for="memo">做了什麼</label>
+      <textarea id="memo" placeholder="例：首頁改版、跟客戶開會"></textarea>
+      <button class="primary" id="send" type="button">送出</button>
+    </div>
+    <div class="card">
+      <h2 id="mineTitle">我的紀錄</h2>
+      <div class="kpis">
+        <div class="kpi"><b id="kOk">0</b><span>已核定（小時）</span></div>
+        <div class="kpi"><b id="kWait">0</b><span>待審核（筆）</span></div>
+        <div class="kpi"><b id="kFix">0</b><span>需補件（筆）</span></div>
+      </div>
+      <div class="bars" id="bars"></div>
+      <p class="muted">累計只算「核定工時」：主管有改就用主管填的，沒改就用申報的。</p>
+      <div class="list" id="mine"></div>
+    </div>
+  </section>
+
+  <!-- 主管 -->
+  <section id="tab-boss" hidden>
+    <div class="card">
+      <h2>待審核與已審核</h2>
+      <p class="muted">實際部署時主管直接在 Google 試算表改「審核狀態」欄，存檔就自動寄信、回填審核者與時間。這裡用表格模擬。核定工時留白＝照申報的算。</p>
+      <div class="tablewrap"><table id="review"></table></div>
+      <div class="mail" id="mail"></div>
+      <p><button class="linkbtn" id="reset" type="button">重設示範資料</button></p>
+    </div>
+  </section>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+'use strict';
+const STAFF=['林雅婷','張志豪','吳佳穎'];
+const PROJECTS=['官網改版','品牌手冊','展場設計','內部行政'];
+const HOURS=[0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8];
+const STATUS={'':'待審核','通過':'通過','補件':'需補件','不通過':'不通過'};
+const CLS={'':'pend','通過':'pass','補件':'fix','不通過':'reject'};
+const BOSS='主管（示範）', LS='ha-demo-rows';
+
+const store={get(){try{return JSON.parse(localStorage.getItem(LS));}catch(e){return null;}},
+             set(v){try{localStorage.setItem(LS,JSON.stringify(v));}catch(e){}}};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmtTs=d=>`${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} ${d.toTimeString().slice(0,5)}`;
+const iso=d=>{d=new Date(d);d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10);};
+const daysAgo=n=>{const d=new Date();d.setDate(d.getDate()-n);return iso(d);};
+
+function seed(){
+  return [
+    {id:1,who:'林雅婷',day:daysAgo(6),proj:'官網改版',hrs:6,memo:'首頁版型與 RWD',status:'通過',ok:'',by:BOSS,at:fmtTs(new Date(Date.now()-5*864e5)),note:''},
+    {id:2,who:'林雅婷',day:daysAgo(5),proj:'品牌手冊',hrs:4,memo:'色彩規範初稿',status:'通過',ok:'3',by:BOSS,at:fmtTs(new Date(Date.now()-4*864e5)),note:'其中 1 小時算行政'},
+    {id:3,who:'張志豪',day:daysAgo(4),proj:'展場設計',hrs:8,memo:'3D 模型',status:'補件',ok:'',by:BOSS,at:fmtTs(new Date(Date.now()-3*864e5)),note:'請附模型截圖'},
+    {id:4,who:'林雅婷',day:daysAgo(2),proj:'官網改版',hrs:5.5,memo:'內頁切版',status:'',ok:'',by:'',at:'',note:''},
+    {id:5,who:'吳佳穎',day:daysAgo(1),proj:'內部行政',hrs:2,memo:'月結報帳',status:'',ok:'',by:'',at:'',note:''}
+  ];
+}
+let rows=store.get()||seed();
+const save=()=>store.set(rows);
+
+/* 核定工時：主管填了大於 0 的數字就用主管的，否則用申報的；只有「通過」才算進累計 */
+function approved(r){
+  if(r.status!=='通過') return 0;
+  const m=parseFloat(r.ok);
+  return m>0?m:r.hrs;
+}
+
+/* ---------- 員工端 ---------- */
+$('#who').innerHTML=STAFF.map(s=>`<option>${s}</option>`).join('');
+$('#proj').innerHTML='<option value="">請選擇</option>'+PROJECTS.map(p=>`<option>${p}</option>`).join('');
+$('#hrs').innerHTML=HOURS.map(h=>`<label><input type="radio" name="hrs" value="${h}">${h}</label>`).join('');
+$('#day').value=iso(new Date());
+
+function renderMine(){
+  const who=$('#who').value, mine=rows.filter(r=>r.who===who);
+  $('#mineTitle').textContent=`${who} 的紀錄`;
+  $('#kOk').textContent=mine.reduce((a,r)=>a+approved(r),0);
+  $('#kWait').textContent=mine.filter(r=>!r.status).length;
+  $('#kFix').textContent=mine.filter(r=>r.status==='補件').length;
+  const byProj={}; mine.forEach(r=>{byProj[r.proj]=(byProj[r.proj]||0)+approved(r);});
+  const max=Math.max(1,...Object.values(byProj));
+  $('#bars').innerHTML=PROJECTS.filter(p=>byProj[p]).map(p=>
+    `<div><span>${p}</span><i style="width:${byProj[p]/max*100}%"></i><em>${byProj[p]} h</em></div>`).join('');
+  $('#mine').innerHTML=mine.length?mine.slice().reverse().map(r=>{
+    const shown=r.status==='通過'?`核定 ${approved(r)} h`:r.status?'':'待審核';
+    return `<div class="item"><div class="top"><span><b>${esc(r.day)}</b>　${esc(r.proj)}　申報 ${r.hrs} h</span>`+
+      `<span class="badge b-${CLS[r.status]}">${STATUS[r.status]}</span></div>`+
+      `<div class="muted">${esc(r.memo)}${shown&&r.status?'　'+shown:''}${r.note?'　主管：'+esc(r.note):''}</div></div>`;
+  }).join(''):'<p class="muted">還沒有紀錄。</p>';
+}
+$('#who').addEventListener('change',renderMine);
+
+$('#send').addEventListener('click',()=>{
+  document.querySelectorAll('.invalid').forEach(e=>e.classList.remove('invalid'));
+  const h=document.querySelector('input[name=hrs]:checked');
+  let bad=null;
+  if(!$('#day').value) bad=$('#day');
+  else if(!$('#proj').value) bad=$('#proj');
+  else if(!h) bad=$('#hrs');
+  else if(!$('#memo').value.trim()) bad=$('#memo');
+  if(bad){ bad.classList.add('invalid'); bad.scrollIntoView({behavior:'smooth',block:'center'}); toast('還有欄位沒填'); return; }
+  rows.push({id:Date.now(),who:$('#who').value,day:$('#day').value,proj:$('#proj').value,hrs:+h.value,
+    memo:$('#memo').value.trim(),status:'',ok:'',by:'',at:'',note:''});
+  save(); h.checked=false; $('#memo').value=''; $('#proj').value='';
+  renderMine(); renderReview(); toast('已送出，等主管審核');
+});
+
+/* ---------- 主管端 ---------- */
+function renderReview(){
+  const list=rows.slice().sort((a,b)=>(a.status?1:0)-(b.status?1:0)||b.day.localeCompare(a.day));
+  $('#review').innerHTML='<tr><th>員工</th><th>日期</th><th>專案</th><th>申報</th><th>審核狀態</th><th>核定工時</th><th>審核意見</th><th>審核者／時間</th></tr>'+
+    list.map(r=>`<tr class="st-${CLS[r.status]}" data-id="${r.id}">`+
+      `<td>${esc(r.who)}</td><td>${esc(r.day.slice(5))}</td><td data-l="專案">${esc(r.proj)}<div class="muted">${esc(r.memo)}</div></td>`+
+      `<td class="n" data-l="申報工時">${r.hrs} h</td>`+
+      `<td data-l="審核狀態"><select data-f="status" aria-label="審核狀態">${Object.keys(STATUS).map(k=>`<option value="${k}"${k===r.status?' selected':''}>${k||'（待審核）'}</option>`).join('')}</select></td>`+
+      `<td data-l="核定工時（留白＝照申報）"><input class="hrs" data-f="ok" aria-label="核定工時" inputmode="decimal" placeholder="${r.hrs}" value="${esc(r.ok)}"></td>`+
+      `<td data-l="審核意見"><input data-f="note" aria-label="審核意見" placeholder="選填" value="${esc(r.note)}"></td>`+
+      `<td class="muted" data-l="審核者／時間">${r.by?esc(r.by)+'　'+esc(r.at):'—'}</td></tr>`).join('');
+  $('#review').querySelectorAll('[data-f]').forEach(el=>el.addEventListener('change',()=>{
+    const r=rows.find(x=>String(x.id)===el.closest('tr').dataset.id);
+    r[el.dataset.f]=el.value.trim();
+    if(el.dataset.f==='status'&&r.status){
+      r.by=BOSS; r.at=fmtTs(new Date());
+      if(r.status==='通過'&&!(parseFloat(r.ok)>0)) r.ok=String(r.hrs);  // 通過時把核定工時寫回欄位
+      showMail(r);
+    }
+    save(); renderReview(); renderMine();
+  }));
+}
+function showMail(r){
+  const subj=`[工時審核] ${r.day} ${r.proj}：${STATUS[r.status]}（${r.at}）`;
+  const body=r.status==='通過'?`你申報的 ${r.hrs} 小時已通過，核定 ${approved(r)} 小時。`:
+             r.status==='補件'?`你申報的工時需要補件：${r.note||'請洽主管'}。`:
+             `你申報的工時未通過。${r.note?'原因：'+r.note:''}`;
+  $('#mail').innerHTML=`<b>已寄出通知信給 ${esc(r.who)}（示範，沒有真的寄）</b>主旨：${esc(subj)}<br>${esc(body)}`+
+    `<div class="muted" style="margin-top:6px">主旨帶審核時間，同一個人收到多封通知時 Gmail 不會串成同一串。</div>`;
+  $('#mail').classList.add('on');
+  toast('已寄出通知信（示範）');
+}
+$('#reset').addEventListener('click',()=>{rows=seed();save();renderReview();renderMine();$('#mail').classList.remove('on');toast('已重設');});
+
+/* ---------- 分頁 ---------- */
+document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('[data-tab]').forEach(x=>x.setAttribute('aria-selected',x===b));
+  $('#tab-staff').hidden=b.dataset.tab!=='staff';
+  $('#tab-boss').hidden=b.dataset.tab!=='boss';
+}));
+
+let tt; function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),2400);}
+renderMine(); renderReview();
+})();
+</script>
+</body>
+</html>

@@ -4,7 +4,7 @@ shortTitle: 生產日報自動彙整
 description: 把每台機台匯出的 CSV 合併成一份 Excel 日報：各機台良率與稼動率、早夜班比較、停機原因排行、異常清單。支援 Big5 編碼與髒資料，良率未達標自動標紅。
 pubDate: 2026-10-30
 tags: [Excel 自動化, Python, 生產日報, 工廠數位化]
-order: 3
+order: 4
 kind: 自有作品
 stack: [Python, openpyxl]
 link: https://github.com/TedShen/tedshen-dev/tree/main/demos/production-daily-report

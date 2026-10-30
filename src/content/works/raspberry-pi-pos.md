@@ -4,7 +4,7 @@ shortTitle: 樹莓派 POS 點餐出單機
 description: 幫一家小吃店做的點餐出單系統。店員在平板上點餐、加料、結帳找零，樹莓派用 Python 透過 ESC/POS 指令驅動熱感出單機，印出含店家 Logo 的取餐單。菜單用設定檔管理，改價不用改程式。
 pubDate: 2026-10-30
 tags: [樹莓派, Python, POS, ESC/POS, 系統整合]
-order: 2
+order: 3
 kind: 案例
 stack: [Raspberry Pi 3, Python, Flask, tkinter, ESC/POS, 熱感出單機, Android 平板]
 cover: /works/cover-raspberry-pi-pos.webp
