@@ -68,6 +68,11 @@
 
 ## 6. 作業紀錄
 
+### 2026-10-30 — 年資統一為「15 年」；sitemap 加 lastmod
+- 範圍：`src/consts.ts`、`src/pages/index.astro`（「十年以上」→「15 年資歷」，含 og 描述與 ① 設備軟體卡片）；`astro.config.mjs`（sitemap `serialize` 依 content frontmatter 的 updated／pubDate 填 lastmod，區塊頁取該區最新、首頁取全站最新）
+- 原因：站主 2026-10-30 確認年資寫 15 年；GSC 顯示 `https://dev.tedshen.link/` 停在「已找到 - 目前尚未建立索引」、從未檢索，sitemap 上次讀取 2026-10-23 只發現 1 頁，加 lastmod 讓 Google 知道有新內容
+- 驗證：`npm run build` 通過，`dist/sitemap-0.xml` 16 個網址都有 lastmod
+
 ### 2026-10-30 — 新增作品〈訂單揀貨單產生器〉與服務頁〈電商訂單與出貨自動化〉
 - 範圍：`src/content/works/order-picking.md`（order 5；kindmap 改 6、raspberry-pi-stepper 改 7）、`src/content/services/ecommerce-order-automation.md`（order 4）、`public/works/cover-order-picking.webp`、`public/samples/order-picking.html`（虛構資料的範例，`noindex`）
 - 原因：關鍵字分析的利基「電商訂單匯出 → 揀貨單」；依站主指示以產品化版本為主，原始碼不放公開 repo

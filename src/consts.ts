@@ -4,7 +4,7 @@
 export const SITE_NAME = 'Ted ｜ 軟體開發';
 export const SITE_URL = 'https://dev.tedshen.link';
 export const SITE_DESCRIPTION =
-  '沈裕德 Ted，十年以上軟體工程師，機器視覺、工業自動化與資安軟體出身。接自動化設備軟體、系統串接（POS、LINE 官方帳號、SharePoint）、網站開發與技術顧問。';
+  '沈裕德 Ted，15 年資歷的軟體工程師，機器視覺、工業自動化與資安軟體出身。接自動化設備軟體、系統串接（POS、LINE 官方帳號、SharePoint）、網站開發與技術顧問。';
 
 // 其他站與作品
 export const HUB_URL = 'https://tedshen.link';
