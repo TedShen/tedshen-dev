@@ -1,0 +1,71 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta name="viewport" content="width=device-width,initial-scale=1"><title>條件監控通知器 範例</title><style>
+:root{--ink:#1d2733;--mute:#5b6876;--line:#d9dee4;--head:#1f3a5f}
+*{box-sizing:border-box}body{font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;color:var(--ink);margin:0 auto;padding:32px;max-width:1080px;line-height:1.6;background:#fff}
+h1{font-size:24px;margin:0 0 4px}h2{font-size:17px;margin:32px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--head)}
+.meta,.note{color:var(--mute);font-size:13px}svg{width:100%;height:auto;display:block}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--mute);margin-top:6px}.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:middle}
+.chat{background:#8fa9c8;border-radius:12px;padding:16px;display:grid;gap:12px;max-width:520px}
+.msg{background:#fff;border-radius:14px;padding:10px 14px;border-left:5px solid #9a6700}.msg.critical{border-left-color:#b3261e}.msg.info{border-left-color:#1e7b4a}
+.msg .when{font-size:12px;color:var(--mute)}.msg pre{margin:4px 0 0;font:14px/1.55 inherit;font-family:inherit;white-space:pre-wrap}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}.cols>div{min-width:0}
+code,pre.yaml{font-family:ui-monospace,Consolas,monospace}pre.yaml{background:#f4f6f8;border:1px solid var(--line);border-radius:8px;padding:12px;font-size:13px;overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13px}th,td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}th{background:var(--head);color:#fff}td:first-child,th:first-child{white-space:nowrap}
+footer{margin-top:40px;font-size:12px;color:var(--mute)}
+@media (max-width:760px){body{padding:16px}.cols{grid-template-columns:1fr}}
+</style></head><body>
+<h1>條件監控通知器：範例執行結果</h1>
+<div class="meta">虛構資料：3 台設備（OVEN-01、OVEN-02、PUMP-01），2026-11-02 08:00～10:00，每分鐘一筆，共 300 筆</div>
+<h2>OVEN-01 溫度與通知時間點</h2>
+<svg viewBox="0 0 1000 300" role="img" aria-label="OVEN-01 溫度曲線與通知時間點">
+<g font-size="12" fill="#5b6876"><line x1="48" x2="988" y1="236.4" y2="236.4" stroke="#e5e8ec"/><text x="40" y="240.4" text-anchor="end">175</text><line x1="48" x2="988" y1="181.3" y2="181.3" stroke="#e5e8ec"/><text x="40" y="185.3" text-anchor="end">185</text><line x1="48" x2="988" y1="126.2" y2="126.2" stroke="#e5e8ec"/><text x="40" y="130.2" text-anchor="end">195</text><line x1="48" x2="988" y1="71.1" y2="71.1" stroke="#e5e8ec"/><text x="40" y="75.1" text-anchor="end">205</text><line x1="48" x2="988" y1="16.0" y2="16.0" stroke="#e5e8ec"/><text x="40" y="20.0" text-anchor="end">215</text><text x="48.0" y="288" text-anchor="middle">08:00</text><text x="285.0" y="288" text-anchor="middle">08:30</text><text x="521.9" y="288" text-anchor="middle">09:00</text><text x="758.9" y="288" text-anchor="middle">09:30</text></g>
+<rect x="624.6" y="16" width="47.4" height="248" fill="#fff4d6"/>
+<text x="648.3" y="30" font-size="12" text-anchor="middle" fill="#9a6700">冷卻中，不重複通知</text>
+<line x1="48" x2="988" y1="98.7" y2="98.7" stroke="#b3261e" stroke-dasharray="6 4"/>
+<text x="986" y="92.7" font-size="12" text-anchor="end" fill="#b3261e">門檻 200°C</text>
+<polyline points="48.0,208.9 55.9,205.6 63.8,202.3 71.7,199.0 79.6,195.7 87.5,208.9 95.4,205.6 103.3,202.3 111.2,199.0 119.1,195.7 127.0,208.9 134.9,205.6 142.8,202.3 150.7,199.0 158.6,195.7 166.5,208.9 174.4,205.6 182.3,202.3 190.2,199.0 198.1,195.7 206.0,208.9 213.9,205.6 221.8,202.3 229.7,199.0 237.6,195.7 245.5,208.9 253.4,205.6 261.3,202.3 269.2,199.0 277.1,195.7 285.0,208.9 292.9,197.9 300.8,186.8 308.7,175.8 316.6,164.8 324.5,153.8 332.4,142.8 340.3,131.7 348.2,120.7 356.1,109.7 364.0,98.7 371.9,87.6 379.8,76.6 387.7,65.6 395.6,54.6 403.5,49.1 411.4,71.1 419.3,93.2 427.2,115.2 435.1,137.2 443.0,208.9 450.9,205.6 458.8,202.3 466.7,199.0 474.6,195.7 482.5,208.9 490.4,205.6 498.3,202.3 506.2,199.0 514.1,195.7 521.9,208.9 529.8,205.6 537.7,202.3 545.6,199.0 553.5,195.7 561.4,208.9 569.3,205.6 577.2,202.3 585.1,199.0 593.0,195.7 600.9,105.8 608.8,94.8 616.7,105.8 624.6,94.8 632.5,105.8 640.4,94.8 648.3,105.8 656.2,94.8 664.1,105.8 672.0,94.8 679.9,208.9 687.8,205.6 695.7,202.3 703.6,199.0 711.5,195.7 719.4,208.9 727.3,205.6 735.2,202.3 743.1,199.0 751.0,195.7 758.9,208.9 766.8,205.6 774.7,202.3 782.6,199.0 790.5,195.7 798.4,208.9 806.3,205.6 814.2,202.3 822.1,199.0 830.0,195.7 837.9,208.9 845.8,205.6 853.7,202.3 861.6,199.0 869.5,195.7 877.4,208.9 885.3,205.6 893.2,202.3 901.1,199.0 909.0,195.7 916.9,208.9 924.8,205.6 932.7,202.3 940.6,199.0 948.5,195.7 956.4,208.9 964.3,205.6 972.2,202.3 980.1,199.0 988.0,195.7" fill="none" stroke="#1f3a5f" stroke-width="2"/><circle cx="364.0" cy="98.7" r="7" fill="#b3261e" stroke="#fff" stroke-width="2"/><circle cx="427.2" cy="115.2" r="7" fill="#1e7b4a" stroke="#fff" stroke-width="2"/><circle cx="608.8" cy="94.8" r="7" fill="#b3261e" stroke="#fff" stroke-width="2"/><circle cx="616.7" cy="105.8" r="7" fill="#1e7b4a" stroke="#fff" stroke-width="2"/></svg>
+<div class="legend"><span><i style="background:#b3261e"></i>發出「溫度過高」</span><span><i style="background:#1e7b4a"></i>發出「已恢復正常」</span><span><i style="background:#fff4d6;border:1px solid #e0c56b;border-radius:2px"></i>條件又成立，但在 30 分鐘冷卻內，不通知</span></div>
+<p class="note">09:11～09:19 溫度在 200°C 上下來回跳了 5 次。如果每次超過都通知，9 分鐘內會收到 5 則「過熱」加 5 則「恢復」；實際只通知第一次和它的恢復。</p>
+<div class="cols">
+<div><h2>手機收到的通知（共 6 則）</h2><div class="chat"><div class="msg critical"><div class="when">資料時間 08:40・條件成立</div><pre>【緊急】OVEN-01 溫度過高
+條件：溫度(°C) &gt;= 200
+目前：溫度(°C)=200，壓力(bar)=1.03
+資料時間：2026-11-02 08:40:00
+規則：oven_overheat</pre></div><div class="msg info"><div class="when">資料時間 08:48・恢復</div><pre>【通知】OVEN-01 已恢復正常
+規則：溫度過高
+目前：溫度(°C)=197，壓力(bar)=1.02
+資料時間：2026-11-02 08:48:00</pre></div><div class="msg warning"><div class="when">資料時間 09:10・資料中斷</div><pre>【警告】OVEN-02 資料停止更新超過 10 分鐘
+最後資料時間 2026-11-02 08:59:00</pre></div><div class="msg critical"><div class="when">資料時間 09:11・條件成立</div><pre>【緊急】OVEN-01 溫度過高
+條件：溫度(°C) &gt;= 200
+目前：溫度(°C)=200.7，壓力(bar)=1.04
+資料時間：2026-11-02 09:11:00
+規則：oven_overheat</pre></div><div class="msg info"><div class="when">資料時間 09:12・恢復</div><pre>【通知】OVEN-01 已恢復正常
+規則：溫度過高
+目前：溫度(°C)=198.7，壓力(bar)=1.02
+資料時間：2026-11-02 09:12:00</pre></div><div class="msg warning"><div class="when">資料時間 09:30・條件成立</div><pre>【警告】PUMP-01 壓力跌破下限
+條件：壓力(bar) 向下穿越 0.8
+目前：壓力(bar)=0.65
+資料時間：2026-11-02 09:30:00
+規則：pump_pressure_low</pre></div></div></div>
+<div><h2>對應的規則設定</h2><pre class="yaml">rules:
+  - id: oven_overheat
+    target: &quot;*&quot;            # 所有設備
+    message: 溫度過高
+    level: critical
+    notify_recover: true   # 恢復正常也通知
+    all:
+      - { field: temp, op: &quot;&gt;=&quot;, value: 200 }
+
+  - id: pump_pressure_low
+    target: PUMP-01
+    message: 壓力跌破下限
+    level: warning
+    all:
+      - { field: pressure, op: cross_below, value: 0.8 }</pre>
+<h2>其他設定</h2><table><tr><th>設定</th><th>範例值</th><th>作用</th></tr>
+<tr><td>冷卻時間</td><td>30 分鐘</td><td>同一條規則通知後，多久內不再通知</td></tr>
+<tr><td>資料中斷</td><td>10 分鐘</td><td>某台設備超過 10 分鐘沒有新資料就通知（OVEN-02 在 08:59 之後停止回報）</td></tr>
+<tr><td>監控時段</td><td>週一～五 08:00～20:00</td><td>下班時間不檢查資料中斷，避免半夜被吵醒</td></tr>
+<tr><td>來源失敗</td><td>連續 3 次</td><td>檔案讀不到、API 連不上，連續失敗才通知，恢復後再通知一次</td></tr></table></div>
+</div>
+<footer>以上通知由條件監控通知器 1.0.0 實際執行範例資料產生，不是手繪示意。資料為虛構，不代表任何公司或設備。</footer>
+</body></html>

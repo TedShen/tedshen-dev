@@ -69,6 +69,12 @@
 
 ## 6. 作業紀錄
 
+### 2026-11-02 — 新增作品〈條件監控通知器〉與技術筆記〈設備異常通知不重複的做法〉
+- 範圍：`src/content/works/condition-watch-notifier.md`（自有作品，order 7；kindmap 改 8、raspberry-pi-stepper 改 9）、`src/content/notes/equipment-alert-dedup.md`、`public/works/cover-condition-watch-notifier.webp`（沿用深藍流程圖版型，圖示改用內嵌 SVG）、`public/samples/condition-watch-notifier.html`（產品版實際重播虛構資料產生的 6 則通知＋溫度曲線，`noindex`）
+- 原因：出任務「寫下單通知程式」需求類型改做成自有作品；站主 2026-11-02 決定做成通用版，主打設備／營運監控，台股公開行情只當資料來源示範，避開投資題材。產品版原始碼不放公開 repo（待放私有 repo `TedShen/products`）
+- 驗證：`npm run build` 通過（19 頁），sitemap 含兩個新網址、不含 samples；Playwright 以 1280px／390px 檢查作品頁、筆記、作品列表與範例頁，無橫向捲動、站內連結無 404、無 console 錯誤；產品版 21 項測試通過
+- 備註：LINE Notify 停止服務日期引用數位時代報導；台股行情來源未連線實測，頁面已註明
+
 ### 2026-10-30 — 新增作品〈手機回報表單〉（案例）與兩個可試填的網頁 Demo
 - 範圍：`src/content/works/mobile-report-form.md`（kind 案例，order 2；raspberry-pi-pos、production-daily-report、test-report、order-picking、kindmap、raspberry-pi-stepper 各往後 +1）、`public/works/cover-mobile-report-form.webp`、`public/demos/field-report/index.html`（外勤維修回報：逐題版、區域連動、姓名遮罩、草稿、確認清單、可改設定表、模擬 LINE 開啟）、`public/demos/hours-approval/index.html`（工時申報＋主管審核、核定工時、模擬通知信）、`src/content/services/line-google-sheets.md`（實際例子段加連結）、`README.md` 與本檔 §4（說明 `public/demos/`）
 - 原因：站主實際做過、已在使用中的 GAS 手機回報表單要當作品；站主指示可寫「已在實際組織使用」，但原單位名稱、期數、獎學金、慰訪、稱謂、行政區等可回推的設定一律不放，情境全部換成虛構
