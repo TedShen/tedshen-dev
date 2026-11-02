@@ -4,7 +4,7 @@
 h1{font-size:24px;margin:0 0 4px}h2{font-size:17px;margin:32px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--head)}
 .meta,.note{color:var(--mute);font-size:13px}svg{width:100%;height:auto;display:block}
 .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--mute);margin-top:6px}.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:middle}
-.chat{background:#8fa9c8;border-radius:12px;padding:16px;display:grid;gap:12px;max-width:520px}
+.warn{background:#fff4d6;border:1px solid #e0c56b;border-radius:8px;padding:10px 14px;font-size:14px;margin:8px 0 12px}.chat{background:#e9edf2;border-radius:12px;padding:16px;display:grid;gap:12px;max-width:520px}
 .msg{background:#fff;border-radius:14px;padding:10px 14px;border-left:5px solid #9a6700}.msg.critical{border-left-color:#b3261e}.msg.info{border-left-color:#1e7b4a}
 .msg .when{font-size:12px;color:var(--mute)}.msg pre{margin:4px 0 0;font:14px/1.55 inherit;font-family:inherit;white-space:pre-wrap}
 .cols{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}.cols>div{min-width:0}
@@ -14,6 +14,7 @@ footer{margin-top:40px;font-size:12px;color:var(--mute)}
 @media (max-width:760px){body{padding:16px}.cols{grid-template-columns:1fr}}
 </style></head><body>
 <h1>條件監控通知器：範例執行結果</h1>
+<p class="warn">這是範例：用虛構資料重播，讓程式跑一次後輸出的結果。這個工具還沒有在實際設備或手機上使用過。</p>
 <div class="meta">虛構資料：3 台設備（OVEN-01、OVEN-02、PUMP-01），2026-11-02 08:00～10:00，每分鐘一筆，共 300 筆</div>
 <h2>OVEN-01 溫度與通知時間點</h2>
 <svg viewBox="0 0 1000 300" role="img" aria-label="OVEN-01 溫度曲線與通知時間點">
@@ -26,7 +27,7 @@ footer{margin-top:40px;font-size:12px;color:var(--mute)}
 <div class="legend"><span><i style="background:#b3261e"></i>發出「溫度過高」</span><span><i style="background:#1e7b4a"></i>發出「已恢復正常」</span><span><i style="background:#fff4d6;border:1px solid #e0c56b;border-radius:2px"></i>條件又成立，但在 30 分鐘冷卻內，不通知</span></div>
 <p class="note">09:11～09:19 溫度在 200°C 上下來回跳了 5 次。如果每次超過都通知，9 分鐘內會收到 5 則「過熱」加 5 則「恢復」；實際只通知第一次和它的恢復。</p>
 <div class="cols">
-<div><h2>手機收到的通知（共 6 則）</h2><div class="chat"><div class="msg critical"><div class="when">資料時間 08:40・條件成立</div><pre>【緊急】OVEN-01 溫度過高
+<div><h2>程式輸出的通知內容（共 6 則）</h2><div class="chat"><div class="msg critical"><div class="when">資料時間 08:40・條件成立</div><pre>【緊急】OVEN-01 溫度過高
 條件：溫度(°C) &gt;= 200
 目前：溫度(°C)=200，壓力(bar)=1.03
 資料時間：2026-11-02 08:40:00
@@ -67,5 +68,5 @@ footer{margin-top:40px;font-size:12px;color:var(--mute)}
 <tr><td>監控時段</td><td>週一～五 08:00～20:00</td><td>下班時間不檢查資料中斷，避免半夜被吵醒</td></tr>
 <tr><td>來源失敗</td><td>連續 3 次</td><td>檔案讀不到、API 連不上，連續失敗才通知，恢復後再通知一次</td></tr></table></div>
 </div>
-<footer>以上通知由條件監控通知器 1.0.0 實際執行範例資料產生，不是手繪示意。資料為虛構，不代表任何公司或設備。</footer>
+<footer>以上通知內容由條件監控通知器 1.0.0 重播虛構資料時輸出（畫面顯示模式），不是手繪示意，也不是實際使用紀錄。LINE、Telegram 推播尚未實際連線測試。資料為虛構，不代表任何公司或設備。</footer>
 </body></html>

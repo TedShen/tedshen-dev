@@ -69,6 +69,11 @@
 
 ## 6. 作業紀錄
 
+### 2026-11-02 — 條件監控通知器：標明尚未實際使用，刪掉不是站主說過的經驗句
+- 範圍：`src/content/works/condition-watch-notifier.md`（驗證狀態改為「還沒有在實際設備或客戶環境使用過」，LINE／Telegram 推播未連線測試）、`src/content/notes/equipment-alert-dedup.md`（開頭刪掉「在設備業 15 年看過很多通知被設靜音」這句推論）、`public/samples/condition-watch-notifier.html`（頂部加「這是範例、尚未實際使用」提示；「手機收到的通知」改為「程式輸出的通知內容」；頁尾註明不是實際使用紀錄）
+- 原因：站主 2026-11-02 指出這個工具他沒有實際用過，範例頁的「手機收到」「實際執行」字樣容易被誤會成實際使用紀錄
+- 驗證：`npm run build` 通過；關鍵字掃描「手機收到」「實際執行」無命中
+
 ### 2026-11-02 — 新增作品〈條件監控通知器〉與技術筆記〈設備異常通知不重複的做法〉
 - 範圍：`src/content/works/condition-watch-notifier.md`（自有作品，order 7；kindmap 改 8、raspberry-pi-stepper 改 9）、`src/content/notes/equipment-alert-dedup.md`、`public/works/cover-condition-watch-notifier.webp`（沿用深藍流程圖版型，圖示改用內嵌 SVG）、`public/samples/condition-watch-notifier.html`（產品版實際重播虛構資料產生的 6 則通知＋溫度曲線，`noindex`）
 - 原因：出任務「寫下單通知程式」需求類型改做成自有作品；站主 2026-11-02 決定做成通用版，主打設備／營運監控，台股公開行情只當資料來源示範，避開投資題材。產品版原始碼不放公開 repo（待放私有 repo `TedShen/products`）
