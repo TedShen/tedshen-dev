@@ -3,13 +3,15 @@ import { getCollection, type CollectionEntry } from 'astro:content';
 
 export type SectionKey = 'services' | 'works' | 'notes';
 
-export const SECTIONS: Record<SectionKey, { name: string; path: string; label: string; title: string; intro: string }> = {
+// desc 只給 <meta description> 用（50～120 字），intro 是頁面上顯示的導言；兩者分開，SEO 補長時不動版面文案。
+export const SECTIONS: Record<SectionKey, { name: string; path: string; label: string; title: string; intro: string; desc: string }> = {
   services: {
     name: '服務',
     path: '/services/',
     label: 'SERVICES ｜ 服務',
     title: '能幫你做的事',
     intro: '一個問題一頁：能解決什麼、怎麼做、大概要多久、怎麼開始。沒看到你的情況也沒關係，直接問。',
+    desc: '沈裕德 Ted 的軟體開發與技術顧問服務，一個問題一頁：工廠 Excel 報表自動化、LINE 官方帳號串接 Google 試算表、自動化設備軟體、網站開發與系統整合，寫清楚能解決什麼、怎麼做、要多久、怎麼開始。',
   },
   works: {
     name: '作品',
@@ -17,6 +19,7 @@ export const SECTIONS: Record<SectionKey, { name: string; path: string; label: s
     label: 'WORKS ｜ 作品',
     title: '作品與 Demo',
     intro: '自己做、自己在用的東西，以及用常見需求做的示範。客戶案子多半有保密約定，所以這裡不放客戶名稱。',
+    desc: '沈裕德 Ted 的軟體作品與可試填的網頁 Demo：工業量測、LINE 自動化、Google Apps Script 回報表單、樹莓派硬體控制。自己做、自己在用的，以及用常見需求做的示範；客戶案子多半保密，這裡不放客戶名稱。',
   },
   notes: {
     name: '技術筆記',
@@ -24,6 +27,7 @@ export const SECTIONS: Record<SectionKey, { name: string; path: string; label: s
     label: 'NOTES ｜ 技術筆記',
     title: '實作與技術筆記',
     intro: '實作時遇到的問題和解法。每篇會註明是實機驗證，還是只用模擬測試驗證過。',
+    desc: '軟體實作的技術筆記：工業量測、系統整合、LINE 官方帳號、Google Apps Script、硬體控制等，記錄實作時遇到的問題和解法。每篇都會註明是實機驗證，還是只用模擬測試驗證過，方便判斷能不能直接套用。',
   },
 };
 

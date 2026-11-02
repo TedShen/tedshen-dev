@@ -1,7 +1,7 @@
 ---
 title: 手機回報表單：Google Apps Script 做的填報、審核與 LINE 一鍵開啟
 shortTitle: 手機回報表單（填報＋審核）
-description: 用 Google Apps Script 做的手機回報表單，已在實際組織使用。一頁一題、草稿自動暫存、選項從試算表載入、多層連動、姓名顯示遮罩，主管在試算表改狀態就自動寄通知信，也能從 LINE 圖文選單一鍵開啟。附兩個可以直接試填的 Demo。
+description: 用 Google Apps Script 做的手機回報表單：一頁一題、草稿自動暫存、選項從試算表載入、多層連動、姓名遮罩，主管改狀態就自動寄通知信，還能從 LINE 一鍵開啟。附兩個可試填的 Demo。
 pubDate: 2026-10-30
 tags: [Google Apps Script, Google 試算表, LINE 官方帳號, 表單, 系統整合]
 order: 2
