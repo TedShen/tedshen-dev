@@ -69,6 +69,11 @@
 
 ## 6. 作業紀錄
 
+### 2026-11-03 — 新增作品〈捲動敘事品牌網站〉與網頁 Demo〈粒田米舖〉
+- 範圍：`src/content/works/scroll-story-brand-site.md`（自有作品，order 11，排在最後）、`public/works/cover-scroll-story-brand-site.webp`（沿用深藍流程圖版型，Pillow 繪製）、`public/demos/rice-brand/index.html`（純前端單檔、`noindex`；Three.js r128、GSAP 3.12.5＋ScrollTrigger、Lenis 1.1.13 皆由 CDN 載入，Lenis 載入失敗時退回原生捲動；左下角固定連結回作品頁）
+- 原因：站主 2026-11-03 指示參考日本針織廠官網的捲動敘事手法，做一個米品牌官網當 demo 產品，開拓品牌網站／互動網頁案型。品牌「粒田米舖」、商品、價格、地址與數據全為虛構，作品頁開頭已註明是示範、未實際上線給品牌使用
+- 驗證：`npm run build` 通過（22 頁），sitemap 含作品頁、不含 demos；Playwright（Chromium＋SwiftShader，CDN 改由本機同版本套件供應）以 1280px／390px 捲過五個段落截圖，無橫向捲動、無 JS 錯誤；CDN 全部連不到時 3D 畫布自動隱藏、文字與表單照常顯示
+- 備註：CDN 套件在雲端沙箱連不到，上線後要在真實瀏覽器確認一次動畫流暢度
 ### 2026-11-02 — 條件監控通知器：標明尚未實際使用，刪掉不是站主說過的經驗句
 - 範圍：`src/content/works/condition-watch-notifier.md`（驗證狀態改為「還沒有在實際設備或客戶環境使用過」，LINE／Telegram 推播未連線測試）、`src/content/notes/equipment-alert-dedup.md`（開頭刪掉「在設備業 15 年看過很多通知被設靜音」這句推論）、`public/samples/condition-watch-notifier.html`（頂部加「這是範例、尚未實際使用」提示；「手機收到的通知」改為「程式輸出的通知內容」；頁尾註明不是實際使用紀錄）
 - 原因：站主 2026-11-02 指出這個工具他沒有實際用過，範例頁的「手機收到」「實際執行」字樣容易被誤會成實際使用紀錄
