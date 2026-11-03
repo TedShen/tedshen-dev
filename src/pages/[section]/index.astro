@@ -36,17 +36,17 @@ const listSchema = {
   schema={listSchema}
 >
   <SiteNav current={meta.path} />
-  <header class="wrap page-head">
+  <header class="wrap-wide page-head">
     <p class="brand-tag">{meta.label}</p>
     <h1>{meta.title}</h1>
     <p class="lead">{meta.intro}</p>
   </header>
 
-  <section class="wrap" style="padding-top:8px;">
+  <section class="wrap-wide" style="padding-top:8px;">
     {items.length === 0 ? (
       <p>內容整理中。</p>
     ) : (
-      <div class="cards">
+      <div class={section === 'works' ? 'cards grid-3' : 'cards grid-2'}>
         {items.map((e) => (
           <a class="card card-link" href={entryPath(section, e.id)}>
             {section === 'works' && 'cover' in e.data && e.data.cover && (

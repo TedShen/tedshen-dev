@@ -5,7 +5,7 @@
 import { LINE_URL, EMAIL, SITE_URL, GROW_URL, HUB_URL } from '../consts';
 ---
 
-<section class="wrap channels">
+<section class="wrap-wide channels">
   <p class="zone-label">防範冒用</p>
   <h2>我的官方管道</h2>
 
@@ -44,6 +44,7 @@ import { LINE_URL, EMAIL, SITE_URL, GROW_URL, HUB_URL } from '../consts';
   .channel-list {
     list-style: none;
     display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
     gap: 10px;
     margin-bottom: 32px;
   }
