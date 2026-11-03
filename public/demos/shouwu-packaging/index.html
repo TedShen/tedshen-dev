@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>守物包材｜企業採購型錄網站 Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* 守物包材：虛構的 B2B 包材供應商。版型重點：依產業／材質兩條找產品路徑、型錄篩選、詢價清單（取代購物車）。 */
+:root{
+  --bg:#FFFFFF; --soft:#F5F3EE; --ink:#1B2430; --muted:#4F5966; --line:#DDD8CE; --field:#B9B2A5;
+  --accent:#C2410C; --accent-ink:#FFFFFF; --accent-soft:#FBEDE4; --accent-deep:#9A330A;
+  --kraft:#C9A27A; --kraft-dark:#A77E52; --kraft-light:#E3CBAE;
+  --band:#1B2430; --band-ink:#FFFFFF; --band-muted:#C3CAD3; --band-line:#36414F;
+  --f:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#14181E; --soft:#1C2129; --ink:#ECEFF3; --muted:#AAB3BE; --line:#2E3540; --field:#4A5361;
+  --accent:#F08A4B; --accent-ink:#1B1206; --accent-soft:#3A2417; --accent-deep:#F7A877;
+  --kraft:#B48D63; --kraft-dark:#8E6B45; --kraft-light:#D7BB98;
+  --band:#0D1015; --band-line:#2A313B; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#14181E; --soft:#1C2129; --ink:#ECEFF3; --muted:#AAB3BE; --line:#2E3540; --field:#4A5361;
+  --accent:#F08A4B; --accent-ink:#1B1206; --accent-soft:#3A2417; --accent-deep:#F7A877;
+  --kraft:#B48D63; --kraft-dark:#8E6B45; --kraft-light:#D7BB98;
+  --band:#0D1015; --band-line:#2A313B; color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f);line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img,svg{max-width:100%}
+a{color:var(--accent)}
+a:hover{color:var(--accent-deep)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+h1,h2,h3{margin:0;line-height:1.3;text-wrap:balance}
+p{margin:0}
+[hidden]{display:none!important}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:max(16px,env(safe-area-inset-left,0px))}
+.mono{font-family:var(--mono)}
+.eyebrow{font-family:var(--mono);font-size:.8125rem;letter-spacing:.08em;color:var(--accent);margin-bottom:10px}
+.h2{font-size:clamp(1.6rem,3vw,2.25rem);font-weight:900}
+.lead{color:var(--muted);font-size:1.0625rem;max-width:40em;margin-top:12px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 24px;border-radius:6px;font:inherit;font-weight:700;font-size:1rem;text-decoration:none;cursor:pointer;border:1.5px solid transparent;transition:background .15s,color .15s}
+.btn-primary{background:var(--accent);color:var(--accent-ink)}
+.btn-primary:hover{background:var(--accent-deep);color:var(--accent-ink)}
+.btn-line{border-color:var(--ink);color:var(--ink);background:transparent}
+.btn-line:hover{background:var(--ink);color:var(--bg)}
+.btn-sm{min-height:44px;padding:0 16px;font-size:.9375rem}
+.demo-badge{position:fixed;z-index:60;left:max(16px,env(safe-area-inset-left,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));font-size:.75rem;letter-spacing:.04em;background:#1B2430;color:#F3F1EC;padding:8px 14px;border-radius:99px;text-decoration:none;max-width:calc(100% - 32px)}
+.demo-badge:hover{background:#C2410C;color:#fff}
+
+/* utility + header */
+.util{background:var(--band);color:var(--band-muted);font-size:.8125rem}
+.util .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 24px;padding-block:7px}
+header.top{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 94%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:12px 32px;padding-block:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+.brand b{font-size:1.375rem;font-weight:900;letter-spacing:.08em}
+.brand small{font-size:.8125rem;color:var(--muted);border-left:1px solid var(--line);padding-left:10px}
+.nav{display:flex;gap:2px 24px;flex-wrap:wrap;flex:1 1 auto;font-weight:500}
+.nav a{color:var(--ink);text-decoration:none;padding:10px 0}
+.nav a:hover{color:var(--accent)}
+.rfq-btn .n{font-family:var(--mono);background:var(--accent-ink);color:var(--accent);border-radius:10px;min-width:22px;padding:0 6px;font-size:.75rem;line-height:20px;text-align:center}
+@media (max-width:760px){.nav{order:3;flex-basis:100%;overflow-x:auto;flex-wrap:nowrap;gap:20px;scrollbar-width:none}.nav a{white-space:nowrap}.brand small{display:none}.top .wrap{justify-content:space-between}}
+
+/* hero */
+.hero{background:var(--soft);border-bottom:1px solid var(--line)}
+.hero .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:40px;padding-block:clamp(48px,7vw,88px)}
+.hero-copy{flex:1 1 480px;min-width:0}
+.hero h1{font-size:clamp(2.2rem,5vw,3.6rem);font-weight:900;letter-spacing:-.01em}
+.hero .lead{font-size:1.125rem}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
+.hero-art{flex:1 1 400px;min-width:0;display:flex;justify-content:center}
+.hero-art svg{width:100%;max-width:520px;height:auto}
+
+.stats{border-bottom:1px solid var(--line)}
+.stats .wrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:20px;padding-block:28px}
+.stat b{display:block;font-family:var(--mono);font-size:1.75rem;font-weight:500}
+.stat span{font-size:.875rem;color:var(--muted)}
+
+section.sec{padding-block:clamp(64px,8vw,96px)}
+.sec-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:36px}
+
+/* industry */
+.ind-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
+.ind{display:flex;flex-direction:column;text-align:left;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;overflow:hidden;cursor:pointer;padding:0}
+.ind:hover{border-color:var(--ink)}
+.ind .art{aspect-ratio:16/10;background:var(--soft);display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--line)}
+.ind .art svg{width:46%;height:auto}
+.ind .body{padding:22px;display:flex;flex-direction:column;gap:8px;flex:1}
+.ind .t{font-size:1.25rem;font-weight:700;line-height:1.3}
+.ind .d{font-size:.9375rem;color:var(--muted)}
+.ind .go{margin-top:auto;padding-top:6px;color:var(--accent);font-weight:700;font-size:.9375rem}
+
+/* guide */
+.guide{background:var(--soft)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.tab{min-height:44px;padding:0 18px;border-radius:22px;border:1px solid var(--field);background:var(--bg);color:var(--ink);font:inherit;font-size:.9375rem;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.table-box{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+table{width:100%;min-width:640px;border-collapse:collapse;font-size:.9375rem}
+thead th{background:var(--band);color:var(--band-ink);text-align:left;padding:14px 18px;font-weight:700}
+thead th:first-child{font-weight:500;color:var(--band-muted)}
+tbody th{text-align:left;font-weight:500;color:var(--muted);white-space:nowrap}
+tbody th,tbody td{padding:14px 18px;border-top:1px solid var(--line);vertical-align:top}
+
+/* catalog */
+.cat-layout{display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start}
+.filters{flex:1 1 230px;max-width:280px;display:flex;flex-direction:column;gap:24px}
+@media (max-width:760px){.filters{max-width:none}}
+.filters fieldset{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.filters legend{font-weight:700;margin-bottom:8px}
+.opt{display:flex;align-items:center;gap:10px;min-height:40px;cursor:pointer;font-size:.9375rem}
+.opt input{width:18px;height:18px;accent-color:var(--accent);margin:0}
+.opt .c{margin-left:auto;font-family:var(--mono);font-size:.8125rem;color:var(--muted)}
+.search{display:flex;align-items:center;gap:8px;border:1px solid var(--field);border-radius:6px;padding:0 12px;min-height:44px;background:var(--bg)}
+.search input{border:0;outline:0;background:transparent;font:inherit;color:var(--ink);width:100%;min-width:0}
+.help{border:1px solid var(--line);border-radius:8px;padding:18px;background:var(--soft);font-size:.9375rem}
+.help b{display:block;margin-bottom:4px}
+.help p{color:var(--muted);margin-bottom:10px}
+.results{flex:999 1 560px;min-width:0}
+.res-bar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin-bottom:18px;color:var(--muted);font-size:.9375rem}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:0 10px;border-radius:16px;background:var(--accent-soft);color:var(--ink);border:0;font:inherit;font-size:.8125rem;cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px}
+.card{border:1px solid var(--line);border-radius:8px;overflow:hidden;display:flex;flex-direction:column;background:var(--bg)}
+.card .art{aspect-ratio:4/3;background:var(--soft);display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--line)}
+.card .art svg{width:54%;height:auto}
+.card .body{padding:18px;display:flex;flex-direction:column;gap:8px;flex:1}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:.75rem;background:var(--accent-soft);color:var(--ink);border-radius:4px;padding:2px 8px}
+.card h3{font-size:1.0625rem}
+.card p{font-size:.875rem;color:var(--muted)}
+dl.spec{margin:2px 0 0;display:grid;grid-template-columns:auto 1fr;gap:2px 12px;font-size:.8125rem;color:var(--muted)}
+dl.spec dd{margin:0;font-family:var(--mono);color:var(--ink)}
+.add{margin-top:auto;min-height:44px;border-radius:6px;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font:inherit;font-weight:700;font-size:.9375rem;cursor:pointer}
+.add:hover{background:var(--accent-soft)}
+.add[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.empty{border:1px dashed var(--field);border-radius:8px;padding:32px;text-align:center;color:var(--muted)}
+
+/* quality band */
+.band{background:var(--band);color:var(--band-ink)}
+.band .wrap{display:flex;flex-wrap:wrap;gap:40px}
+.band .eyebrow{color:#F6A26F}
+.band .lead{color:var(--band-muted)}
+.band-copy{flex:1 1 360px;min-width:0}
+.band-grid{flex:1 1 520px;min-width:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.qcard{border:1px solid var(--band-line);border-radius:8px;padding:22px}
+.qcard b{display:block;font-size:1.125rem;margin-bottom:6px}
+.qcard span{font-size:.9375rem;color:var(--band-muted)}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
+.step{border-top:3px solid var(--accent);padding-top:18px}
+.step .n{font-family:var(--mono);color:var(--accent);font-size:.875rem}
+.step h3{font-size:1.25rem;margin:4px 0 6px}
+.step p{font-size:.9375rem;color:var(--muted)}
+
+/* contact */
+.contact{background:var(--soft)}
+.contact .wrap{display:flex;flex-wrap:wrap;gap:40px}
+.contact-copy{flex:1 1 340px;min-width:0}
+.contact-copy .info{margin-top:20px;line-height:2;font-size:.9375rem}
+form.quote{flex:1 1 540px;min-width:0;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:clamp(20px,3vw,32px);display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.field{display:flex;flex-direction:column;gap:6px;font-size:.9375rem;font-weight:500}
+.field.full{grid-column:1/-1}
+.field input,.field select,.field textarea{font:inherit;font-weight:400;color:var(--ink);background:var(--bg);border:1px solid var(--field);border-radius:6px;padding:10px 12px;min-height:44px}
+.field textarea{resize:vertical;min-height:96px}
+.field .err{color:var(--accent);font-size:.8125rem;font-weight:400}
+.picked{grid-column:1/-1;border:1px solid var(--line);border-radius:6px;padding:12px 14px;font-size:.9375rem;background:var(--soft)}
+.picked ul{margin:6px 0 0;padding-left:1.2em;color:var(--muted)}
+.form-actions{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.form-actions .btn{flex:1 1 auto}
+.done{grid-column:1/-1;border:1px solid var(--accent);background:var(--accent-soft);border-radius:6px;padding:16px;font-size:.9375rem}
+
+footer{background:var(--band);color:var(--band-muted);font-size:.875rem;padding-bottom:64px}
+footer .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:28px;padding-block:48px 28px}
+footer b{color:var(--band-ink);display:block;margin-bottom:10px}
+footer .legal{border-top:1px solid var(--band-line);padding-block:18px;font-size:.8125rem}
+
+/* RFQ drawer */
+.scrim{position:fixed;inset:0;z-index:70;background:rgba(10,14,20,.45)}
+.drawer{position:fixed;z-index:71;top:0;right:0;bottom:0;width:min(420px,100%);background:var(--bg);border-left:1px solid var(--line);display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom,0px)}
+.drawer-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line)}
+.drawer-head h2{font-size:1.125rem}
+.icon-btn{width:44px;height:44px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.drawer-body{flex:1;overflow-y:auto;padding:8px 20px}
+.line{display:flex;gap:12px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+.line .nm{flex:1;min-width:0;font-size:.9375rem}
+.line .nm small{display:block;color:var(--muted);font-size:.8125rem}
+.qty{display:flex;align-items:center;border:1px solid var(--field);border-radius:6px}
+.qty button{width:36px;height:40px;border:0;background:transparent;color:var(--ink);font-size:1.125rem;cursor:pointer}
+.qty input{width:52px;height:40px;border:0;text-align:center;font-family:var(--mono);background:transparent;color:var(--ink)}
+.rm{border:0;background:transparent;color:var(--muted);cursor:pointer;font:inherit;font-size:.8125rem;text-decoration:underline;min-height:40px}
+.drawer-foot{padding:16px 20px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
+.drawer-foot p{font-size:.8125rem;color:var(--muted)}
+.toast{position:fixed;z-index:80;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:6px;font-size:.9375rem;max-width:calc(100% - 32px)}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<a class="demo-badge" href="/works/shouwu-packaging-site/">← 示範作品：虛構品牌，回作品說明</a>
+
+<div class="util"><div class="wrap">
+  <span>業務專線 02-0000-0000 ・ 週一至週五 9:00–18:00</span>
+  <span>滿 [金額] 免運 ・ 北北基 [N] 日到貨</span>
+</div></div>
+
+<header class="top"><div class="wrap">
+  <a class="brand" href="#top" aria-label="守物包材 首頁"><svg aria-hidden="true" width="30" height="30" viewBox="0 0 32 32"><path d="M16 3 28 9.5v13L16 29 4 22.5v-13Z" fill="var(--kraft)"/><path d="M4 9.5 16 16l12-6.5M16 16v13" fill="none" stroke="var(--ink)" stroke-width="1.6" stroke-linejoin="round"/><path d="M10 6.3 22 12.8" stroke="var(--accent)" stroke-width="3"/></svg><b>守物包材</b><small>企業包裝耗材供應</small></a>
+  <nav class="nav" aria-label="主選單">
+    <a href="#catalog">產品型錄</a>
+    <a href="#industry">產業應用</a>
+    <a href="#guide">選材指南</a>
+    <a href="#quality">品質把關</a>
+    <a href="#contact">聯絡業務</a>
+  </nav>
+  <button class="btn btn-primary btn-sm rfq-btn" type="button" id="openRfq" aria-haspopup="dialog">詢價清單 <span class="n" id="rfqCount">0</span></button>
+</div></header>
+
+<main id="top">
+
+<section class="hero"><div class="wrap">
+  <div class="hero-copy">
+    <p class="eyebrow">紙箱 ・ 緩衝材 ・ 膠帶 ・ 袋類 ・ 工業包裝</p>
+    <h1>把貨好好送到，<br>從包裝開始。</h1>
+    <p class="lead">守物包材供應電商出貨、食品冷鏈、電子精密與倉儲物流所需的包裝耗材。先選型號、索取樣品，確定合用再大量訂。</p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="#industry">依產業找產品</a>
+      <a class="btn btn-line" href="#contact">索取樣品與報價</a>
+    </div>
+  </div>
+  <div class="hero-art" aria-hidden="true">
+    <svg viewBox="0 0 520 420">
+      <ellipse cx="270" cy="372" rx="210" ry="26" fill="var(--line)" opacity=".7"/>
+      <!-- back big box -->
+      <g transform="translate(150 70)">
+        <path d="M110 0 220 55v130L110 240 0 185V55Z" fill="var(--kraft)"/>
+        <path d="M0 55 110 110 220 55" fill="none" stroke="var(--kraft-dark)" stroke-width="2"/>
+        <path d="M110 110v130" stroke="var(--kraft-dark)" stroke-width="2"/>
+        <path d="M110 110 220 55v130L110 240Z" fill="var(--kraft-dark)" opacity=".35"/>
+        <path d="M55 27.5 165 82.5" stroke="var(--accent)" stroke-width="14" opacity=".9"/>
+        <path d="M165 82.5v40" stroke="var(--accent)" stroke-width="14" opacity=".75"/>
+        <g fill="none" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" opacity=".75"><path d="M30 120v34M22 130l8-10 8 10"/><path d="M58 134v34M50 144l8-10 8 10"/></g>
+      </g>
+      <!-- front small box -->
+      <g transform="translate(60 210)">
+        <path d="M80 0 160 40v80L80 160 0 120V40Z" fill="var(--kraft-light)"/>
+        <path d="M0 40 80 80 160 40M80 80v80" fill="none" stroke="var(--kraft-dark)" stroke-width="2"/>
+        <path d="M80 80 160 40v80L80 160Z" fill="var(--kraft-dark)" opacity=".25"/>
+        <path d="M40 20 120 60" stroke="var(--ink)" stroke-width="10" opacity=".85"/>
+      </g>
+      <!-- bubble roll -->
+      <g transform="translate(360 250)">
+        <rect x="0" y="20" width="110" height="96" rx="8" fill="var(--soft)" stroke="var(--field)" stroke-width="2"/>
+        <ellipse cx="110" cy="68" rx="22" ry="48" fill="var(--bg)" stroke="var(--field)" stroke-width="2"/>
+        <ellipse cx="110" cy="68" rx="8" ry="18" fill="var(--soft)" stroke="var(--field)" stroke-width="2"/>
+        <g fill="none" stroke="var(--field)" stroke-width="1.6"><circle cx="18" cy="40" r="7"/><circle cx="40" cy="40" r="7"/><circle cx="62" cy="40" r="7"/><circle cx="84" cy="40" r="7"/><circle cx="29" cy="62" r="7"/><circle cx="51" cy="62" r="7"/><circle cx="73" cy="62" r="7"/><circle cx="18" cy="84" r="7"/><circle cx="40" cy="84" r="7"/><circle cx="62" cy="84" r="7"/><circle cx="84" cy="84" r="7"/></g>
+      </g>
+      <!-- tape -->
+      <g transform="translate(330 36)">
+        <circle cx="44" cy="44" r="40" fill="var(--accent)" opacity=".9"/>
+        <circle cx="44" cy="44" r="22" fill="var(--soft)"/>
+        <path d="M78 64 120 92" stroke="var(--accent)" stroke-width="16" opacity=".55"/>
+      </g>
+    </svg>
+  </div>
+</div></section>
+
+<section class="stats" aria-label="數字一覽"><div class="wrap">
+  <div class="stat"><b id="statProducts">15</b><span>款常備品項</span></div>
+  <div class="stat"><b>5</b><span>大類：紙箱到工業包裝</span></div>
+  <div class="stat"><b>4</b><span>個主要服務產業</span></div>
+  <div class="stat"><b>免費</b><span>樣品寄送（示範條件）</span></div>
+</div></section>
+
+<section class="sec" id="industry"><div class="wrap">
+  <div class="sec-head">
+    <div><p class="eyebrow">01／依產業選購</p><h2 class="h2">你的貨，需要哪一種保護？</h2></div>
+    <a href="#catalog" style="font-weight:700">看全部品項 →</a>
+  </div>
+  <div class="ind-grid" id="indGrid"></div>
+</div></section>
+
+<section class="sec guide" id="guide"><div class="wrap">
+  <p class="eyebrow">02／選材指南</p>
+  <h2 class="h2">三十秒看懂，不再買錯</h2>
+  <p class="lead">不確定時，直接告訴業務你要寄什麼、多重、怎麼運送，我們推薦型號並寄樣品。</p>
+  <div class="tabs" role="tablist" aria-label="指南主題" style="margin-top:28px">
+    <button class="tab" role="tab" id="tab-cushion" aria-selected="true" aria-controls="panel-cushion">緩衝材怎麼選</button>
+    <button class="tab" role="tab" id="tab-box" aria-selected="false" aria-controls="panel-box">紙箱幾層才夠</button>
+  </div>
+  <div class="table-box" role="tabpanel" id="panel-cushion" aria-labelledby="tab-cushion">
+    <table>
+      <thead><tr><th scope="col">比較項目</th><th scope="col">氣泡布</th><th scope="col">牛皮紙緩衝</th><th scope="col">珍珠棉</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">防撞</th><td>佳</td><td>普通</td><td>佳</td></tr>
+        <tr><th scope="row">防刮</th><td>普通</td><td>普通</td><td>最佳</td></tr>
+        <tr><th scope="row">可回收</th><td>依當地分類</td><td>可隨紙類回收</td><td>依當地分類</td></tr>
+        <tr><th scope="row">適合</th><td>3C、玻璃瓶、一般電商</td><td>重視環保形象的品牌、填充空隙</td><td>面板、烤漆、精密零件</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="table-box" role="tabpanel" id="panel-box" aria-labelledby="tab-box" hidden>
+    <table>
+      <thead><tr><th scope="col">比較項目</th><th scope="col">三層紙箱</th><th scope="col">五層紙箱</th><th scope="col">飛機盒</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">承重</th><td>輕到中</td><td>中到重</td><td>輕</td></tr>
+        <tr><th scope="row">堆疊</th><td>短期可</td><td>倉儲長期堆疊</td><td>不建議重壓</td></tr>
+        <tr><th scope="row">封箱</th><td>需膠帶</td><td>需膠帶，建議打包帶</td><td>摺疊卡扣，免膠帶</td></tr>
+        <tr><th scope="row">適合</th><td>電商日常出貨</td><td>家電、工具、整箱批發</td><td>服飾、文具、禮盒</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div></section>
+
+<section class="sec" id="catalog"><div class="wrap">
+  <div class="sec-head">
+    <div><p class="eyebrow">03／產品型錄</p><h2 class="h2">挑好放進詢價清單，一次問價</h2></div>
+  </div>
+  <div class="cat-layout">
+    <aside class="filters" aria-label="篩選條件">
+      <label class="search"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input type="search" id="q" placeholder="搜尋品名，例如：氣泡" aria-label="搜尋品名"></label>
+      <fieldset><legend>品類</legend><div id="fCat"></div></fieldset>
+      <fieldset><legend>產業</legend><div id="fInd"></div></fieldset>
+      <div class="help"><b>不確定選哪款？</b><p>描述要寄的東西，業務幫你挑型號並寄樣品。</p><a href="#contact" style="font-weight:700">填寫需求 →</a></div>
+    </aside>
+    <div class="results">
+      <div class="res-bar"><span id="resCount" aria-live="polite"></span><div class="chips" id="chips"></div></div>
+      <div class="grid" id="grid"></div>
+    </div>
+  </div>
+</div></section>
+
+<section class="sec band" id="quality"><div class="wrap">
+  <div class="band-copy">
+    <p class="eyebrow">04／品質把關</p>
+    <h2 class="h2">每一批貨，<br>規格都對得上。</h2>
+    <p class="lead">紙箱抗壓、膠帶黏著、緩衝材厚度，到貨前抽檢。需要材質說明或檢驗文件，可以向業務索取。</p>
+  </div>
+  <div class="band-grid">
+    <div class="qcard"><b>到貨前抽檢</b><span>每批依型號抽樣，量尺寸、測抗壓與黏著。</span></div>
+    <div class="qcard"><b>規格固定不偷換</b><span>同型號長期供應同一規格，換料會先通知。</span></div>
+    <div class="qcard"><b>食品接觸級品項</b><span>夾鏈袋、保冷袋另附材質說明（示範內容）。</span></div>
+    <div class="qcard"><b>固定交期</b><span>月結客戶可約定每月出貨日，備貨不斷料。</span></div>
+  </div>
+</div></section>
+
+<section class="sec"><div class="wrap">
+  <p class="eyebrow">05／企業採購流程</p>
+  <h2 class="h2" style="margin-bottom:36px">四步完成大量採購</h2>
+  <div class="steps">
+    <div class="step"><div class="n">第 1 步</div><h3>選型號</h3><p>依產業或品類篩選，把要的品項放進詢價清單。</p></div>
+    <div class="step"><div class="n">第 2 步</div><h3>索取樣品</h3><p>實際裝一次貨、跑一趟物流，確認合用再下單。</p></div>
+    <div class="step"><div class="n">第 3 步</div><h3>收到報價</h3><p>業務依數量級距報價，月用量越穩定越好談。</p></div>
+    <div class="step"><div class="n">第 4 步</div><h3>固定出貨</h3><p>約定交期與送貨地點，每月自動補貨。</p></div>
+  </div>
+</div></section>
+
+<section class="sec contact" id="contact"><div class="wrap">
+  <div class="contact-copy">
+    <p class="eyebrow">06／詢價與樣品</p>
+    <h2 class="h2">告訴我們寄什麼，<br>我們推薦怎麼包。</h2>
+    <p class="lead">通路與代工夥伴也歡迎洽談合作。</p>
+    <p class="info">電話 02-0000-0000<br>Email demo@example.com<br>地址〇〇市〇〇區〇〇路（示範地址）</p>
+  </div>
+  <form class="quote" id="quote" novalidate>
+    <label class="field">公司名稱 *<input name="company" autocomplete="organization" required><span class="err" hidden>請填公司名稱</span></label>
+    <label class="field">聯絡人 *<input name="name" autocomplete="name" required><span class="err" hidden>請填聯絡人</span></label>
+    <label class="field">電話或 Email *<input name="contact" autocomplete="email" required><span class="err" hidden>請留一種聯絡方式</span></label>
+    <label class="field">產業別<select name="industry" id="formInd"></select></label>
+    <div class="picked" id="picked"></div>
+    <label class="field full">需求說明（寄什麼、月用量、尺寸）<textarea name="note" rows="4"></textarea></label>
+    <label class="opt full" style="grid-column:1/-1"><input type="checkbox" name="sample" checked> 需要先寄樣品</label>
+    <div class="form-actions"><button class="btn btn-primary" type="submit">送出詢價</button></div>
+    <div class="done" id="done" hidden role="status"></div>
+  </form>
+</div></section>
+
+</main>
+
+<footer><div class="wrap">
+  <div class="cols">
+    <div><b>守物包材</b>企業包裝耗材供應<br>虛構品牌，僅作網站示範</div>
+    <div><b>紙箱與袋類</b>三層・五層紙箱<br>飛機盒<br>破壞袋・夾鏈袋・保冷袋</div>
+    <div><b>緩衝與封箱</b>氣泡布・氣泡袋<br>牛皮紙緩衝・珍珠棉<br>透明・牛皮紙・印刷膠帶</div>
+    <div><b>工業包裝</b>棧板拉伸膜<br>打包帶</div>
+  </div>
+  <div class="legal">本頁為網站設計示範，品牌、產品、規格、聯絡方式皆為虛構，詢價不會真的送出。</div>
+</div></footer>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" hidden>
+  <div class="drawer-head"><h2 id="drawerTitle">詢價清單</h2><button class="icon-btn" type="button" id="closeRfq" aria-label="關閉詢價清單"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+  <div class="drawer-body" id="drawerBody"></div>
+  <div class="drawer-foot"><p>數量是預估月用量，業務會依此報價。</p><a class="btn btn-primary" href="#contact" id="toForm">填寫聯絡資料並送出</a></div>
+</aside>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+(function(){
+  var CATS=['紙箱','緩衝材','膠帶','袋類','工業包裝'];
+  var INDS=[
+    {id:'電商出貨',desc:'郵寄紙箱、飛機盒、氣泡袋、破壞袋，日常出貨一次備齊。',art:'box'},
+    {id:'食品冷鏈',desc:'保冷袋、食品接觸級夾鏈袋，搭配加厚紙箱寄生鮮與甜點。',art:'bag'},
+    {id:'電子精密',desc:'珍珠棉、氣泡布與五層紙箱，保護面板、零件與儀器。',art:'foam'},
+    {id:'倉儲物流',desc:'棧板拉伸膜、打包帶、五層紙箱，整板出貨不散不倒。',art:'film'}
+  ];
+  var P=[
+    {id:'b1',c:'紙箱',n:'三層郵寄紙箱',d:'電商最常用，6 種尺寸可選。',s:[['楞別','B 楞'],['尺寸','[6 種]'],['包裝','每捆 25 入']],i:['電商出貨'],u:'捆',a:'box'},
+    {id:'b2',c:'紙箱',n:'五層加厚紙箱',d:'承重與堆疊更好，適合重物與倉儲。',s:[['楞別','AB 楞'],['尺寸','[8 種]'],['包裝','每捆 10 入']],i:['電子精密','倉儲物流','食品冷鏈'],u:'捆',a:'box'},
+    {id:'b3',c:'紙箱',n:'摺疊飛機盒',d:'卡扣成型免膠帶，開箱體驗好。',s:[['材質','白牛皮'],['尺寸','[5 種]'],['包裝','每捆 50 入']],i:['電商出貨'],u:'捆',a:'mailer'},
+    {id:'c1',c:'緩衝材',n:'氣泡布',d:'防撞萬用款，可裁切成任意大小。',s:[['寬度','30／60／120 公分'],['長度','每卷 [N] 公尺'],['氣泡','10 公釐']],i:['電商出貨','電子精密'],u:'卷',a:'bubble'},
+    {id:'c2',c:'緩衝材',n:'氣泡信封袋',d:'外層牛皮紙、內層氣泡，小件直接寄。',s:[['尺寸','[6 種]'],['封口','自黏'],['包裝','每包 100 入']],i:['電商出貨'],u:'包',a:'bag'},
+    {id:'c3',c:'緩衝材',n:'牛皮紙緩衝卷',d:'可隨紙類回收，填充空隙、包覆瓶罐。',s:[['寬度','38 公分'],['長度','每卷 [N] 公尺'],['基重','[—]']],i:['電商出貨','食品冷鏈'],u:'卷',a:'paper'},
+    {id:'c4',c:'緩衝材',n:'珍珠棉',d:'柔軟不刮傷，適合面板與烤漆件。',s:[['厚度','1–10 公釐'],['寬度','100 公分'],['包裝','依厚度']],i:['電子精密'],u:'卷',a:'foam'},
+    {id:'t1',c:'膠帶',n:'透明封箱膠帶',d:'一般紙箱封箱，黏著穩定。',s:[['寬度','48 公釐'],['長度','每卷 [N] 公尺'],['包裝','每箱 60 卷']],i:['電商出貨','倉儲物流'],u:'箱',a:'tape'},
+    {id:'t2',c:'膠帶',n:'牛皮紙膠帶',d:'可書寫，和紙箱同色更整齊。',s:[['寬度','48 公釐'],['長度','每卷 [N] 公尺'],['包裝','每箱 50 卷']],i:['電商出貨'],u:'箱',a:'tape'},
+    {id:'t3',c:'膠帶',n:'客製印刷膠帶',d:'印上品牌名稱，封箱就是廣告。',s:[['印刷','1–2 色'],['最低訂量','[N] 卷'],['交期','[N] 工作天']],i:['電商出貨','食品冷鏈'],u:'箱',a:'tape'},
+    {id:'g1',c:'袋類',n:'破壞袋',d:'撕開無法復原，寄送服飾與文件。',s:[['尺寸','[8 種]'],['顏色','灰／白'],['包裝','每包 100 入']],i:['電商出貨'],u:'包',a:'bag'},
+    {id:'g2',c:'袋類',n:'食品夾鏈袋',d:'食品接觸級材料，分裝零食與乾貨。',s:[['尺寸','[6 種]'],['厚度','[—]'],['包裝','每包 100 入']],i:['食品冷鏈'],u:'包',a:'bag'},
+    {id:'g3',c:'袋類',n:'鋁箔保冷袋',d:'搭配冰磚寄送生鮮、甜點。',s:[['尺寸','[4 種]'],['結構','鋁箔＋泡棉'],['包裝','每包 50 入']],i:['食品冷鏈'],u:'包',a:'bag'},
+    {id:'w1',c:'工業包裝',n:'棧板拉伸膜',d:'整板纏繞固定，防塵防散落。',s:[['寬度','50 公分'],['厚度','[—]'],['包裝','每箱 4 卷']],i:['倉儲物流'],u:'箱',a:'film'},
+    {id:'w2',c:'工業包裝',n:'打包帶',d:'重箱、整綑出貨加固用。',s:[['寬度','12 公釐'],['材質','PP'],['包裝','每卷 [N] 公尺']],i:['倉儲物流','電子精密'],u:'卷',a:'strap'}
+  ];
+  var ART={
+    box:'<svg viewBox="0 0 120 110" aria-hidden="true"><path d="M60 6 112 32v52L60 108 8 84V32Z" fill="var(--kraft)"/><path d="M8 32 60 58l52-26M60 58v50" fill="none" stroke="var(--kraft-dark)" stroke-width="2"/><path d="M60 58 112 32v52L60 108Z" fill="var(--kraft-dark)" opacity=".3"/><path d="M34 19 86 45" stroke="var(--accent)" stroke-width="8"/></svg>',
+    mailer:'<svg viewBox="0 0 120 110" aria-hidden="true"><path d="M8 56 60 80l52-24v22L60 104 8 78Z" fill="var(--kraft-light)" stroke="var(--kraft-dark)" stroke-width="2"/><path d="M8 56 60 32l52 24-52 24Z" fill="var(--kraft)" stroke="var(--kraft-dark)" stroke-width="2"/><path d="M8 56 30 10l52 24-22 46" fill="var(--kraft-light)" stroke="var(--kraft-dark)" stroke-width="2" opacity=".9"/></svg>',
+    bubble:'<svg viewBox="0 0 120 110" aria-hidden="true"><rect x="6" y="22" width="84" height="70" rx="6" fill="var(--bg)" stroke="var(--field)" stroke-width="2"/><ellipse cx="90" cy="57" rx="18" ry="35" fill="var(--bg)" stroke="var(--field)" stroke-width="2"/><ellipse cx="90" cy="57" rx="7" ry="13" fill="var(--soft)" stroke="var(--field)" stroke-width="2"/><g fill="none" stroke="var(--field)" stroke-width="1.6"><circle cx="20" cy="38" r="6"/><circle cx="38" cy="38" r="6"/><circle cx="56" cy="38" r="6"/><circle cx="29" cy="56" r="6"/><circle cx="47" cy="56" r="6"/><circle cx="65" cy="56" r="6"/><circle cx="20" cy="74" r="6"/><circle cx="38" cy="74" r="6"/><circle cx="56" cy="74" r="6"/></g></svg>',
+    bag:'<svg viewBox="0 0 120 110" aria-hidden="true"><rect x="22" y="12" width="76" height="90" rx="5" fill="var(--kraft-light)" stroke="var(--kraft-dark)" stroke-width="2"/><path d="M22 28h76" stroke="var(--accent)" stroke-width="4"/><path d="M36 48h48M36 60h36" stroke="var(--kraft-dark)" stroke-width="3" stroke-linecap="round" opacity=".6"/></svg>',
+    paper:'<svg viewBox="0 0 120 110" aria-hidden="true"><rect x="10" y="30" width="80" height="56" rx="4" fill="var(--kraft)" /><path d="M10 44h80M10 58h80M10 72h80" stroke="var(--kraft-dark)" stroke-width="1.6" opacity=".6"/><ellipse cx="90" cy="58" rx="14" ry="28" fill="var(--kraft-light)" stroke="var(--kraft-dark)" stroke-width="2"/><ellipse cx="90" cy="58" rx="5" ry="10" fill="var(--soft)" stroke="var(--kraft-dark)" stroke-width="2"/></svg>',
+    foam:'<svg viewBox="0 0 120 110" aria-hidden="true"><g stroke="var(--field)" stroke-width="2"><path d="M14 40 60 18l46 22-46 22Z" fill="var(--bg)"/><path d="M14 40v12l46 22 46-22V40L60 62Z" fill="var(--soft)"/><path d="M14 58v12l46 22 46-22V58L60 80Z" fill="var(--bg)"/></g><path d="M14 58 60 80l46-22" fill="none" stroke="var(--accent)" stroke-width="2.5"/></svg>',
+    tape:'<svg viewBox="0 0 120 110" aria-hidden="true"><circle cx="54" cy="55" r="40" fill="var(--accent)" opacity=".85"/><circle cx="54" cy="55" r="22" fill="var(--soft)"/><circle cx="54" cy="55" r="40" fill="none" stroke="var(--accent-deep)" stroke-width="2"/><path d="M90 72 114 88" stroke="var(--accent)" stroke-width="12" opacity=".5"/></svg>',
+    film:'<svg viewBox="0 0 120 110" aria-hidden="true"><rect x="34" y="8" width="52" height="94" rx="6" fill="var(--soft)" stroke="var(--field)" stroke-width="2"/><ellipse cx="60" cy="10" rx="26" ry="7" fill="var(--bg)" stroke="var(--field)" stroke-width="2"/><ellipse cx="60" cy="10" rx="8" ry="2.5" fill="var(--kraft)"/><path d="M40 30h40M40 50h40M40 70h40M40 90h40" stroke="var(--field)" stroke-width="1.4"/></svg>',
+    strap:'<svg viewBox="0 0 120 110" aria-hidden="true"><circle cx="60" cy="55" r="42" fill="none" stroke="var(--ink)" stroke-width="10" opacity=".8"/><circle cx="60" cy="55" r="28" fill="none" stroke="var(--ink)" stroke-width="10" opacity=".55"/><circle cx="60" cy="55" r="12" fill="var(--kraft)"/></svg>'
+  };
+  var KEY='shouwu-rfq';
+  var rfq={};
+  try{rfq=JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){rfq={};}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(rfq));}catch(e){}}
+  var state={cats:[],ind:'',q:''};
+  var $=function(id){return document.getElementById(id);};
+  function esc(s){return String(s).replace(/[&<>"]/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch];});}
+  function byId(id){for(var k=0;k<P.length;k++){if(P[k].id===id)return P[k];}return null;}
+
+  // industry cards
+  $('indGrid').innerHTML=INDS.map(function(x){
+    var n=P.filter(function(p){return p.i.indexOf(x.id)>-1;}).length;
+    return '<button type="button" class="ind" data-ind="'+x.id+'"><span class="art">'+ART[x.art]+'</span><span class="body"><span class="t">'+x.id+'</span><span class="d">'+x.desc+'</span><span class="go">'+n+' 款適用品項 →</span></span></button>';
+  }).join('');
+  $('indGrid').addEventListener('click',function(e){
+    var b=e.target.closest('.ind'); if(!b)return;
+    state.ind=b.getAttribute('data-ind'); state.cats=[]; renderFilters(); render();
+    $('catalog').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+  });
+
+  // filters
+  function renderFilters(){
+    $('fCat').innerHTML=CATS.map(function(c){
+      var n=P.filter(function(p){return p.c===c;}).length;
+      return '<label class="opt"><input type="checkbox" value="'+c+'"'+(state.cats.indexOf(c)>-1?' checked':'')+'> '+c+'<span class="c">'+n+'</span></label>';
+    }).join('');
+    $('fInd').innerHTML=['全部產業'].concat(INDS.map(function(x){return x.id;})).map(function(c){
+      var v=c==='全部產業'?'':c;
+      return '<label class="opt"><input type="radio" name="ind" value="'+v+'"'+(state.ind===v?' checked':'')+'> '+c+'</label>';
+    }).join('');
+  }
+  $('fCat').addEventListener('change',function(){state.cats=[].slice.call($('fCat').querySelectorAll('input:checked')).map(function(i){return i.value;});render();});
+  $('fInd').addEventListener('change',function(e){state.ind=e.target.value;render();});
+  $('q').addEventListener('input',function(e){state.q=e.target.value.trim();render();});
+  $('chips').addEventListener('click',function(e){
+    var b=e.target.closest('.chip'); if(!b)return;
+    var t=b.getAttribute('data-k'),v=b.getAttribute('data-v');
+    if(t==='cat')state.cats=state.cats.filter(function(c){return c!==v;});
+    if(t==='ind')state.ind='';
+    if(t==='q'){state.q='';$('q').value='';}
+    renderFilters();render();
+  });
+
+  function render(){
+    var list=P.filter(function(p){
+      return (!state.cats.length||state.cats.indexOf(p.c)>-1)&&(!state.ind||p.i.indexOf(state.ind)>-1)&&(!state.q||(p.n+p.d+p.c).indexOf(state.q)>-1);
+    });
+    $('resCount').textContent='顯示 '+list.length+' 款';
+    var chips=state.cats.map(function(c){return ['cat',c];});
+    if(state.ind)chips.push(['ind',state.ind]);
+    if(state.q)chips.push(['q',state.q]);
+    $('chips').innerHTML=chips.map(function(c){return '<button type="button" class="chip" data-k="'+c[0]+'" data-v="'+esc(c[1])+'" aria-label="移除條件 '+esc(c[1])+'">'+esc(c[1])+' ✕</button>';}).join('');
+    $('grid').innerHTML=list.length?list.map(function(p){
+      var on=!!rfq[p.id];
+      return '<article class="card"><div class="art">'+ART[p.a]+'</div><div class="body"><div class="tags"><span class="tag">'+p.c+'</span>'+p.i.slice(0,2).map(function(x){return '<span class="tag">'+x+'</span>';}).join('')+'</div><h3>'+p.n+'</h3><p>'+p.d+'</p><dl class="spec">'+p.s.map(function(r){return '<dt>'+r[0]+'</dt><dd>'+r[1]+'</dd>';}).join('')+'</dl><button type="button" class="add" data-id="'+p.id+'" aria-pressed="'+on+'">'+(on?'✓ 已在詢價清單':'＋ 加入詢價')+'</button></div></article>';
+    }).join(''):'<div class="empty">沒有符合的品項。換個條件，或直接<a href="#contact">告訴業務你的需求</a>。</div>';
+  }
+  $('grid').addEventListener('click',function(e){
+    var b=e.target.closest('.add'); if(!b)return;
+    var id=b.getAttribute('data-id');
+    if(rfq[id]){delete rfq[id];toast('已從詢價清單移除');}else{rfq[id]=1;toast('已加入詢價清單：'+byId(id).n);}
+    save();render();syncRfq();
+  });
+
+  // rfq drawer
+  var lastFocus=null;
+  function syncRfq(){
+    var ids=Object.keys(rfq).filter(byId);
+    $('rfqCount').textContent=ids.length;
+    $('drawerBody').innerHTML=ids.length?ids.map(function(id){var p=byId(id);
+      return '<div class="line"><div class="nm">'+p.n+'<small>'+p.c+' ・ 單位：'+p.u+'</small><button type="button" class="rm" data-rm="'+id+'">移除</button></div><div class="qty"><button type="button" data-step="-1" data-id="'+id+'" aria-label="減少 '+p.n+' 數量">−</button><input inputmode="numeric" value="'+rfq[id]+'" data-qty="'+id+'" aria-label="'+p.n+' 月用量（'+p.u+'）"><button type="button" data-step="1" data-id="'+id+'" aria-label="增加 '+p.n+' 數量">＋</button></div></div>';
+    }).join(''):'<p style="padding:24px 0;color:var(--muted)">清單是空的。到產品型錄按「加入詢價」，一次問多個品項。</p>';
+    $('picked').innerHTML=ids.length?'<b>詢價品項（'+ids.length+'）</b><ul>'+ids.map(function(id){var p=byId(id);return '<li>'+p.n+' × '+rfq[id]+' '+p.u+'</li>';}).join('')+'</ul>':'<b>詢價品項</b><div style="color:var(--muted)">尚未選擇，可以<a href="#catalog">到型錄挑選</a>，或直接在下方描述需求。</div>';
+    $('toForm').toggleAttribute('aria-disabled',!ids.length);
+  }
+  $('drawerBody').addEventListener('click',function(e){
+    var r=e.target.closest('[data-rm]');
+    if(r){delete rfq[r.getAttribute('data-rm')];save();syncRfq();render();return;}
+    var s=e.target.closest('[data-step]');
+    if(s){var id=s.getAttribute('data-id');rfq[id]=Math.max(1,(parseInt(rfq[id],10)||1)+parseInt(s.getAttribute('data-step'),10));save();syncRfq();var inp=$('drawerBody').querySelector('[data-qty="'+id+'"]');if(inp)inp.focus();}
+  });
+  $('drawerBody').addEventListener('change',function(e){
+    var id=e.target.getAttribute('data-qty'); if(!id)return;
+    rfq[id]=Math.max(1,parseInt(e.target.value,10)||1);save();syncRfq();
+  });
+  function openDrawer(){lastFocus=document.activeElement;$('scrim').hidden=false;$('drawer').hidden=false;$('closeRfq').focus();document.body.style.overflow='hidden';}
+  function closeDrawer(){$('scrim').hidden=true;$('drawer').hidden=true;document.body.style.overflow='';if(lastFocus)lastFocus.focus();}
+  $('openRfq').addEventListener('click',openDrawer);
+  $('closeRfq').addEventListener('click',closeDrawer);
+  $('scrim').addEventListener('click',closeDrawer);
+  $('toForm').addEventListener('click',function(){closeDrawer();});
+  $('drawer').addEventListener('keydown',function(e){
+    if(e.key==='Escape'){closeDrawer();return;}
+    if(e.key!=='Tab')return;
+    var f=[].slice.call($('drawer').querySelectorAll('button,input,a[href]'));
+    if(!f.length)return;
+    if(e.shiftKey&&document.activeElement===f[0]){e.preventDefault();f[f.length-1].focus();}
+    else if(!e.shiftKey&&document.activeElement===f[f.length-1]){e.preventDefault();f[0].focus();}
+  });
+
+  // tabs
+  var tabs=[].slice.call(document.querySelectorAll('.tab'));
+  tabs.forEach(function(t){t.addEventListener('click',function(){
+    tabs.forEach(function(x){var on=x===t;x.setAttribute('aria-selected',on);$(x.getAttribute('aria-controls')).hidden=!on;});
+  });});
+
+  // form
+  $('formInd').innerHTML=INDS.map(function(x){return '<option>'+x.id+'</option>';}).join('')+'<option>其他／通路合作</option>';
+  $('quote').addEventListener('submit',function(e){
+    e.preventDefault();
+    var f=e.target, ok=true, first=null;
+    ['company','name','contact'].forEach(function(n){
+      var inp=f.elements[n], err=inp.parentNode.querySelector('.err'), bad=!inp.value.trim();
+      err.hidden=!bad; inp.setAttribute('aria-invalid',bad);
+      if(bad){ok=false;if(!first)first=inp;}
+    });
+    if(!ok){first.focus();return;}
+    var ids=Object.keys(rfq).filter(byId);
+    $('done').hidden=false;
+    $('done').innerHTML='<b>已模擬送出（示範，不會真的寄出）。</b><br>'+esc(f.elements.company.value)+' '+esc(f.elements.name.value)+' 您好，業務會在 [N] 個工作天內回覆'+(ids.length?' '+ids.length+' 項品項的':'')+'報價'+(f.elements.sample.checked?'，並先寄出樣品':'')+'。';
+    rfq={};save();syncRfq();render();
+    f.reset();
+  });
+
+  var tt;
+  function toast(m){var t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(function(){t.hidden=true;},1800);}
+
+  $('statProducts').textContent=P.length;
+  renderFilters();render();syncRfq();
+})();
+</script>
+<script>if(window.self!==window.top){var b=document.querySelector(".demo-badge");if(b)b.style.display="none";}</script>
+</body>
+</html>
