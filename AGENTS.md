@@ -69,6 +69,12 @@
 
 ## 6. 作業紀錄
 
+### 2026-11-03 — 品牌網站 Demo 改用實景照片；新增〈美好煎餅〉〈璞〉兩個作品
+- 範圍：`public/demos/rice-brand/`（拿掉 Three.js，改成滿版照片隨捲動淡入切換，圖檔放 `img/`）、`public/demos/meihao-jianbing/`、`public/demos/pu-jewelry/`（新增，皆為單一 index.html＋`img/*.webp`，`noindex`，左下角固定連結回作品頁）；作品頁 `src/content/works/scroll-story-brand-site.md`（改寫為照片版）、`meihao-jianbing-site.md`（order 12）、`pu-jewelry-site.md`（order 13）；封面 `public/works/cover-scroll-story-brand-site.webp`（重畫）、`cover-meihao-jianbing-site.webp`、`cover-pu-jewelry-site.webp`（沿用深藍流程圖版型）
+- 原因：站主 2026-11-03 指示三個品牌網站 Demo 改用可商用的實景照片、全部放上作品集；品牌名一律中文（美好煎餅、璞），不放英文
+- 照片：全部來自 Unsplash（Unsplash License，可免費商用），作品頁與 Demo 內都標註攝影師；天津街頭照片的招牌文字由簡體改為繁體（頁面已註明）。部分照片有人物，未取得肖像授權，只適合作品集示範
+- 驗證：`npm run build` 通過，sitemap 含三個作品頁、不含 demos；Playwright 以 1280px／390px 檢查三個 Demo（CDN 套件改由本機同版本供應），無橫向捲動、無 JS 錯誤
+
 ### 2026-11-03 — 新增作品〈捲動敘事品牌網站〉與網頁 Demo〈粒田米舖〉
 - 範圍：`src/content/works/scroll-story-brand-site.md`（自有作品，order 11，排在最後）、`public/works/cover-scroll-story-brand-site.webp`（沿用深藍流程圖版型，Pillow 繪製）、`public/demos/rice-brand/index.html`（純前端單檔、`noindex`；Three.js r128、GSAP 3.12.5＋ScrollTrigger、Lenis 1.1.13 皆由 CDN 載入，Lenis 載入失敗時退回原生捲動；左下角固定連結回作品頁）
 - 原因：站主 2026-11-03 指示參考日本針織廠官網的捲動敘事手法，做一個米品牌官網當 demo 產品，開拓品牌網站／互動網頁案型。品牌「粒田米舖」、商品、價格、地址與數據全為虛構，作品頁開頭已註明是示範、未實際上線給品牌使用

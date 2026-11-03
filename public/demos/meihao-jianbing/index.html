@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>美好煎餅｜餐飲品牌網站 Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Noto+Serif+TC:wght@300;400;500&family=Noto+Sans+TC:wght@400;500&display=swap">
+<style>
+/* Layout: street food dressed as a luxury house — full-bleed tiles that are live 3D "product photographs" (one fixed WebGL canvas, one scissor view per tile), then a menu calculator. */
+:root{
+  --paper:#FAF8F3;
+  --ink:#171512;
+  --muted:#6F6A61;
+  --scallion:#3F6B3A;
+  --chili:#B2402F;
+  --rule:color-mix(in srgb,var(--ink) 15%,transparent);
+  --f-mark:"Bodoni Moda","Didot","Bodoni 72",serif;
+  --f-head:"Noto Serif TC","Songti TC","PMingLiU",serif;
+  --f-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --s-1:.8125rem;--s0:1rem;--s1:1.25rem;--s2:1.75rem;--s3:clamp(1.9rem,3.6vw,2.75rem);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#12110F;--ink:#ECE8E0;--muted:#A49E93;--scallion:#8BBE7E;--chili:#E2806E;color-scheme:dark}}
+:root[data-theme="dark"]{--paper:#12110F;--ink:#ECE8E0;--muted:#A49E93;--scallion:#8BBE7E;--chili:#E2806E;color-scheme:dark}
+
+*{box-sizing:border-box}
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+.demo-badge{position:fixed;z-index:30;left:max(16px,env(safe-area-inset-left,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));font-size:.75rem;letter-spacing:.06em;background:#1B1915;color:#F4EFE6;padding:8px 14px;border-radius:99px;text-decoration:none;max-width:calc(100% - 32px)}
+.demo-badge:hover{background:#3F6B3A}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);line-height:1.8;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--scallion);outline-offset:3px}
+h1,h2,h3{font-family:var(--f-head);font-weight:400;margin:0;text-wrap:balance;line-height:1.4}
+p{margin:0}
+
+#gl{position:fixed;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;display:block}
+main{position:relative;z-index:2}
+
+.top{position:fixed;inset:0 0 auto;z-index:5;background:color-mix(in srgb,var(--paper) 94%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--rule);
+  padding-top:env(safe-area-inset-top,0px);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top-in{max-width:1320px;margin:0 auto;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding-block:14px 8px;gap:12px}
+.top .util{display:flex;gap:18px;font-size:.75rem;color:var(--muted);letter-spacing:.08em}
+.top .util.r{justify-content:flex-end}
+.mark{font-family:var(--f-head);font-weight:500;font-size:2.1rem;line-height:1;letter-spacing:.32em;padding-left:.32em;text-decoration:none;display:flex;align-items:baseline;gap:.4em;transition:font-size .45s ease;white-space:nowrap}
+.mark span{font-family:var(--f-head);font-size:.4em;letter-spacing:.3em;color:var(--muted)}
+.cats{max-width:1320px;margin:0 auto;display:flex;justify-content:center;gap:clamp(14px,2.4vw,34px);padding-block:6px 12px;font-size:.78rem;letter-spacing:.16em;flex-wrap:wrap;transition:padding .45s}
+.cats a{text-decoration:none;padding-block:2px;border-bottom:1px solid transparent}
+.cats a:hover{border-color:currentColor}
+.top.compact .mark{font-size:1.35rem}
+.top.compact .cats{padding-block:2px 8px}
+.spacer{height:146px}
+
+.tile{position:relative;min-height:min(90svh,860px);display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
+.tile{background:var(--tile-bg)}
+.tile .ph{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;max-width:none;transform-origin:50% 50%;will-change:transform}
+.tile .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(18,12,8,0) 28%,rgba(18,12,8,.55) 55%,rgba(18,12,8,.9) 100%);pointer-events:none}
+.tile .cap{text-shadow:0 1px 14px rgba(0,0,0,.55)}
+.ph-batter{background:#1B1510}
+#batter{background:#1B1510}
+.cap .credit{font-size:.7rem;opacity:.65;letter-spacing:.04em}
+.card .ph{overflow:hidden;background:#EFEAE0}
+.card .ph img{width:100%;height:100%;object-fit:cover;display:block;max-width:100%}
+.ph-text{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:14px;background:radial-gradient(circle at 50% 42%,var(--c2) 0 34%,var(--c1) 35%)!important;color:#fff;text-align:center}
+.ph-text span{font-family:var(--f-head);font-size:clamp(1.3rem,2.4vw,1.9rem);letter-spacing:.3em;padding-left:.3em;line-height:1.5;color:var(--c1);mix-blend-mode:normal}
+.ph-text small{position:absolute;bottom:14px;font-size:.7rem;letter-spacing:.2em;color:rgba(255,255,255,.75)}
+
+.tile .view{position:absolute;inset:0}
+.cap{position:relative;text-align:center;display:grid;justify-items:center;gap:14px;padding-block:0 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));max-width:40rem;width:100%}
+.cap .eyebrow{font-family:var(--f-head);font-size:.82rem;letter-spacing:.42em;padding-left:.42em;opacity:.78}
+.cap h1,.cap h2{font-size:var(--s3);letter-spacing:.12em}
+.cap p{font-size:.95rem;opacity:.86}
+.on-dark{color:#F4EFE6}
+.on-light{color:#1B1915}
+.btn{display:inline-block;margin-top:6px;border:1px solid currentColor;padding:10px 28px;font-size:.78rem;letter-spacing:.24em;text-decoration:none;background:transparent;color:inherit;cursor:pointer;font-family:inherit}
+.on-dark .btn:hover{color:#1B1915;background:#F4EFE6}
+.on-light .btn:hover{color:#F4EFE6;background:#1B1915}
+.haze{position:absolute;inset:0;background:color-mix(in srgb,#F6F3EC 72%,transparent);-webkit-backdrop-filter:blur(22px);backdrop-filter:blur(22px);pointer-events:none;opacity:0}
+
+.band{background:var(--paper);padding-block:110px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.band.clear{background:transparent}
+.lede{max-width:38rem;margin:0 auto;text-align:center;display:grid;gap:20px;justify-items:center}
+.lede h2{font-size:var(--s3);letter-spacing:.1em}
+.lede p{color:var(--muted)}
+.rule{width:1px;height:46px;background:var(--rule)}
+.inside{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 10px;margin-top:4px}
+.inside span{font-size:.8rem;letter-spacing:.1em;border:1px solid var(--rule);padding:4px 12px;border-radius:99px;color:var(--ink)}
+
+.shelf{max-width:1320px;margin:0 auto}
+.shelf-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:30px}
+.shelf-head h2{font-size:var(--s2);letter-spacing:.12em}
+.shelf-head span{font-size:.78rem;letter-spacing:.16em;color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.card{display:grid;gap:12px;text-decoration:none;min-width:0}
+.card .ph{position:relative;aspect-ratio:4/5;max-width:100%}
+.no-gl .card .ph{background:#F2EEE6}
+.card .ph .view{position:absolute;inset:0}
+.card h3{font-size:1rem;letter-spacing:.08em}
+.card small{color:var(--muted);font-size:.8rem}
+.card b{font-weight:400;font-size:.9rem;font-variant-numeric:tabular-nums}
+
+/* order */
+.order{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(32px,6vw,90px);align-items:start}
+.order h2{font-size:var(--s3);letter-spacing:.08em;margin-bottom:18px}
+.order .txt{display:grid;gap:16px;color:var(--muted)}
+.hours{display:grid;border-top:1px solid var(--rule);margin:8px 0 0}
+.hours div{display:grid;grid-template-columns:6.5rem minmax(0,1fr);gap:14px;padding-block:12px;border-bottom:1px solid var(--rule)}
+.hours dt{color:var(--ink);font-size:.9rem}
+.hours dd{margin:0;font-size:.9rem}
+form{display:grid;gap:18px}
+fieldset{border:0;margin:0;padding:0;display:grid;gap:10px;min-width:0}
+legend{font-size:.75rem;letter-spacing:.16em;color:var(--muted);margin-bottom:6px;padding:0}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg label,.adds label{display:flex;align-items:center;gap:8px;border:1px solid var(--rule);padding:8px 14px;cursor:pointer;font-size:.9rem;font-variant-numeric:tabular-nums}
+.seg input,.adds input{accent-color:var(--scallion)}
+.seg label:has(input:checked),.adds label:has(input:checked){border-color:var(--ink)}
+.adds{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.adds label{justify-content:space-between}
+.adds label span{flex:1}
+.qty{display:flex;align-items:center;gap:10px}
+.qty button{width:38px;height:38px;border:1px solid var(--rule);background:transparent;color:var(--ink);font-size:1.1rem;cursor:pointer}
+.qty output{min-width:2ch;text-align:center;font-variant-numeric:tabular-nums}
+.total{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--ink);padding-top:14px}
+.total b{font-family:var(--f-mark);font-size:var(--s2);font-weight:400;font-variant-numeric:tabular-nums}
+.total small{color:var(--muted);font-size:.8rem}
+form .btn{justify-self:stretch;text-align:center;background:var(--ink);color:var(--paper);border-color:var(--ink)}
+form .btn:hover{background:var(--scallion);border-color:var(--scallion)}
+.note{font-size:.85rem;color:var(--scallion);min-height:1.5em}
+
+footer{position:relative;z-index:2;background:var(--paper);border-top:1px solid var(--rule)}
+.foot{max-width:1320px;margin:0 auto;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-block:34px calc(34px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));font-size:.8rem;color:var(--muted)}
+.foot .mark{font-size:1.35rem;color:var(--ink)}
+
+
+/* photo sections */
+.spread{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.9fr) minmax(0,1fr);gap:clamp(20px,4vw,56px);align-items:start}
+.spread figure{margin:0;display:grid;gap:10px}
+.spread img{width:100%;height:auto;display:block;aspect-ratio:2/3;object-fit:cover;max-width:100%}
+.spread .ph-b{margin-top:clamp(40px,12vw,180px)}
+.spread .ph-b img{aspect-ratio:4/5}
+figcaption{font-size:.82rem;color:var(--muted);display:grid;gap:2px}
+figcaption small{font-size:.7rem;letter-spacing:.06em;opacity:.8}
+.spread-txt{display:grid;gap:18px;align-self:center}
+.spread-txt .kicker,.order .kicker{font-family:var(--f-head);font-size:.82rem;letter-spacing:.42em;color:var(--scallion)}
+.spread-txt h2{font-size:var(--s3);letter-spacing:.08em}
+.spread-txt p{color:var(--muted)}
+.street{position:relative;min-height:min(86svh,820px);display:flex;align-items:flex-end;justify-content:flex-end;overflow:hidden;background:#2a1a14}
+.street img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.street::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(20,12,8,0) 45%,rgba(20,12,8,.78) 78%)}
+.street-cap{position:relative;z-index:1;color:#F4EFE6;display:grid;gap:12px;max-width:34rem;padding-block:0 56px;padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px))}
+.street-cap .eyebrow{font-family:var(--f-head);font-size:.82rem;letter-spacing:.42em;opacity:.8}
+.street-cap h2{font-size:var(--s3);letter-spacing:.1em}
+.street-cap p{opacity:.88}
+.street-cap small{font-size:.7rem;opacity:.7;letter-spacing:.04em}
+.order-photo{margin:0 0 26px;display:grid;gap:8px}
+.order-photo img{width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;display:block;max-width:100%}
+@media (max-width:760px){
+  .street{display:block;min-height:0}
+  .street img{position:static;height:auto;aspect-ratio:3/2;object-position:30% 70%}
+  .street::after{display:none}
+  .street-cap{padding-block:28px 40px;max-width:none}
+}
+@media (max-width:860px){.spread{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.spread-txt{grid-column:1/-1;order:-1}.spread .ph-b{margin-top:60px}}
+@media (max-width:860px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.order{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:640px){
+  .top .util{display:none}
+  .top-in{grid-template-columns:1fr;justify-items:center}
+  .mark{font-size:1.7rem}
+  .top.compact .mark{font-size:1.2rem}
+  .cats{gap:12px;font-size:.72rem;letter-spacing:.12em}
+  .spacer{height:116px}
+  .tile{min-height:78svh}
+  .cap{padding-block:0 44px}
+  .adds{grid-template-columns:minmax(0,1fr)}
+}
+</style>
+</head>
+<body>
+<a class="demo-badge" href="/works/meihao-jianbing-site/">← 示範作品：虛構品牌，回作品說明</a>
+<header class="top" id="top">
+  <div class="top-in">
+    <div class="util"><a href="#order">線上預訂</a><a href="#story">什麼是煎餅果子</a></div>
+    <a class="mark" href="#hero" aria-label="美好煎餅 回到頂端">美好煎餅</a>
+    <div class="util r"><span>09:30 開賣 · 賣完即收</span></div>
+  </div>
+  <nav class="cats" aria-label="分類">
+    <a href="#hero">煎餅果子</a><a href="#scene">現場</a><a href="#batter">綠豆餅皮</a><a href="#crisp">薄脆</a><a href="#menu">菜單</a><a href="#egg">加料</a><a href="#order">預訂</a>
+  </nav>
+</header>
+
+<main>
+  <div class="spacer" aria-hidden="true"></div>
+
+  <section class="tile" id="hero" style="--tile-bg:#1B1510">
+    <img class="ph" src="img/t-hero.webp" alt="手拿紙袋裝的煎餅果子，餅皮捲著蛋、蔥和薄脆，背景是模糊的街道" width="1200" height="750">
+    <div class="shade" aria-hidden="true"></div>
+    <div class="cap on-dark">
+      <span class="eyebrow">天津 · 手工現做</span>
+      <h1>一捲，六百年</h1>
+      <p>天津街頭的早餐，在鐵板上一份一份現做。綠豆餅皮、紅殼蛋、薄脆和生菜，捲起來切成兩半。</p>
+      <a class="btn" href="#menu">看菜單</a>
+      <small class="credit">攝影：tommao wang／Unsplash</small>
+    </div>
+  </section>
+
+  <section class="band" id="story">
+    <div class="lede reveal">
+      <div class="rule" aria-hidden="true"></div>
+      <h2>「果子」是天津話的油條</h2>
+      <p>傳統煎餅果子裡包的是油條。我們改用自己炸的薄脆，咬下去是脆的，捲久了也不會軟爛。一份大煎餅果子，展開將近一把尺長。</p>
+      <div class="inside" aria-label="一份煎餅果子的內容">
+        <span>綠豆 Q 餅皮</span><span>青蔥</span><span>芝麻</span><span>有機紅殼雞蛋</span><span>薄脆</span><span>生菜</span><span>胡椒</span>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="band" id="scene">
+    <div class="spread">
+      <figure class="ph-a reveal">
+        <img src="img/griddle.webp" alt="攤販在大鐵板上用手抹開麵糊，餅皮上撒滿蔥花，後方疊著一落現炸薄脆" width="1000" height="1500" loading="lazy">
+        <figcaption>麵糊抹開、打蛋、撒蔥，一份大約兩分鐘。<small>攝影：tommao wang／Unsplash</small></figcaption>
+      </figure>
+      <div class="spread-txt reveal">
+        <span class="kicker">現場</span>
+        <h2>在鐵板前，<br>等兩分鐘</h2>
+        <p>點完餐站在攤子前，看餅皮在鐵板上變色、蛋液攤開、薄脆被壓進去。這兩分鐘是煎餅果子的一部分，我們不先做好放著。</p>
+      </div>
+      <figure class="ph-b reveal">
+        <img src="img/holding.webp" alt="一隻手拿著紙袋裝的煎餅果子，切面看得到蛋、蔥和生菜，背景是模糊的街道" width="1000" height="1500" loading="lazy">
+        <figcaption>趁熱吃，薄脆還會響。<small>攝影：tommao wang／Unsplash</small></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="tile" id="batter" style="--tile-bg:#ECE8DF">
+    <img class="ph ph-batter" src="img/t-batter.webp" alt="大圓鐵板上攤開的綠豆餅皮，中央撒滿蔥花和蛋液，師傅的手正把餅皮抹平" width="1800" height="1192" loading="lazy">
+    <div class="shade" aria-hidden="true"></div>
+    <div class="haze" aria-hidden="true"></div>
+    <div class="cap on-dark reveal">
+      <span class="eyebrow">鐵板上的第一步</span>
+      <h2>綠豆餅皮</h2>
+      <p>綠豆粉麵糊倒上鐵板，用竹耙一圈抹開，薄到看得見鐵板的顏色。打上蛋、撒滿蔥花，再翻面。</p>
+      <a class="btn" href="#menu">選一份</a>
+      <small class="credit">攝影：tommao wang／Unsplash</small>
+    </div>
+  </section>
+
+  <section class="tile" id="crisp" style="--tile-bg:#15110D">
+    <img class="ph" src="img/t-crisp.webp" alt="一疊現炸的金黃薄脆，放在深色背景前" width="1800" height="1080" loading="lazy">
+    <div class="shade" aria-hidden="true"></div>
+    <div class="haze" aria-hidden="true"></div>
+    <div class="cap on-dark reveal">
+      <span class="eyebrow">每天早上現炸</span>
+      <h2>薄脆，靈魂所在</h2>
+      <p>每天早上先炸好一整批，起泡、金黃、一壓就碎。整份煎餅果子的口感都靠它。</p>
+      <a class="btn" href="#order">現在預訂</a>
+      <small class="credit">照片合成：tommao wang／Unsplash</small>
+    </div>
+  </section>
+
+
+  <section class="street" id="street">
+    <img src="img/stall.webp" alt="街角的煎餅果子攤，紅色招牌寫著煎餅果子，客人坐在路邊小板凳上等" width="1600" height="1067" loading="lazy">
+    <div class="street-cap reveal">
+      <span class="eyebrow">天津 · 街頭</span>
+      <h2>從路邊攤開始</h2>
+      <p>在天津，煎餅果子是一早排隊買、邊走邊吃的東西。我們想保留的就是這種樣子：一台推車、一塊鐵板，賣完就收。</p>
+      <small>攝影：Mche Lee／Unsplash（招牌文字改為繁體，示範用）</small>
+    </div>
+  </section>
+
+  <section class="band clear" id="menu">
+    <div class="shelf">
+      <div class="shelf-head reveal"><h2>菜單</h2><span>推薦口味以 ◆ 標示</span></div>
+      <div class="cards">
+        <a class="card reveal" href="#order"><div class="ph"><img src="img/c-large.webp" alt="紙袋裝的一份煎餅果子" width="800" height="1000" loading="lazy"></div><div><h3>大煎餅果子 · 原味鹹酥 ◆</h3><small>兩捲 · 一份就是早午餐</small></div><b>NT$ 95</b></a>
+        <a class="card reveal" href="#order"><div class="ph"><img src="img/c-small.webp" alt="鐵板上剛攤開、撒滿蔥花的餅皮" width="800" height="1000" loading="lazy"></div><div><h3>小煎餅果子 · 泰式香檸 ◆</h3><small>一捲 · 微辣、帶蒜香</small></div><b>NT$ 70</b></a>
+        <a class="card reveal" href="#order"><div class="ph ph-text" style="--c1:#5A3420;--c2:#E9C46A"><span>香蕉<br>巧克力</span><small>照片準備中</small></div><div><h3>香蕉巧克力捲餅</h3><small>甜點 · 一份兩捲</small></div><b>NT$ 85</b></a>
+        <a class="card reveal" href="#order"><div class="ph ph-text" style="--c1:#7A4A1E;--c2:#F1E4C8"><span>冬瓜茶</span><small>照片準備中</small></div><div><h3>古早味冬瓜茶</h3><small>飲料 · 自己熬的冬瓜糖</small></div><b>NT$ 30</b></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="tile" id="egg" style="--tile-bg:#F0EBE2">
+    <img class="ph" src="img/eggs.webp" alt="一整盒排列整齊的紅殼雞蛋" width="1000" height="781" loading="lazy">
+    <div class="shade" aria-hidden="true"></div>
+    <div class="haze" aria-hidden="true"></div>
+    <div class="cap on-dark reveal">
+      <span class="eyebrow">加料選項</span>
+      <h2>加一顆紅殼蛋</h2>
+      <p>每份都已經有一顆蛋。想吃更飽，可以再加蛋、起司、肉鬆、火腿、德腸或舒肥雞。</p>
+      <a class="btn" href="#order">自己配一份</a>
+      <small class="credit">攝影：Erol Ahmed／Unsplash</small>
+    </div>
+  </section>
+
+  <section class="band" id="order">
+    <div class="order">
+      <div class="reveal">
+        <figure class="order-photo">
+          <img src="img/s-sauce.webp" alt="鐵板旁一排裝著辣醬和甜麵醬的鐵罐" width="900" height="1125" loading="lazy">
+          <figcaption>醬料都是自己熬的，要多要少點餐時說。<small>攝影：tommao wang／Unsplash</small></figcaption>
+        </figure>
+        <h2>先訂，到了就拿</h2>
+        <div class="txt">
+          <p>每天備料有限，賣完就收攤。先在這裡算好要什麼，到店報名字就能拿。不吃的配料請先註明，現點現做，請耐心等候。</p>
+          <dl class="hours">
+            <div><dt>週三至週日</dt><dd>09:30 開賣，賣完即收</dd></div>
+            <div><dt>週一、週二</dt><dd>公休</dd></div>
+            <div><dt>地址</dt><dd>新北市板橋區（示範地址）</dd></div>
+            <div><dt>電話</dt><dd>02-0000-0000（示範）</dd></div>
+          </dl>
+        </div>
+      </div>
+
+      <form id="orderForm" class="reveal" novalidate>
+        <fieldset><legend>份量</legend>
+          <div class="seg" id="sizes">
+            <label><input type="radio" name="size" value="L" checked> 大份（兩捲）</label>
+            <label><input type="radio" name="size" value="S"> 小份（一捲）</label>
+          </div></fieldset>
+        <fieldset><legend>口味</legend><div class="seg" id="flavors"></div></fieldset>
+        <fieldset><legend>加料</legend><div class="adds" id="adds"></div></fieldset>
+        <fieldset><legend>數量</legend>
+          <div class="qty"><button type="button" id="minus" aria-label="減少一份">−</button><output id="qty">1</output><button type="button" id="plus" aria-label="增加一份">＋</button></div></fieldset>
+        <div class="total"><small id="summary">大份 原味鹹酥 × 1</small><b id="total">NT$ 95</b></div>
+        <button class="btn" type="submit">送出預訂</button>
+        <p class="note" id="note" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="foot">
+    <span class="mark">美好煎餅</span>
+    <span>本頁為示範網站，店名、地址、電話與價格皆為虛構；照片來自 Unsplash。</span>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const clamp = (x,a=0,b=1) => Math.min(b, Math.max(a,x));
+  const smooth = t => t*t*(3-2*t);
+
+  /* ---------- header ---------- */
+  const top = document.getElementById('top');
+  const onScroll = () => top.classList.toggle('compact', scrollY > 60);
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  /* ---------- order calculator ---------- */
+  const MENU = {
+    L: { name: '大份', flavors: [['原味鹹酥', 95, true], ['顆粒花生醬', 105, false]] },
+    S: { name: '小份', flavors: [['原味鹹酥', 60, false], ['泰式香檸', 70, true], ['日式胡麻', 70, true]] }
+  };
+  const ADDS = [['有機紅殼雞蛋', 15], ['薄脆', 15], ['起司', 15], ['肉鬆', 20], ['火腿', 25], ['煙燻德腸', 35], ['舒肥雞', 40]];
+  const flavorsEl = document.getElementById('flavors'), addsEl = document.getElementById('adds');
+  let qty = 1;
+  addsEl.innerHTML = ADDS.map(([n,p],i) => `<label><input type="checkbox" id="add-${i}" value="${i}"><span>${n}</span>+${p}</label>`).join('');
+  function renderFlavors(){
+    const size = document.querySelector('input[name="size"]:checked').value;
+    const prevName = (document.querySelector('input[name="flavor"]:checked') || {}).dataset?.name;
+    flavorsEl.innerHTML = MENU[size].flavors.map(([n,p,rec],i) =>
+      `<label><input type="radio" name="flavor" id="fl-${size}-${i}" value="${i}" data-name="${n}"> ${n}${rec ? ' ◆' : ''}　$${p}</label>`).join('');
+    const keep = [...flavorsEl.querySelectorAll('input')].find(r => r.dataset.name === prevName);
+    (keep || flavorsEl.querySelector('input')).checked = true;
+  }
+  function calc(){
+    const size = document.querySelector('input[name="size"]:checked').value;
+    const f = MENU[size].flavors[+document.querySelector('input[name="flavor"]:checked').value];
+    const adds = [...addsEl.querySelectorAll('input:checked')].map(c => ADDS[+c.value]);
+    const unit = f[1] + adds.reduce((s,a) => s + a[1], 0);
+    document.getElementById('qty').textContent = qty;
+    document.getElementById('total').textContent = 'NT$ ' + (unit*qty).toLocaleString('en-US');
+    document.getElementById('summary').textContent = `${MENU[size].name} ${f[0]}${adds.length ? ' ＋' + adds.map(a => a[0]).join('、') : ''} × ${qty}`;
+  }
+  document.getElementById('sizes').addEventListener('change', () => { renderFlavors(); calc(); });
+  flavorsEl.addEventListener('change', calc); addsEl.addEventListener('change', calc);
+  document.getElementById('minus').addEventListener('click', () => { qty = Math.max(1, qty-1); calc(); });
+  document.getElementById('plus').addEventListener('click', () => { qty = Math.min(20, qty+1); calc(); });
+  document.getElementById('orderForm').addEventListener('submit', e => { e.preventDefault();
+    document.getElementById('note').textContent = '已記下：' + document.getElementById('summary').textContent + '，合計 ' + document.getElementById('total').textContent + '（示範網站，訂單不會送出）。'; });
+  renderFlavors(); calc();
+
+  /* ---------- smooth scroll + reveals ---------- */
+  let lenis = null;
+  if (window.gsap && window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
+  if (!reduce && window.Lenis && window.gsap) {
+    try { lenis = new Lenis({ lerp: .085 });
+      lenis.on('scroll', () => window.ScrollTrigger && ScrollTrigger.update());
+      gsap.ticker.add(t => lenis.raf(t*1000)); gsap.ticker.lagSmoothing(0);
+    } catch(e){ lenis = null; }
+  }
+  document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', ev => {
+    const t = document.querySelector(a.getAttribute('href')); if (!t) return;
+    ev.preventDefault();
+    if (lenis) lenis.scrollTo(t, { offset: -110 }); else scrollTo({ top: t.getBoundingClientRect().top + scrollY - 110, behavior: reduce ? 'auto' : 'smooth' });
+  }));
+  if (!reduce && window.gsap && window.ScrollTrigger) {
+    gsap.utils.toArray('.reveal').forEach(el => gsap.from(el, { y: 26, opacity: .15, duration: 1.2, ease: 'power2.out', scrollTrigger: { trigger: el, start: 'top 90%' } }));
+    gsap.utils.toArray('.tile .haze').forEach(h => gsap.fromTo(h, { opacity: 1 }, { opacity: 0, ease: 'none',
+      scrollTrigger: { trigger: h.parentElement, start: 'top 95%', end: 'top 25%', scrub: true } }));
+  }
+
+  /* ---------- photo motion ---------- */
+  if (!reduce && window.gsap && window.ScrollTrigger) {
+    gsap.utils.toArray('.tile .ph').forEach(img => gsap.fromTo(img, { scale: 1.14, yPercent: -3 }, { scale: 1, yPercent: 3, ease: 'none',
+      scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: true } }));
+    // the crepe "spreads": a circular reveal that opens as the tile scrolls in
+    const b = document.querySelector('.ph-batter');
+    gsap.fromTo(b, { clipPath: 'circle(18% at 50% 55%)' }, { clipPath: 'circle(80% at 50% 55%)', ease: 'none',
+      scrollTrigger: { trigger: b.parentElement, start: 'top 85%', end: 'top 15%', scrub: true } });
+    gsap.utils.toArray('.card .ph img').forEach(img => gsap.fromTo(img, { scale: 1.12 }, { scale: 1, ease: 'none',
+      scrollTrigger: { trigger: img, start: 'top bottom', end: 'bottom 40%', scrub: true } }));
+  }
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>璞｜珠寶品牌網站 Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Noto+Serif+TC:wght@300;400;500&family=Noto+Sans+TC:wght@400;500&display=swap">
+<style>
+/* Layout: a luxury-house homepage of full-bleed "photo" tiles, but every tile is a live 3D render — one fixed WebGL canvas draws each tile's scene inside that tile's rectangle (scissor views). */
+:root{
+  --paper:#FAF8F4;   /* gallery white */
+  --ink:#161514;
+  --muted:#6E6963;
+  --jade:#2E6A4F;    /* 豐田 nephrite */
+  --coral:#B8473A;
+  --card:#F2EFE8;    /* product photography sweep */
+  --rule:color-mix(in srgb,var(--ink) 15%,transparent);
+  --f-mark:"Bodoni Moda","Didot","Bodoni 72",serif;
+  --f-head:"Noto Serif TC","Songti TC","PMingLiU",serif;
+  --f-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --s-1:.8125rem;--s0:1rem;--s1:1.25rem;--s2:1.75rem;--s3:clamp(1.9rem,3.6vw,2.75rem);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#11110F;--ink:#ECE8E1;--muted:#A39D94;--jade:#7DB898;--coral:#E07A6C;color-scheme:dark}}
+:root[data-theme="dark"]{--paper:#11110F;--ink:#ECE8E1;--muted:#A39D94;--jade:#7DB898;--coral:#E07A6C;color-scheme:dark}
+
+*{box-sizing:border-box}
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+.demo-badge{position:fixed;z-index:30;left:max(16px,env(safe-area-inset-left,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));font-size:.75rem;letter-spacing:.06em;background:#1B1915;color:#F4EFE6;padding:8px 14px;border-radius:99px;text-decoration:none;max-width:calc(100% - 32px)}
+.demo-badge:hover{background:#3F6B3A}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);line-height:1.8;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--jade);outline-offset:3px}
+h1,h2,h3{font-family:var(--f-head);font-weight:400;margin:0;text-wrap:balance;line-height:1.4}
+p{margin:0}
+
+#gl{position:fixed;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;display:block}
+main{position:relative;z-index:2}
+
+/* header: wordmark shrinks once you scroll */
+.top{position:fixed;inset:0 0 auto;z-index:5;background:color-mix(in srgb,var(--paper) 94%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--rule);
+  padding-top:env(safe-area-inset-top,0px);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));transition:transform .4s}
+.top-in{max-width:1320px;margin:0 auto;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding-block:14px 8px;gap:12px}
+.top .util{display:flex;gap:18px;font-size:.75rem;color:var(--muted);letter-spacing:.08em}
+.top .util.r{justify-content:flex-end}
+.mark{font-family:var(--f-head);font-weight:500;font-size:2.8rem;line-height:1;letter-spacing:0;text-decoration:none;display:flex;align-items:baseline;gap:.35em;transition:font-size .45s ease}
+.mark span{font-family:var(--f-head);font-size:.42em;letter-spacing:.3em;color:var(--muted)}
+.cats{max-width:1320px;margin:0 auto;display:flex;justify-content:center;gap:clamp(14px,2.4vw,34px);padding-block:6px 12px;font-size:.78rem;letter-spacing:.16em;flex-wrap:wrap;transition:padding .45s}
+.cats a{text-decoration:none;padding-block:2px;border-bottom:1px solid transparent}
+.cats a:hover{border-color:currentColor}
+.top.compact .mark{font-size:1.7rem}
+.top.compact .cats{padding-block:2px 8px}
+.spacer{height:148px}
+
+/* tiles = full-bleed 3D "photographs" */
+.tile{position:relative;min-height:min(90svh,860px);display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
+.tile{background:var(--tile-bg)}
+.tile .ph{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;max-width:none;will-change:transform}
+.tile .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,12,10,0) 30%,rgba(14,12,10,.5) 56%,rgba(14,12,10,.88) 100%);pointer-events:none}
+.tile .cap{text-shadow:0 1px 14px rgba(0,0,0,.5)}
+#hero{justify-content:flex-start;align-items:center}
+#hero .hero-cap{text-shadow:none;justify-items:start;text-align:left;max-width:30rem;padding-block:40px;margin-left:clamp(0px,6vw,90px)}
+@media (max-width:640px){#hero{align-items:flex-end}#hero .ph{object-position:78% 50%}#hero .hero-cap{margin-left:0;background:color-mix(in srgb,#F1EEE9 82%,transparent);padding-block:24px}}
+.cap .credit{font-size:.7rem;opacity:.65;letter-spacing:.04em}
+.card .ph{overflow:hidden;background:#EFEAE0}
+.card .ph img{width:100%;height:100%;object-fit:cover;display:block;max-width:100%}
+.shelf-credit{margin-top:18px;font-size:.72rem;color:var(--muted)}
+.craft{margin:0;display:grid;gap:8px;overflow:hidden}
+.craft img{width:100%;height:auto;aspect-ratio:3/2;object-fit:cover;display:block;max-width:100%}
+.craft figcaption{font-size:.72rem;color:var(--muted)}
+
+.tile .view{position:absolute;inset:0}
+.cap{position:relative;text-align:center;display:grid;justify-items:center;gap:14px;padding-block:0 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));max-width:40rem;width:100%;overflow-wrap:anywhere}
+.cap .eyebrow{font-family:var(--f-head);font-size:.82rem;letter-spacing:.42em;padding-left:.42em;opacity:.78}
+.cap h2{font-size:var(--s3);letter-spacing:.12em}
+.cap p{font-size:.95rem;opacity:.85}
+.on-dark{color:#F3EFE8}
+.on-light{color:#1A1816}
+.btn{display:inline-block;margin-top:6px;border:1px solid currentColor;padding:10px 28px;font-size:.78rem;letter-spacing:.24em;text-decoration:none;background:transparent;color:inherit;cursor:pointer;font-family:inherit}
+.btn:hover{background:currentColor}
+.on-dark .btn:hover{color:#1A1816;background:#F3EFE8}
+.on-light .btn:hover{color:#F3EFE8;background:#1A1816}
+.haze{position:absolute;inset:0;background:color-mix(in srgb,#F6F4EF 72%,transparent);-webkit-backdrop-filter:blur(22px);backdrop-filter:blur(22px);pointer-events:none;opacity:0}
+.time{font-variant-numeric:tabular-nums;font-family:var(--f-mark);letter-spacing:.08em}
+
+/* plain sections */
+.band{background:var(--paper);padding-block:110px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.lede{max-width:38rem;margin:0 auto;text-align:center;display:grid;gap:20px;justify-items:center}
+.lede h2{font-size:var(--s3);letter-spacing:.1em}
+.lede p{color:var(--muted)}
+.rule{width:1px;height:46px;background:var(--rule)}
+
+.shelf-band{background:transparent}
+.shelf{max-width:1320px;margin:0 auto}
+.shelf-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:30px}
+.shelf-head h2{font-size:var(--s2);letter-spacing:.12em}
+.shelf-head a{font-size:.78rem;letter-spacing:.2em;color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.card{display:grid;gap:12px;text-decoration:none;min-width:0}
+.card .ph{position:relative;aspect-ratio:4/5;max-width:100%;background:transparent}
+.no-gl .card .ph{background:#F2EFE8}
+.card .ph .view{position:absolute;inset:0}
+.card h3{font-size:1rem;letter-spacing:.08em}
+.card small{color:var(--muted);font-size:.8rem}
+.card b{font-weight:400;font-size:.9rem;font-variant-numeric:tabular-nums}
+
+.maison{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(32px,6vw,90px);align-items:start}
+.maison h2{font-size:var(--s3);letter-spacing:.08em;margin-bottom:22px}
+.maison .txt{display:grid;gap:18px;color:var(--muted)}
+.maison .txt p:first-of-type{color:var(--ink);font-family:var(--f-head);font-size:var(--s1);line-height:1.9}
+.nums{display:grid;gap:0;border-top:1px solid var(--rule);margin:0}
+.nums div{display:grid;grid-template-columns:7.5rem minmax(0,1fr);gap:16px;padding-block:18px;border-bottom:1px solid var(--rule);align-items:baseline}
+.nums dt{font-family:var(--f-mark);font-size:var(--s2);font-variant-numeric:tabular-nums}
+.nums dt small{font-family:var(--f-body);font-size:.75rem;color:var(--muted);margin-left:4px}
+.nums dd{margin:0;color:var(--muted);font-size:.92rem}
+
+.book{max-width:34rem;margin:0 auto;display:grid;gap:18px}
+.book h2{font-size:var(--s2);letter-spacing:.12em;text-align:center}
+.book > p{text-align:center;color:var(--muted);font-size:.92rem}
+form{display:grid;gap:16px;margin-top:10px}
+.f2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.fld{display:grid;gap:6px}
+label{font-size:.75rem;letter-spacing:.14em;color:var(--muted)}
+input,select{font:inherit;color:var(--ink);background:transparent;border:0;border-bottom:1px solid var(--rule);padding:8px 2px;border-radius:0;width:100%;min-width:0}
+input:focus,select:focus{outline:none;border-bottom-color:var(--ink)}
+form .btn{justify-self:center;margin-top:10px}
+form .btn:hover{background:var(--ink);color:var(--paper)}
+.note{text-align:center;font-size:.85rem;color:var(--jade);min-height:1.5em}
+
+footer{position:relative;z-index:2;background:var(--paper);border-top:1px solid var(--rule)}
+.foot{max-width:1320px;margin:0 auto;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-block:34px calc(34px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));font-size:.8rem;color:var(--muted)}
+.foot .mark{font-size:1.4rem;color:var(--ink)}
+
+@media (max-width:860px){
+  .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .maison{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:640px){
+  .top .util{display:none}
+  .top-in{grid-template-columns:1fr;justify-items:center}
+  .mark{font-size:2rem}
+  .top.compact .mark{font-size:1.35rem}
+  .cats{gap:12px;font-size:.72rem;letter-spacing:.12em}
+  .spacer{height:118px}
+  .tile{min-height:78svh}
+  .cap{padding-block:0 44px}
+  .f2{grid-template-columns:minmax(0,1fr)}
+  .nums div{grid-template-columns:6rem minmax(0,1fr)}
+}
+</style>
+</head>
+<body>
+<a class="demo-badge" href="/works/pu-jewelry-site/">← 示範作品：虛構品牌，回作品說明</a>
+<header class="top" id="top">
+  <div class="top-in">
+    <div class="util"><a href="#book">預約鑑賞</a><a href="#maison">品牌故事</a></div>
+    <a class="mark" href="#hero" aria-label="璞 回到頂端">璞</a>
+    <div class="util r"><span>台北 · 台中 · 花蓮</span></div>
+  </div>
+  <nav class="cats" aria-label="商品分類">
+    <a href="#hero">高級珠寶</a><a href="#jade">玉</a><a href="#coral">珊瑚</a><a href="#watch">腕錶</a><a href="#shelf">精選作品</a><a href="#book">預約</a>
+  </nav>
+</header>
+
+<main>
+  <div class="spacer" aria-hidden="true"></div>
+
+  <section class="tile" id="hero" style="--tile-bg:#0E1311">
+    <img class="ph" src="img/hero.webp" alt="淺色桌面上幾顆打磨成蛋面的綠色寶石" width="2400" height="1350">
+    <div class="cap on-light hero-cap">
+      <span class="eyebrow">高級珠寶系列</span>
+      <h1 style="font-size:var(--s3);letter-spacing:.14em">山海之石</h1>
+      <p>花蓮豐田的玉，南方澳的紅珊瑚，第一次放進同一個系列。</p>
+      <a class="btn" href="#jade">探索系列</a>
+      <small class="credit">攝影：Content Pixie／Unsplash</small>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="lede reveal">
+      <div class="rule" aria-hidden="true"></div>
+      <h2>石頭不說話，<br>但記得山和海。</h2>
+      <p>台灣玉在中央山脈東側的蛇紋岩裡等了幾百萬年，紅珊瑚在海底一年只長幾公釐。我們做的事很少：挑一塊好石頭，把它打磨到能被看見。</p>
+    </div>
+  </section>
+
+  <section class="tile" id="jade" style="--tile-bg:#E6E9E2">
+    <img class="ph" src="img/bangle.webp" alt="一排排深淺不同的綠色與白色玉鐲" width="1800" height="1200" loading="lazy">
+    <div class="shade" aria-hidden="true"></div>
+    <div class="haze" aria-hidden="true"></div>
+    <div class="cap on-dark reveal">
+      <span class="eyebrow">花蓮 · 豐田</span>
+      <h2>豐田玉鐲</h2>
+      <p>每只玉鐲由同一塊玉料掏出，沒有接合。台灣玉色如菠菜，質地細密，對光看得見細微的纖維。</p>
+      <a class="btn" href="#book">預約鑑賞</a>
+      <small class="credit">攝影：Eric Prouzet／Unsplash</small>
+    </div>
+  </section>
+
+  <section class="tile" id="coral" style="--tile-bg:#17100E">
+    <img class="ph" src="img/coral.webp" alt="海邊一位戴著多串紅珊瑚珠項鍊的女子，背景是黃昏的海面" width="1400" height="1750" loading="lazy" style="object-position:50% 30%">
+    <div class="shade" aria-hidden="true"></div>
+    <div class="haze" aria-hidden="true"></div>
+    <div class="cap on-dark reveal">
+      <span class="eyebrow">南方澳 · 紅珊瑚</span>
+      <h2>紅珊瑚項鍊</h2>
+      <p>一串約六十顆珊瑚珠，逐顆挑色、手工鑽孔。珠面只做最低限度的打磨，保留原本的溫潤光澤。</p>
+      <a class="btn" href="#shelf">看更多作品</a>
+      <small class="credit">攝影：Emmanuel Black／Unsplash</small>
+    </div>
+  </section>
+
+  <section class="band shelf-band" id="shelf">
+    <div class="shelf">
+      <div class="shelf-head reveal"><h2>精選作品</h2><a href="#book">全部作品需預約鑑賞</a></div>
+      <div class="cards">
+        <a class="card reveal" href="#book"><div class="ph"><img src="img/c1.webp" alt="綠色玉珮掛在棕色皮繩上" width="800" height="747" loading="lazy"></div><div><h3>玉珮項鍊</h3><small>台灣玉 · 皮繩</small></div><b>NT$ 38,000</b></a>
+        <a class="card reveal" href="#book"><div class="ph"><img src="img/c2.webp" alt="一對綠色蛋面寶石金耳環放在白布上" width="800" height="889" loading="lazy"></div><div><h3>綠玉金耳環</h3><small>台灣玉 · 18K 金</small></div><b>NT$ 42,000</b></a>
+        <a class="card reveal" href="#book"><div class="ph"><img src="img/c3.webp" alt="多枚金戒指散放在米色布面上" width="800" height="960" loading="lazy"></div><div><h3>素金戒</h3><small>18K 金 · 多款可選</small></div><b>NT$ 26,000 起</b></a>
+        <a class="card reveal" href="#book"><div class="ph"><img src="img/c4.webp" alt="一對波紋金耳環放在白色托盤上" width="800" height="960" loading="lazy"></div><div><h3>波紋金耳環</h3><small>18K 金 · 一對</small></div><b>NT$ 32,000</b></a>
+      </div>
+      <p class="shelf-credit">攝影：Sebastian Schuster、Tahlia Doyle、Jonathan Sanchez、Saronita／Unsplash</p>
+    </div>
+  </section>
+
+  <section class="tile" id="watch" style="--tile-bg:#ECE7DE">
+    <img class="ph" src="img/watch.webp" alt="白色錶盤與指針的近距離特寫" width="1800" height="1201" loading="lazy">
+    <div class="shade" aria-hidden="true"></div>
+    <div class="haze" aria-hidden="true"></div>
+    <div class="cap on-dark reveal">
+      <span class="eyebrow">腕錶</span>
+      <h2>時辰腕錶</h2>
+      <p>白色琺瑯錶盤，細長的柳葉指針。自動上鍊機芯，動力儲存 42 小時。</p>
+      <a class="btn" href="#book">預約試戴</a>
+      <small class="credit">攝影：Age Barros／Unsplash</small>
+    </div>
+  </section>
+
+  <section class="band" id="maison">
+    <div class="maison">
+      <div class="reveal">
+        <h2>花蓮，1987</h2>
+        <div class="txt">
+          <p>璞從花蓮市一間玉石打磨工坊開始。第一代師傅在豐田礦區還開採的年代學會看玉。</p>
+          <p>礦區停採之後，台灣玉變得稀少。我們只用工坊早年收藏的原石，以及有來源證明的舊料，每年做出的玉鐲不超過四十只。</p>
+        </div>
+      </div>
+      <div class="reveal" style="display:grid;gap:26px">
+        <figure class="craft"><img src="img/craft.webp" alt="工匠雙手拿著工具打磨一枚戒指" width="1200" height="800" loading="lazy"><figcaption>攝影：Tahlia Doyle／Unsplash</figcaption></figure>
+      <dl class="nums">
+        <div><dt>60<small>小時</small></dt><dd>一只玉鐲從開料到拋光的平均工時</dd></div>
+        <div><dt>40<small>只</small></dt><dd>每年完成的玉鐲數量上限</dd></div>
+        <div><dt>60<small>顆</small></dt><dd>一串珊瑚項鍊的珠數，逐顆挑色、手工鑽孔</dd></div>
+        <div><dt>3<small>間</small></dt><dd>門市與工坊：台北信義、台中、花蓮</dd></div>
+      </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="book" style="padding-top:40px">
+    <div class="book reveal">
+      <h2>預約鑑賞</h2>
+      <p>每件作品都是單件，請先預約，我們會準備好你想看的石頭。</p>
+      <form id="bookForm" novalidate>
+        <div class="f2">
+          <div class="fld"><label for="bk-name">姓名</label><input id="bk-name" autocomplete="name" placeholder="王小明"></div>
+          <div class="fld"><label for="bk-store">門市</label>
+            <select id="bk-store"><option>台北信義</option><option>台中</option><option>花蓮工坊</option></select></div>
+        </div>
+        <div class="f2">
+          <div class="fld"><label for="bk-date">日期</label><input id="bk-date" type="date"></div>
+          <div class="fld"><label for="bk-item">想看的作品</label>
+            <select id="bk-item"><option>豐田玉鐲</option><option>紅珊瑚項鍊</option><option>時辰腕錶</option><option>還不確定</option></select></div>
+        </div>
+        <button class="btn" type="submit">送出預約</button>
+        <p class="note" id="bookNote" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="foot">
+    <span class="mark">璞</span>
+    <span>本頁為示範品牌網站，品牌、作品、價格與門市皆為虛構；照片來自 Unsplash。</span>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const clamp = (x,a=0,b=1) => Math.min(b, Math.max(a,x));
+  const root = document.documentElement;
+
+  /* ---------- header + clock + form ---------- */
+  const top = document.getElementById('top');
+  const onScroll = () => top.classList.toggle('compact', scrollY > 60);
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  const taipei = () => { const d = new Date(Date.now() + 8*3600e3);
+    return { h: d.getUTCHours(), m: d.getUTCMinutes(), s: d.getUTCSeconds() + d.getUTCMilliseconds()/1000 }; };
+  
+  const dateIn = document.getElementById('bk-date');
+  try { const d = new Date(Date.now() + 8*3600e3 + 3*864e5); dateIn.value = d.toISOString().slice(0,10); } catch(e){}
+  document.getElementById('bookForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const n = document.getElementById('bk-name').value.trim() || '你';
+    document.getElementById('bookNote').textContent =
+      `${n}好，已為你保留 ${dateIn.value || '指定日期'} 在${document.getElementById('bk-store').value}的鑑賞時段（示範網站，預約不會送出）。`;
+  });
+
+  /* ---------- smooth scroll + reveals ---------- */
+  let lenis = null;
+  if (window.gsap && window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
+  if (!reduce && window.Lenis && window.gsap) {
+    try { lenis = new Lenis({ lerp: .085 });
+      lenis.on('scroll', () => window.ScrollTrigger && ScrollTrigger.update());
+      gsap.ticker.add(t => lenis.raf(t*1000)); gsap.ticker.lagSmoothing(0);
+    } catch(e){ lenis = null; }
+  }
+  document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', ev => {
+    const t = document.querySelector(a.getAttribute('href')); if (!t) return;
+    ev.preventDefault();
+    if (lenis) lenis.scrollTo(t, { offset: -110 }); else scrollTo({ top: t.getBoundingClientRect().top + scrollY - 110, behavior: reduce ? 'auto' : 'smooth' });
+  }));
+  if (!reduce && window.gsap && window.ScrollTrigger) {
+    gsap.utils.toArray('.reveal').forEach(el => gsap.from(el, { y: 26, opacity: .15, duration: 1.2, ease: 'power2.out',
+      scrollTrigger: { trigger: el, start: 'top 90%' } }));
+    // white haze clears as each tile arrives, like a photograph coming into focus
+    gsap.utils.toArray('.tile .haze').forEach(h => gsap.fromTo(h, { opacity: 1 }, { opacity: 0, ease: 'none',
+      scrollTrigger: { trigger: h.parentElement, start: 'top 95%', end: 'top 25%', scrub: true } }));
+  }
+
+  /* ---------- photo motion ---------- */
+  if (!reduce && window.gsap && window.ScrollTrigger) {
+    gsap.utils.toArray('.tile .ph').forEach(img => gsap.fromTo(img, { scale: 1.14, yPercent: -3 }, { scale: 1, yPercent: 3, ease: 'none',
+      scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: true } }));
+    gsap.utils.toArray('.card .ph img, .craft img').forEach(img => gsap.fromTo(img, { scale: 1.12 }, { scale: 1, ease: 'none',
+      scrollTrigger: { trigger: img, start: 'top bottom', end: 'bottom 40%', scrub: true } }));
+  }
+})();
+</script>
+
+</body>
+</html>
