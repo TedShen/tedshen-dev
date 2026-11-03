@@ -33,9 +33,12 @@
   --bg:#10150F;--paper:#171E16;--ink:#E5E8D7;--muted:#9AA393;--line:#CDA850;--leaf:#8DB063;--glow:#1C2519;--grain:#ECE5CE;--husk:#CFA548;--stalk:#8E8C55;color-scheme:dark}
 
 *{box-sizing:border-box}
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 body{margin:0}
 img{max-width:100%}
 [hidden]{display:none!important}
+.demo-badge{position:fixed;z-index:30;left:max(16px,env(safe-area-inset-left,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));font-size:.75rem;letter-spacing:.06em;background:#1B1915;color:#F4EFE6;padding:8px 14px;border-radius:99px;text-decoration:none;max-width:calc(100% - 32px)}
+.demo-badge:hover{background:#3F6B3A}
 html{scroll-behavior:auto}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:var(--s0);line-height:1.85;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 a{color:inherit}
@@ -44,13 +47,16 @@ h1,h2,h3{font-family:var(--f-display);font-weight:400;text-wrap:balance;margin:0
 p{margin:0}
 
 /* stage */
-#stage{position:fixed;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;display:block}
-.halo{position:fixed;left:0;top:0;width:10px;height:10px;border-radius:50%;z-index:0;pointer-events:none;background:var(--glow);
-  box-shadow:0 0 0 1px color-mix(in srgb,var(--line) 55%,transparent),0 30px 80px color-mix(in srgb,var(--line) 10%,transparent);opacity:0;will-change:transform,width,height,opacity}
-.halo::after{content:"";position:absolute;inset:-14px -6px -4px -18px;border-radius:50%;border:1px solid color-mix(in srgb,var(--line) 70%,transparent);transform:rotate(-8deg)}
+.stage{position:fixed;inset:0;z-index:1;pointer-events:none;background:var(--bg);overflow:hidden}
+.stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;max-width:none;opacity:0;will-change:opacity,transform}
+.stage img:first-child{opacity:1}
+.stage::after{content:"";position:absolute;inset:0;background:color-mix(in srgb,var(--bg) 18%,transparent)}
+.copy figure{margin:0;display:grid;gap:6px}
+.copy figure img{width:100%;height:auto;display:block;max-width:100%}
+.copy figcaption,.photo-credit{font-size:.72rem;color:var(--muted)}
 
 /* header */
-.top{position:fixed;inset:0 0 auto;z-index:20;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;
+.top{background:color-mix(in srgb,var(--bg) 86%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--rule);position:fixed;inset:0 0 auto;z-index:20;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;
   padding-top:calc(env(safe-area-inset-top,0px) + 22px);padding-bottom:14px;
   padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px))}
 .brand{text-decoration:none;display:grid;gap:2px}
@@ -71,9 +77,9 @@ section{position:relative}
 /* hero */
 .hero{min-height:min(100svh,860px);display:grid;align-items:end}
 .hero .wrap{width:100%;display:flex;justify-content:space-between;align-items:flex-end;gap:24px;padding-block:120px 48px;min-height:inherit}
-.hero h1{writing-mode:vertical-rl;font-size:var(--s4);letter-spacing:.28em;line-height:1.6;font-weight:300;align-self:center}
+.hero h1{text-shadow:0 0 18px var(--bg),0 0 4px var(--bg);writing-mode:vertical-rl;font-size:var(--s4);letter-spacing:.28em;line-height:1.6;font-weight:300;align-self:center}
 .hero h1 span{display:block}
-.hero-foot{display:grid;gap:10px;justify-items:end;text-align:right;font-size:var(--s-1);color:var(--muted);letter-spacing:.12em}
+.hero-foot{text-shadow:0 0 12px var(--bg);display:grid;gap:10px;justify-items:end;text-align:right;font-size:var(--s-1);color:var(--muted);letter-spacing:.12em}
 .hero-foot .yr{font-family:var(--f-mono);color:var(--ink)}
 .cue{display:flex;align-items:center;gap:10px;font-family:var(--f-mono);font-size:.6875rem;letter-spacing:.3em}
 .cue i{display:block;width:1px;height:42px;background:var(--line);transform-origin:top;animation:cue 2.4s ease-in-out infinite}
@@ -141,9 +147,6 @@ footer{position:relative;z-index:2;border-top:1px solid var(--rule);background:v
 footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;padding-block:36px calc(36px + env(safe-area-inset-bottom,0px));font-size:var(--s-1);color:var(--muted)}
 footer address{font-style:normal;user-select:text}
 
-.demo-badge{position:fixed;z-index:30;left:max(16px,env(safe-area-inset-left,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));
-  display:flex;gap:10px;align-items:center;font-size:.75rem;letter-spacing:.06em;background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:99px;text-decoration:none;max-width:calc(100% - 32px)}
-.demo-badge:hover{background:var(--leaf)}
 @media (max-width:760px){
   .nav{display:none}
   .chapter{min-height:110svh;align-items:flex-end}
@@ -156,10 +159,14 @@ footer address{font-style:normal;user-select:text}
 </style>
 </head>
 <body>
-<canvas id="stage" aria-hidden="true"></canvas>
-<div class="halo" aria-hidden="true"></div>
-
 <a class="demo-badge" href="/works/scroll-story-brand-site/">← 示範作品：虛構品牌，回作品說明</a>
+<div class="stage" aria-hidden="true">
+  <img src="img/s0.webp" alt="" width="1800" height="1200">
+  <img src="img/s1.webp" alt="" width="1300" height="1949" style="object-position:50% 35%">
+  <img src="img/s2.webp" alt="" width="1800" height="1200">
+  <img src="img/s3.webp" alt="" width="1800" height="1200">
+  <img src="img/s4.webp" alt="" width="1800" height="1350">
+</div>
 
 <header class="top">
   <a class="brand" href="#top" aria-label="粒田米舖 回到頂端"><b>粒田米舖</b><small>LITIAN RICE · 花東縱谷</small></a>
@@ -187,6 +194,7 @@ footer address{font-style:normal;user-select:text}
       <span class="label">想法</span>
       <h2>一株稻，<br>大約結一百二十粒米。</h2>
       <p class="lead">一碗白飯，大概是三千粒。也就是二十幾株稻，在田裡站了一百多天。</p>
+      <figure><img src="img/farmer.webp" alt="戴著斗笠的人彎腰在水田裡插秧" width="900" height="1350" loading="lazy" style="aspect-ratio:4/3;object-fit:cover"><figcaption>攝影：Eduardo Prim／Unsplash</figcaption></figure>
       <p>我們在海岸山脈和中央山脈之間種米。秀姑巒溪上游的水冷，日夜溫差大，稻子長得慢，米粒反而飽滿。我們不追求產量，只想把每一粒都照顧到。</p>
     </div></div>
   </section>
@@ -196,6 +204,7 @@ footer address{font-style:normal;user-select:text}
       <span class="label">一年</span>
       <h2>一期稻的一百五十天</h2>
       <p>縱谷一年種兩期。一期稻生長期長，米粒最結實，是我們的主力。</p>
+      <figure><img src="img/seed.webp" alt="水田裡剛插下的秧苗與水面倒影" width="1100" height="733" loading="lazy"><figcaption>攝影：Utsman Media／Unsplash</figcaption></figure>
       <ul class="months">
         <li><b>1 月</b><span>浸種、育苗。秧苗在溫室裡長到十二公分。</span></li>
         <li><b>2 月</b><span>插秧。每叢間距 30 × 20 公分，讓風走得過去。</span></li>
@@ -270,6 +279,7 @@ footer address{font-style:normal;user-select:text}
 
   <section class="order" id="order" data-state="4">
     <div class="wrap">
+      <figure class="reveal" style="margin:0 0 22px;max-width:31rem;display:grid;gap:6px"><img src="img/valley.webp" alt="山腳下大片稻田，田邊有一座拱形鞦韆" width="1200" height="800" loading="lazy" style="width:100%;height:auto;display:block"><figcaption class="photo-credit">縱谷的稻田。攝影：Winston Chen／Unsplash</figcaption></figure>
       <form id="orderForm" class="reveal" novalidate>
         <span class="label" style="margin:0">訂購</span>
         <div class="row">
@@ -296,11 +306,10 @@ footer address{font-style:normal;user-select:text}
 <footer>
   <div class="wrap">
     <address>粒田米舖　花蓮縣富里鄉（示範地址）<br>電話 03-000-0000　·　週一至週五 9:00–17:00</address>
-    <span>本頁為示範品牌網站，品牌、商品與數據皆為虛構。</span>
+    <span>本頁為示範品牌網站，品牌、商品與數據皆為虛構。背景照片：Kseniya Nekrasova、Winston Chen、Pierre Bamin、Markus Winkler／Unsplash。</span>
   </div>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
@@ -407,181 +416,16 @@ footer address{font-style:normal;user-select:text}
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(relayout);
   addEventListener('load', relayout);
 
-  /* ---------- WebGL rice ---------- */
-  const canvas = document.getElementById('stage');
-  const halo = document.querySelector('.halo');
-  if (!window.THREE) { canvas.hidden = true; return; }
-  let renderer;
-  try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true }); }
-  catch (e) { canvas.hidden = true; return; }
-  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
-  renderer.setClearColor(0x000000, 0);
-
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(35, 1, .1, 100);
-  camera.position.set(0, 0, 10);
-  scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8060, .85));
-  const sun = new THREE.DirectionalLight(0xffffff, .75); sun.position.set(-3, 5, 6); scene.add(sun);
-
-  const group = new THREE.Group(); scene.add(group);
-
-  // seeded random
-  let seed = 20260703;
-  const R = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
-    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
-
-  const N = 1400, B = [.12, .055, .05];
-  const mk = () => ({ p: new Float32Array(N*3), r: new Float32Array(N*3), s: new Float32Array(N*3),
-                      c: new Float32Array(N*3), role: new Uint8Array(N), v: new Float32Array(N) });
-  const S = [mk(), mk(), mk(), mk(), mk()];
-  const put = (st, i, p, r, s, role, v = 0) => { st.p.set(p, i*3); st.r.set(r, i*3); st.s.set(s, i*3); st.role[i] = role; st.v[i] = v; };
-  const delay = new Float32Array(N); for (let i=0;i<N;i++) delay[i] = R();
-
-  // 0 — one grain
-  for (let i=0;i<N;i++){
-    if (i === 0) put(S[0], 0, [0,0,0], [.3,.55,.35], [B[0]*9, B[1]*9, B[2]*9], 0);
-    else put(S[0], i, [(R()-.5)*.5, (R()-.5)*.3, (R()-.5)*.3], [R()*6, R()*6, R()*6], [0,0,0], 0);
-  }
-
-  // 1 — three drooping rice ears
-  (() => {
-    const bez = (P0,P1,P2,t) => { const u=1-t; return [u*u*P0[0]+2*u*t*P1[0]+t*t*P2[0], u*u*P0[1]+2*u*t*P1[1]+t*t*P2[1]]; };
-    const tan = (P0,P1,P2,t) => { const x=2*(1-t)*(P1[0]-P0[0])+2*t*(P2[0]-P1[0]), y=2*(1-t)*(P1[1]-P0[1])+2*t*(P2[1]-P1[1]); const l=Math.hypot(x,y)||1; return [x/l,y/l]; };
-    const P0=[0,-3.1], P1=[.15,1.95], P2=[1.6,.3];
-    const pans = [{a:-.55,x:-.55,k:.9},{a:.1,x:0,k:1},{a:.75,x:.5,k:.84}];
-    let idx = 0;
-    for (const pn of pans){
-      const ca = Math.cos(pn.a), sa = Math.sin(pn.a);
-      const place = (x,y,z,rz,s,role) => {
-        if (idx >= N) return;
-        const X = (x*ca + z*sa)*pn.k + pn.x, Z = (-x*sa + z*ca)*pn.k, Y = y*pn.k;
-        put(S[1], idx++, [X,Y,Z], [0, pn.a, rz], [s[0]*pn.k, s[1]*pn.k, s[2]*pn.k], role, (R()-.5)*.16);
-      };
-      for (let j=0;j<40;j++){ const t=.0056+.45*j/40, p=bez(P0,P1,P2,t), T=tan(P0,P1,P2,t);
-        place(p[0], p[1], 0, Math.atan2(T[1],T[0]), [.075,.016,.016], 2); }
-      for (let j=0;j<42;j++){ const t=.45+.55*j/41, p=bez(P0,P1,P2,t), T=tan(P0,P1,P2,t), sd=j%2?1:-1;
-        place(p[0]-T[1]*.05*sd, p[1]+T[0]*.05*sd, (R()-.5)*.08, Math.atan2(T[1],T[0])+sd*.5, [.1,.046,.042], 1); }
-      for (let k=0;k<12;k++){
-        const s=.47+.5*k/11, p=bez(P0,P1,P2,s), T=tan(P0,P1,P2,s), sd=k%2?1:-1;
-        const ang = Math.atan2(T[1],T[0]) + sd*(.75 - .25*k/11), dx=Math.cos(ang), dy=Math.sin(ang);
-        const dz=(R()-.5)*.8, L=.95*(1-.55*k/11);
-        for (let g=0; g<32; g++){
-          const u=.08+.92*g/31, al=u*L, alt=g%2?1:-1;
-          place(p[0]+dx*al - dy*.045*alt, p[1]+dy*al - .18*u*u + dx*.045*alt, dz*al + (R()-.5)*.12,
-                ang + alt*.45 - .3*u, [.1,.046,.042], 1);
-        }
-      }
-    }
-    while (idx < N) put(S[1], idx++, [1.5,.3,0], [0,0,0], [0,0,0], 1);
-  })();
-
-  // 2 — paddy field rows of seedlings
-  for (let r=0;r<28;r++) for (let c=0;c<50;c++){
-    const i = r*50 + c;
-    put(S[2], i, [-6.5 + 13*c/49 + (R()-.5)*.12, -1.7, -10 + r*.48],
-        [(R()-.5)*.3, R()*3, Math.PI/2 + (R()-.5)*.35], [.17 + R()*.05, .026, .026], 3, (R()-.5)*.3);
-  }
-
-  // 3 — milled grains drifting (just out of the mill)
-  for (let i=0;i<N;i++)
-    put(S[3], i, [(R()-.5)*15, (R()-.5)*8.5, -6 + R()*6], [R()*6, R()*6, R()*6], [B[0]*.85, B[1]*.85, B[2]*.85], 0, (R()-.5)*.1);
-
-  // 4 — a bowl of rice: grains on a dome
-  for (let i=0;i<N;i++){
-    const k=i+.5, phi=Math.acos(1 - k/N), th=Math.PI*(1+Math.sqrt(5))*k, r=1.75*(.82+.18*R());
-    put(S[4], i, [r*Math.sin(phi)*Math.cos(th), -.5 + r*Math.cos(phi)*.62, r*Math.sin(phi)*Math.sin(th)],
-        [R()*6, R()*6, R()*6], [B[0]*.95, B[1]*.95, B[2]*.95], 0, (R()-.5)*.08);
-  }
-
-  // bowl line-art
-  const bowl = new THREE.Group(); group.add(bowl);
-  const lineMat = new THREE.LineBasicMaterial({ transparent: true, opacity: 0 });
-  const prof = [[1.92,-.46],[1.86,-.9],[1.65,-1.35],[1.25,-1.74],[.82,-1.95],[.78,-2.1]];
-  prof.forEach(([r,y]) => {
-    const pts = []; for (let a=0;a<=96;a++){ const t=a/96*Math.PI*2; pts.push(new THREE.Vector3(Math.cos(t)*r, y, Math.sin(t)*r)); }
-    bowl.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), lineMat));
-  });
-  for (let m=0;m<18;m++){
-    const t=m/18*Math.PI*2; const pts = prof.map(([r,y]) => new THREE.Vector3(Math.cos(t)*r, y, Math.sin(t)*r));
-    bowl.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), lineMat));
-  }
-
-  // instanced grains
-  const geo = new THREE.SphereGeometry(1, 14, 10);
-  const mat = new THREE.MeshStandardMaterial({ roughness: .55, metalness: 0 });
-  const mesh = new THREE.InstancedMesh(geo, mat, N);
-  mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-  mesh.setColorAt(0, new THREE.Color());
-  group.add(mesh);
-
-  // theme-aware colours
-  function paint(){
-    const pal = ['--grain','--husk','--stalk','--leaf'].map(n => new THREE.Color(cssv(n) || '#ffffff'));
-    S.forEach(st => { for (let i=0;i<N;i++){ const c = pal[st.role[i]], v = 1 + st.v[i];
-      st.c[i*3] = clamp(c.r*v); st.c[i*3+1] = clamp(c.g*v); st.c[i*3+2] = clamp(c.b*v); } });
-    lineMat.color.set(cssv('--line') || '#a9872e');
-  }
-  paint();
-  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', paint);
-  new MutationObserver(paint).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme','class','style'] });
-
-  // per-state framing
-  const FR = {
-    wide:   { x:[0,2.1,0,0,2.2], y:[.1,.1,0,0,-.1], rx:[0,0,.16,0,.42], sc:[1,1,1,1,1],      halo:[.27,0,0,0,.33] },
-    narrow: { x:[0,0,0,0,0],     y:[.7,.3,0,0,.8],  rx:[0,0,.2,0,.42],  sc:[.6,.68,.8,.9,.58], halo:[.3,0,0,0,.36] }
-  };
-  let W = 1, H = 1, frame = FR.wide;
-  function size(){
-    W = innerWidth; H = innerHeight;
-    renderer.setSize(W, H, false);
-    camera.aspect = W / H; camera.updateProjectionMatrix();
-    frame = W < 760 ? FR.narrow : FR.wide;
-  }
-  size(); addEventListener('resize', size);
-
-  const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), eu = new THREE.Euler(), pos = new THREE.Vector3(),
-        scl = new THREE.Vector3(), col = new THREE.Color(), proj = new THREE.Vector3();
-  let p = targetP(), spin = 0, last = performance.now();
-  const lerp = (a,b,t) => a + (b-a)*t;
-  const pick = (arr, a, f) => lerp(arr[a], arr[Math.min(4,a+1)], f);
-
-  function tick(now){
-    const t = now/1000, dt = Math.min(.05, (now-last)/1000); last = now;
-    p += (targetP() - p) * (reduce ? 1 : .075);
-    const a = Math.min(3, Math.floor(p)), f = clamp(p - a), A = S[a], Bs = S[a+1];
-    const wField = clamp(1 - Math.abs(p-2)), wDrift = clamp(1 - Math.abs(p-3)), wBowl = clamp(p-3);
-    const motion = reduce ? 0 : 1;
-
-    for (let i=0;i<N;i++){
-      const lt = smooth(clamp((f - delay[i]*.35) / .65)), j = i*3;
-      let px = lerp(A.p[j], Bs.p[j], lt), py = lerp(A.p[j+1], Bs.p[j+1], lt), pz = lerp(A.p[j+2], Bs.p[j+2], lt);
-      let rx = lerp(A.r[j], Bs.r[j], lt), ry = lerp(A.r[j+1], Bs.r[j+1], lt), rz = lerp(A.r[j+2], Bs.r[j+2], lt);
-      if (wField) rz += Math.sin(t*1.3 + px*.6 + pz*.3) * .12 * wField * motion;
-      if (wDrift) { py += Math.sin(t*.4 + i) * .18 * wDrift * motion; rx += t*.2*wDrift*motion*(delay[i]-.5); }
-      pos.set(px, py, pz); eu.set(rx, ry, rz); q.setFromEuler(eu);
-      scl.set(lerp(A.s[j], Bs.s[j], lt) || 1e-5, lerp(A.s[j+1], Bs.s[j+1], lt) || 1e-5, lerp(A.s[j+2], Bs.s[j+2], lt) || 1e-5);
-      m4.compose(pos, q, scl); mesh.setMatrixAt(i, m4);
-      col.setRGB(lerp(A.c[j], Bs.c[j], lt), lerp(A.c[j+1], Bs.c[j+1], lt), lerp(A.c[j+2], Bs.c[j+2], lt));
-      mesh.setColorAt(i, col);
-    }
-    mesh.instanceMatrix.needsUpdate = true; mesh.instanceColor.needsUpdate = true;
-
-    const g = smooth(f);
-    spin += dt * .18 * wBowl * motion;
-    group.position.set(pick(frame.x, a, g), pick(frame.y, a, g), 0);
-    group.rotation.set(pick(frame.rx, a, g), Math.sin(t*.25)*.16*motion*(1-wField) + spin, 0);
-    group.scale.setScalar(pick(frame.sc, a, g));
-    lineMat.opacity = .8 * smooth(wBowl);
-
-    // halo follows the object on screen
-    const hk = pick(frame.halo, a, g);
-    proj.set(group.position.x, group.position.y + (wBowl ? -.4*wBowl*group.scale.x : 0), 0).project(camera);
-    const d = hk * Math.min(W, H) * 2.2, cx = (proj.x+1)/2*W, cy = (1-proj.y)/2*H;
-    halo.style.width = halo.style.height = d + 'px';
-    halo.style.transform = `translate(${cx - d/2}px, ${cy - d/2}px)`;
-    halo.style.opacity = clamp(hk * 4);
-
-    renderer.render(scene, camera);
+  /* ---------- photo stage: cross-fade by scroll ---------- */
+  const shots = [...document.querySelectorAll('.stage img')];
+  let p = targetP();
+  function tick(){
+    p += (targetP() - p) * (reduce ? 1 : .08);
+    shots.forEach((img, i) => {
+      const d = p - i, w = Math.max(0, 1 - Math.abs(d));
+      img.style.opacity = i === 0 && p <= 0 ? 1 : w;
+      img.style.transform = reduce ? '' : `scale(${(1.06 - .05*Math.max(-1, Math.min(1, d))).toFixed(4)})`;
+    });
     requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);
