@@ -12,7 +12,9 @@ export async function getStaticPaths() {
 
 const section = Astro.params.section as SectionKey;
 const meta = SECTIONS[section];
-const items = await getPublished(section);
+const items0 = await getPublished(section);
+// 作品列表：品牌網站 Demo 排在最前面
+const items = section === 'works' ? [...items0.filter((e: any) => e.data.demo), ...items0.filter((e: any) => !e.data.demo)] : items0;
 const abs = (p: string) => new URL(p, SITE_URL).href;
 
 const listSchema = {
@@ -37,7 +39,7 @@ const listSchema = {
 >
   <SiteNav current={meta.path} />
   <header class="wrap-wide page-head">
-    <p class="brand-tag">{meta.label}</p>
+    <p class="zone-label">{meta.label}</p>
     <h1>{meta.title}</h1>
     <p class="lead">{meta.intro}</p>
   </header>
@@ -46,19 +48,33 @@ const listSchema = {
     {items.length === 0 ? (
       <p>內容整理中。</p>
     ) : (
-      <div class={section === 'works' ? 'cards grid-3' : 'cards grid-2'}>
-        {items.map((e) => (
-          <a class="card card-link" href={entryPath(section, e.id)}>
-            {section === 'works' && 'cover' in e.data && e.data.cover && (
-              <img class="card-cover" src={e.data.cover} alt={e.data.coverAlt ?? e.data.title} width="1200" height="900" loading="lazy" />
-            )}
-            {section === 'works' && 'kind' in e.data && <span class="tag">{e.data.kind}</span>}
-            <h3>{e.data.shortTitle ?? e.data.title}</h3>
-            <p>{e.data.description}</p>
-            <p class="post-meta" style="margin:10px 0 0;">{formatDate(e.data.updated ?? e.data.pubDate)}{e.data.tags.length > 0 && ` ・ ${e.data.tags.join('、')}`}</p>
-          </a>
-        ))}
-      </div>
+      section === 'works' ? (
+        <div class="works-grid">
+          {items.map((e: any) => (
+            <a class="w" href={entryPath(section, e.id)}>
+              <div class="w-img">
+                {e.data.cover && <img src={e.data.cover} alt={e.data.demo ? '' : (e.data.coverAlt ?? e.data.title)} loading="lazy" />}
+                {(e.data.demo || !/^\/works\/cover-.*\.webp$/.test(e.data.cover ?? '')) && <span class="w-kind mono">{e.data.demo ? '品牌網站 Demo' : e.data.kind}</span>}
+              </div>
+              <div class="w-txt">
+                <h3>{e.data.shortTitle ?? e.data.title}</h3>
+                <p>{e.data.description}</p>
+                {e.data.stack?.length > 0 && <span class="w-stack mono">{e.data.stack.slice(0, 3).join(' · ')}</span>}
+              </div>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <div class="cards grid-2">
+          {items.map((e) => (
+            <a class="card card-link" href={entryPath(section, e.id)}>
+              <h3>{e.data.shortTitle ?? e.data.title}</h3>
+              <p>{e.data.description}</p>
+              <p class="post-meta" style="margin:10px 0 0;">{formatDate(e.data.updated ?? e.data.pubDate)}{e.data.tags.length > 0 && ` ・ ${e.data.tags.join('、')}`}</p>
+            </a>
+          ))}
+        </div>
+      )
     )}
   </section>
 

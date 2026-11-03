@@ -135,7 +135,7 @@ const websiteSchema = {
             <a class="w" href={entryPath('works', e.id)}>
               <div class="w-img">
                 {thumb && <img src={thumb} alt={e.id in BRAND_THUMBS ? '' : (e.data.coverAlt ?? e.data.title)} loading="lazy" />}
-                <span class="w-kind mono">{e.id in BRAND_THUMBS ? '品牌網站 Demo' : ('kind' in e.data ? e.data.kind : '')}</span>
+                {(e.id in BRAND_THUMBS || !/^\/works\/cover-.*\.webp$/.test(thumb ?? '')) && <span class="w-kind mono">{e.id in BRAND_THUMBS ? '品牌網站 Demo' : ('kind' in e.data ? e.data.kind : '')}</span>}
               </div>
               <div class="w-txt">
                 <h3>{e.data.shortTitle ?? e.data.title}</h3>
@@ -257,17 +257,6 @@ const websiteSchema = {
   .ch h3 { font-size: 1.45rem; }
   .ch p { color: #BDB8AF; }
 
-  .works-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
-  .w { background: var(--surface); border: 1px solid var(--border); display: grid; grid-template-rows: auto 1fr; text-decoration: none; color: var(--text); min-width: 0; transition: border-color .2s; }
-  .w:hover { border-color: var(--laser); }
-  .w-img { aspect-ratio: 16 / 10; max-width: 100%; overflow: hidden; position: relative; background: #1b1f26; }
-  .w-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .6s ease; }
-  .w:hover .w-img img { transform: scale(1.04); }
-  .w-kind { position: absolute; left: 12px; top: 12px; font-size: .68rem; letter-spacing: .1em; background: rgba(13, 15, 18, .82); padding: 3px 8px; color: var(--text); }
-  .w-txt { padding: 20px 22px 24px; display: grid; gap: 8px; align-content: start; }
-  .w-txt h3 { font-size: 1.1rem; }
-  .w-txt p { font-size: .9rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-  .w-stack { font-size: .7rem; color: var(--read); letter-spacing: .04em; }
   .side-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-top: 18px; }
   .side-links a { border: 1px solid var(--border); padding: 22px 24px; display: grid; gap: 8px; text-decoration: none; color: var(--text); transition: border-color .2s; }
   .side-links a:hover { border-color: var(--read); }
