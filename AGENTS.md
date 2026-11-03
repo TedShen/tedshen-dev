@@ -30,7 +30,7 @@
 - 社群帳號、Email、LINE 連結的正本在 hub 的 `consts.ts`；本站 `src/consts.ts` 改完要和 hub、grow 保持一致。
 - 軟體線只開 LINE 官方帳號（`https://lin.ee/XB3OxbQ`），不開 Threads / IG。
 - Person 正本在 `https://tedshen.link/#person`。本站的 Service / WebSite schema 只用 `@id` 引用它，不要在本棧另建一份 Person。
-- 2026-11-03 起三站各自不同風格（站主指示）：本站深色儀器風、hub 雜誌封面風、protect 淺色專業風。三站之間共用的只剩官方管道資料、連結方向，以及 hub 的三色標示（軟體紅、財務綠、保險藍）。
+- 2026-11-03 起三站各自不同風格（站主指示）：本站淺色製圖紙風（2026-11-04 由深色改淺色，保留雷射掃描造型）、hub 雜誌封面風、protect 淺色專業風。三站之間共用的只剩官方管道資料、連結方向，以及 hub 的三色標示（軟體紅、財務綠、保險藍）。
 
 ## 4. 關鍵檔案
 
@@ -44,7 +44,7 @@
 - `public/works/` — 作品封面（1200×900 webp，深藍底＋一句標題＋流程圖的統一版型）。
 - `demos/` — Demo 原始碼，不進 Astro build，作品頁連到 GitHub 上的資料夾。每個 demo 自帶 README 與測試。
 - `public/demos/<名稱>/index.html` — 可直接試用的網頁 Demo（純前端單檔、虛構資料、`noindex`、資料只存訪客瀏覽器的 localStorage）。不進 sitemap。
-- `src/layouts/Base.astro` — head（canonical / OG / Twitter / JSON-LD）、全域 CSS（只做深色：石墨底 `--bg`、線雷射紅 `--laser`、讀數青 `--read`；字體 Noto Sans TC、IBM Plex Mono、Big Shoulders Display）、footer 導覽三站連結。
+- `src/layouts/Base.astro` — head（canonical / OG / Twitter / JSON-LD）、全域 CSS（只做淺色：製圖紙底 `--bg`＋方格紙背景、墨黑字 `--text`、線雷射紅 `--laser`、讀數青 `--read`；字體 Noto Sans TC、IBM Plex Mono、Big Shoulders Display）、footer 導覽三站連結。
 - `src/components/OfficialChannels.astro` — 官方管道與防冒用聲明（「我不會做的事」5 條不可擅自增刪）。
 - `public/` — `avatar.jpg`＋`avatar.webp`（首屏頭像用 `<picture>`，webp 優先、jpg fallback）、`og.jpg`（1200×630；og:image 沿用 jpg 保分享相容）、`favicon.*`、`robots.txt`（sitemap 指向本網域）。
 
@@ -68,6 +68,11 @@
 不用另開 CHANGELOG、工作日誌檔或 issue 來代替本節；§6 就是唯一的作業流水帳。
 
 ## 6. 作業紀錄
+
+### 2026-11-04 — 全站改淺色：製圖紙風
+- 範圍：`src/layouts/Base.astro`（色票改淺色固定：米白製圖紙底＋24px／120px 方格、墨黑字、雷射紅 `#D63A1C`、讀數青 `#0B7268`；主要按鈕改白字；導覽、標籤、Demo 外框等寫死的深色改掉）、`src/pages/index.astro`（首屏點雲改墨點＋青色已掃描點＋紅色雷射線；讀數框、服務通道、CTA 改淺色）、`public/works/cover-*.webp`（流程圖封面改成淺色紙底＋墨字＋紅色箭頭，由原深藍版重新上色，版面與文字不變）、本檔 §3
+- 原因：站主 2026-11-04 指示 dev 改淺色系並重新設計；維持「有造型」的要求，所以保留雷射掃描與量測讀數，改成工程製圖紙的樣子
+- 驗證：`npm run build` 通過；Playwright 1280px／390px 檢查首頁、作品列表、品牌 Demo 作品頁、一般作品頁，無橫向捲動、無 JS 錯誤
 
 ### 2026-11-04 — 作品頁跟著改版；品牌網站 Demo 點進去直接看網站
 - 範圍：`src/content.config.ts`（works 新增 `demo`、`demoName`、`credits`）、`src/pages/[section]/[slug].astro`（有 `demo` 的作品頁改成整頁嵌入 Demo：品牌名、「全螢幕開啟」「做一個你的品牌官網」兩顆按鈕、iframe 填滿畫面，不顯示內文與技術；其他內頁改儀器風頁首、封面加雷射角框、技術／連結改讀數框）、`src/pages/[section]/index.astro`（作品列表改用首頁同款大圖卡，品牌網站 Demo 排最前）、`src/layouts/Base.astro`（作品卡片樣式從首頁移到全站共用；新增 `.entry-*`、`.demo-*`）、`src/pages/index.astro`（卡片樣式移走；封面已有標籤時不再疊加分類標籤）、三個品牌 Demo 的 md（改寫標題與描述、拿掉技術欄位與內文、封面改用 Demo 實景照片）、`public/demos/{rice-brand,meihao-jianbing,pu-jewelry}/index.html`（被嵌入時隱藏左下角回作品頁連結）、`public/works/cover-*.webp`（深藍流程圖封面重新配色為石墨＋雷射紅；新增 `cover-tools-wishpool.webp`；刪除三張品牌 Demo 舊封面）
