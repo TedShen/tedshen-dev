@@ -5,6 +5,8 @@ description: 在瀏覽器裡完成的 PDF 與圖片工具站，中英日三語�
 pubDate: 2026-10-15
 tags: [網站架設, 瀏覽器端處理, Cloudflare, 多語系]
 order: 10
+cover: /works/cover-tools-wishpool.webp
+coverAlt: PDF 工具、圖片、QR code、許願池四個區塊的流程圖
 kind: 自有作品
 stack: [Cloudflare Workers, Cloudflare D1, Email Routing, pdf.js, pdf-lib, fflate, Playwright]
 link: https://tools.tedshen.link/

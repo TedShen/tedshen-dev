@@ -69,6 +69,11 @@
 
 ## 6. 作業紀錄
 
+### 2026-11-04 — 作品頁跟著改版；品牌網站 Demo 點進去直接看網站
+- 範圍：`src/content.config.ts`（works 新增 `demo`、`demoName`、`credits`）、`src/pages/[section]/[slug].astro`（有 `demo` 的作品頁改成整頁嵌入 Demo：品牌名、「全螢幕開啟」「做一個你的品牌官網」兩顆按鈕、iframe 填滿畫面，不顯示內文與技術；其他內頁改儀器風頁首、封面加雷射角框、技術／連結改讀數框）、`src/pages/[section]/index.astro`（作品列表改用首頁同款大圖卡，品牌網站 Demo 排最前）、`src/layouts/Base.astro`（作品卡片樣式從首頁移到全站共用；新增 `.entry-*`、`.demo-*`）、`src/pages/index.astro`（卡片樣式移走；封面已有標籤時不再疊加分類標籤）、三個品牌 Demo 的 md（改寫標題與描述、拿掉技術欄位與內文、封面改用 Demo 實景照片）、`public/demos/{rice-brand,meihao-jianbing,pu-jewelry}/index.html`（被嵌入時隱藏左下角回作品頁連結）、`public/works/cover-*.webp`（深藍流程圖封面重新配色為石墨＋雷射紅；新增 `cover-tools-wishpool.webp`；刪除三張品牌 Demo 舊封面）
+- 原因：站主 2026-11-04 指出作品內頁沒跟著改版，且品牌形象網站「技術不用提，點進來直接 show」
+- 驗證：`npm run build` 通過；Playwright 1280px／390px 檢查作品列表、品牌 Demo 作品頁、一般作品頁、首頁，無橫向捲動、無 JS 錯誤，嵌入時回作品頁連結已隱藏
+
 ### 2026-11-03 — 首頁拿掉學歷
 - 範圍：`src/pages/index.astro`（首屏署名「中央大學資工碩士」改為「軟體工程師」；「完整履歷」卡片拿掉碩士學歷一句）
 - 原因：站主 2026-11-03 決定網站先不寫學歷。三站搜尋過「中央大學／碩士／學歷」，只有本站首頁這兩處；外部履歷 tedshen.github.io 不在本 repo，未改

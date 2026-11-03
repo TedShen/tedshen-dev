@@ -47,6 +47,12 @@ const works = defineCollection({
     /** 封面圖，放在 public/works/ */
     cover: z.string().optional(),
     coverAlt: z.string().optional(),
+    /** 品牌網站 Demo：填了就直接在作品頁嵌入整個 Demo，不寫技術說明 */
+    demo: z.string().optional(),
+    /** Demo 的品牌名，作品頁大標用 */
+    demoName: z.string().optional(),
+    /** 照片來源，作品頁底部小字 */
+    credits: z.string().optional(),
   }),
 });
 
