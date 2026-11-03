@@ -69,6 +69,12 @@
 
 ## 6. 作業紀錄
 
+### 2026-11-04 — 守物包材 Demo 改用 Unsplash 實景照片
+- 範圍：`public/demos/shouwu-packaging/index.html`（首屏、四張產業卡、15 張產品卡由 SVG 插圖改成照片；拿掉 `ART` 插圖物件；頁尾加攝影師標註；「食品冷鏈」改「食品外帶」、「珍珠棉」改「PE 保護膜」、「鋁箔保冷袋」改「外帶牛皮紙袋」，讓品項跟找得到的免費照片對得上；選材表同步改）、`public/demos/shouwu-packaging/img/*.webp`（hero 889×593、產業卡 800×500、產品卡 800×600，Pillow 裁切轉檔，共約 0.9MB；`cover.webp` 重新截圖）、`src/content/works/shouwu-packaging-site.md`（加 `credits`、`updated`）
+- 原因：站主 2026-11-04 指示從網路找可商用授權的照片取代插圖
+- 照片：全部來自 Unsplash 免費授權（Unsplash License，可商用、不需署名，仍在 Demo 頁尾與作品頁標註攝影師）；排除 Unsplash+ 付費圖，也排除畫面上有真實品牌字樣的照片（Packhelp、Vanguard、Lockport、燕麥包裝等）。兩張有人物（GB The Green Brand），未取得肖像授權，只適合作品集示範。雲端沙箱連不到圖庫，改由站主 Mac 下載後傳回
+- 驗證：`npm run build` 通過；Playwright 390／768／1280／1440px 無橫向捲動、無破圖、無 JS 錯誤；1280px 跑完產業篩選、詢價清單、表單送出、選材分頁
+
 ### 2026-11-04 — 新增作品〈企業採購型錄網站：守物包材〉與網頁 Demo
 - 範圍：`public/demos/shouwu-packaging/index.html`（純前端單檔、`noindex`；依產業找產品、選材比較表分頁、型錄品類／產業／關鍵字篩選、詢價清單側欄可調月用量、詢價表單驗證與模擬送出；詢價清單只存 localStorage；產品圖全為內嵌 SVG 插圖；支援深色模式；被嵌入時隱藏左下角回作品頁連結）、`public/demos/shouwu-packaging/img/cover.webp`（Demo 首屏截圖，1200×900）、`src/content/works/shouwu-packaging-site.md`（自有作品，order 14，以 `demo` 欄位整頁嵌入）
 - 原因：站主 2026-11-04 指示把一家真實耗材供應商的網站改版提案去識別化、換成別種產品，做成作品集 Demo。原公司名稱、品牌、產品線、地址、電話、統編、認證一律不用；品牌改為虛構的「守物包材」（包裝耗材），品牌名與文案只用中文；規格中無法確定的數字保留 `[N]` 等佔位

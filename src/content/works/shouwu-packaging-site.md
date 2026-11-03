@@ -10,7 +10,9 @@ demo: /demos/shouwu-packaging/
 demoName: 守物包材
 link: /demos/shouwu-packaging/
 cover: /demos/shouwu-packaging/img/cover.webp
-coverAlt: 守物包材官網首頁，紙箱、膠帶與氣泡布插圖
+coverAlt: 守物包材官網首頁，倉庫裡的紙箱與包材
+credits: Guilherme Mendes、GB The Green Brand、Conor Brown、Marco Palumbo、Bernd Dittrich、Giorgio Trovato、Brandable Box、Mediamodifier、Ingmar、Ariful Islam、Kiwihug、Barry A、M Danang Muktamarrodin、Franck V.、With Mahdy、Dmitry Mashkin、Arum Visuals、Rohit Choudhari
+updated: 2026-11-04
 ---
 
 <!-- 品牌網站 Demo：作品頁直接嵌入 /demos/shouwu-packaging/，不顯示內文。 -->
