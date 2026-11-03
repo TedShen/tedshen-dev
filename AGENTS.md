@@ -30,7 +30,7 @@
 - 社群帳號、Email、LINE 連結的正本在 hub 的 `consts.ts`；本站 `src/consts.ts` 改完要和 hub、grow 保持一致。
 - 軟體線只開 LINE 官方帳號（`https://lin.ee/XB3OxbQ`），不開 Threads / IG。
 - Person 正本在 `https://tedshen.link/#person`。本站的 Service / WebSite schema 只用 `@id` 引用它，不要在本棧另建一份 Person。
-- 版型與官方管道元件是從 hub 複製後微調，三站樣式刻意一致；大改樣式前先對齊 hub。
+- 2026-11-03 起三站各自不同風格（站主指示）：本站深色儀器風、hub 雜誌封面風、protect 淺色專業風。三站之間共用的只剩官方管道資料、連結方向，以及 hub 的三色標示（軟體紅、財務綠、保險藍）。
 
 ## 4. 關鍵檔案
 
@@ -44,7 +44,7 @@
 - `public/works/` — 作品封面（1200×900 webp，深藍底＋一句標題＋流程圖的統一版型）。
 - `demos/` — Demo 原始碼，不進 Astro build，作品頁連到 GitHub 上的資料夾。每個 demo 自帶 README 與測試。
 - `public/demos/<名稱>/index.html` — 可直接試用的網頁 Demo（純前端單檔、虛構資料、`noindex`、資料只存訪客瀏覽器的 localStorage）。不進 sitemap。
-- `src/layouts/Base.astro` — head（canonical / OG / Twitter / JSON-LD）、全域 CSS（含深色模式）、footer 導覽三站連結。
+- `src/layouts/Base.astro` — head（canonical / OG / Twitter / JSON-LD）、全域 CSS（只做深色：石墨底 `--bg`、線雷射紅 `--laser`、讀數青 `--read`；字體 Noto Sans TC、IBM Plex Mono、Big Shoulders Display）、footer 導覽三站連結。
 - `src/components/OfficialChannels.astro` — 官方管道與防冒用聲明（「我不會做的事」5 條不可擅自增刪）。
 - `public/` — `avatar.jpg`＋`avatar.webp`（首屏頭像用 `<picture>`，webp 優先、jpg fallback）、`og.jpg`（1200×630；og:image 沿用 jpg 保分享相容）、`favicon.*`、`robots.txt`（sitemap 指向本網域）。
 
@@ -68,6 +68,11 @@
 不用另開 CHANGELOG、工作日誌檔或 issue 來代替本節；§6 就是唯一的作業流水帳。
 
 ## 6. 作業紀錄
+
+### 2026-11-03 — 全站改版：深色儀器風，首屏雷射掃描點雲
+- 範圍：`src/layouts/Base.astro`（色票改深色固定、移除淺色／深色切換、按鈕改方角、內頁導覽黏頂、字體）、`src/pages/index.astro`（首屏改成 Canvas 線雷射掃描點雲＋讀數框，滑鼠可控制雷射；服務改成 CH-01～04 通道；精選作品改為三個品牌網站 Demo＋三件作品的大圖卡；DG-1 Demo 連結移到讀數框）、本檔 §3 §4
+- 原因：站主 2026-11-03 指示軟體接案站要「有造型」，概念稿確認後套用；首頁文案不變
+- 驗證：`npm run build` 通過（24 頁）；Playwright 1280px／390px 檢查首頁、作品列表、作品頁、服務列表、技術筆記，無橫向捲動、無 JS 錯誤、無 404
 
 ### 2026-11-03 — 品牌網站 Demo 改用實景照片；新增〈美好煎餅〉〈璞〉兩個作品
 - 範圍：`public/demos/rice-brand/`（拿掉 Three.js，改成滿版照片隨捲動淡入切換，圖檔放 `img/`）、`public/demos/meihao-jianbing/`、`public/demos/pu-jewelry/`（新增，皆為單一 index.html＋`img/*.webp`，`noindex`，左下角固定連結回作品頁）；作品頁 `src/content/works/scroll-story-brand-site.md`（改寫為照片版）、`meihao-jianbing-site.md`（order 12）、`pu-jewelry-site.md`（order 13）；封面 `public/works/cover-scroll-story-brand-site.webp`（重畫）、`cover-meihao-jianbing-site.webp`、`cover-pu-jewelry-site.webp`（沿用深藍流程圖版型）

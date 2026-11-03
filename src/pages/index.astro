@@ -9,7 +9,14 @@ import { EMAIL, LINE_URL, SITE_URL, SITE_DESCRIPTION, HUB_URL, GROW_URL, RESUME_
 
 const abs = (p: string) => new URL(p, SITE_URL).href;
 const works = await getPublished('works');
-const featured = works.slice(0, 3);
+// 首頁精選：三個品牌網站 Demo 在前（用 Demo 裡的照片當縮圖），再接三件其他作品（用封面）
+const BRAND_THUMBS: Record<string, string> = {
+  'scroll-story-brand-site': '/demos/rice-brand/img/s1.webp',
+  'meihao-jianbing-site': '/demos/meihao-jianbing/img/t-hero.webp',
+  'pu-jewelry-site': '/demos/pu-jewelry/img/hero.webp',
+};
+const brandWorks = works.filter((w) => w.id in BRAND_THUMBS);
+const featured = [...brandWorks, ...works.filter((w) => !(w.id in BRAND_THUMBS)).slice(0, 6 - brandWorks.length)];
 const mailto = `mailto:${EMAIL}?subject=${encodeURIComponent('軟體合作洽詢')}`;
 
 const serviceSchema = {
@@ -44,30 +51,31 @@ const websiteSchema = {
   path="/"
   schema={[serviceSchema, websiteSchema]}
 >
-  <!-- ① 頂部導覽＋Hero（深色） -->
-  <div class="dark-band">
-    <nav class="top-nav wrap-wide" aria-label="主要導覽">
-      <a class="top-brand" href="/"><span class="mono accent" aria-hidden="true">&lt;/&gt;</span>Ted ｜ 軟體開發</a>
+  <!-- ① 頂部導覽＋Hero：雷射掃描點雲 -->
+  <nav class="top-nav" aria-label="主要導覽">
+    <div class="wrap-wide nav-in">
+      <a class="top-brand" href="/"><i aria-hidden="true"></i>Ted ｜ 軟體開發</a>
       <ul>
         <li><a href="/services/">服務</a></li>
         <li><a href="/works/">作品</a></li>
         <li><a href="/notes/">技術筆記</a></li>
         <li><a class="nav-line" href={LINE_URL}>加 LINE 聊一聊</a></li>
       </ul>
-    </nav>
+    </div>
+  </nav>
 
-    <header class="hero2 wrap-wide">
-      <div class="hero2-text">
-        <p class="eyebrow mono accent">DEV ｜ 軟體開發與技術顧問</p>
-        <h1>把你想做的事<br />變成能跑的系統</h1>
-        <p class="hero2-lead">
-          我是沈裕德 Ted，軟體工程師，15 年資歷。軟體開發、機器視覺、工業自動化、系統串接、網站，技術顧問。
-        </p>
+  <header class="scan-hero">
+    <canvas id="scan" aria-hidden="true"></canvas>
+    <div class="wrap-wide hero-in">
+      <div>
+        <p class="eyebrow mono">DEV ｜ 軟體開發與技術顧問</p>
+        <h1>把你想做的事<br />變成<em>能跑的系統</em></h1>
+        <p class="hero-lead">我是沈裕德 Ted，軟體工程師，15 年資歷。軟體開發、機器視覺、工業自動化、系統串接、網站，技術顧問。</p>
         <div class="btn-row">
           <a class="btn btn-line" href={LINE_URL}>加 LINE 聊一聊 →</a>
-          <a class="btn btn-outline-dark" href="/works/">看作品與 Demo</a>
+          <a class="btn btn-ghost" href="/works/">看作品與 Demo</a>
         </div>
-        <div class="hero2-me">
+        <div class="hero-me">
           <picture>
             <source srcset="/avatar.webp" type="image/webp" />
             <img class="avatar-sm" src="/avatar.jpg" alt={`${PERSON.name} ${PERSON.alternateName}，軟體工程師`} width="48" height="48" fetchpriority="high" />
@@ -75,96 +83,82 @@ const websiteSchema = {
           <span>沈裕德 Ted ・ 中央大學資工碩士</span>
         </div>
       </div>
-
-      <a class="status-card" href="/demos/dg1-measurement/" aria-label="開啟 DG-1 示範量測機 Demo">
-        <div class="status-head">
-          <div><strong>DG-1 示範量測機</strong><span>線上輪廓量測・狀態畫面</span></div>
-          <span class="badge-sim">只用模擬驗證</span>
-        </div>
-        <div class="status-ok"><span class="dot" aria-hidden="true"></span>可以量測</div>
-        <div class="status-grid">
-          <div><span>溫區 T1</span><b class="mono">35.88</b></div>
-          <div><span>溫區 T2</span><b class="mono">35.88</b></div>
-          <div><span>溫區 T3</span><b class="mono">35.90</b></div>
-          <div><span>溫區 T4</span><b class="mono">35.93</b></div>
-        </div>
-        <div class="status-flow">
-          <span>感測頭 ✓</span><i aria-hidden="true">→</i><span>擷取 ✓</span><i aria-hidden="true">→</i><span>拼接運算 ✓</span><i aria-hidden="true">→</i><span>PLC 回送 ✓</span>
-        </div>
-        <p class="status-note">作品 Demo 畫面，機台、數值、名稱皆為虛構 ・ 點開試用 →</p>
-      </a>
-    </header>
-  </div>
+      <div class="readout" aria-label="背景動畫的即時讀數">
+        <small>LINE LASER · PROFILE SCAN</small>
+        <div><span>X 位置</span><b id="rx">0.00 mm</b></div>
+        <div><span>Z 高度</span><b id="rz">0.000 mm</b></div>
+        <div><span>掃描頻率</span><b>100 Hz</b></div>
+        <div><span>狀態</span><b>量測中</b></div>
+        <small>背景是示意動畫，移動滑鼠可以控制雷射位置</small>
+        <a href="/demos/dg1-measurement/">試用 DG-1 示範量測機 →</a>
+      </div>
+    </div>
+  </header>
 
   <!-- ② 數字 -->
-  <section class="stats-band">
-    <div class="wrap-wide stats">
-      <div><b>15<small> 年</small></b><span>軟體開發資歷</span></div>
-      <div><b>{works.length}<small> 件</small></b><span>公開作品與 Demo</span></div>
-      <div><b>5<small> 類</small></b><span>接案經歷（設備、POS、LINE…）</span></div>
-      <div><b>126<small> 家</small></b><span>捐前一查收錄公益單位</span></div>
+  <div class="wrap-wide">
+    <div class="stats">
+      <div><b>15<small>年</small></b><span>軟體開發資歷</span></div>
+      <div><b>{works.length}<small>件</small></b><span>公開作品與 Demo</span></div>
+      <div><b>5<small>類</small></b><span>接案經歷（設備、POS、LINE…）</span></div>
+      <div><b>126<small>家</small></b><span>捐前一查收錄公益單位</span></div>
     </div>
-  </section>
+  </div>
 
-  <!-- ③ 能做什麼 -->
-  <section class="tint">
+  <!-- ③ 能做什麼：四個通道 -->
+  <section>
     <div class="wrap-wide">
-      <p class="eyebrow mono">SERVICES ｜ 我能做的事</p>
-      <h2 class="h2-big">四種工作，看你的需求落在哪一種</h2>
-      <div class="grid-2">
-        <div class="card card-white"><div class="num mono">01</div><h3>系統串接與流程自動化</h3><p>把你手上的服務接起來：POS 機串接、LINE 官方帳號建置與串接、SharePoint 串接、報表與資料處理腳本。目標是讓你不用再每週做同一件事。</p></div>
-        <div class="card card-white"><div class="num mono">02</div><h3>網站與小型產品</h3><p>形象網站、部落格、內部工具，到一個完整的小型產品。重視載入速度、手機體驗，和搜尋引擎能不能正確讀到你的內容。</p></div>
-        <div class="card card-white"><div class="num mono">03</div><h3>自動化設備軟體</h3><p>產線設備的控制軟體、機器視覺量測與檢測、雷射加工自動化。這是我做了 15 年的本業：從演算法、相機校正到現場驗收，整套都經手過。</p></div>
-        <div class="card card-white"><div class="num mono">04</div><h3>技術顧問與研究分析</h3><p>不一定要寫程式。幫你看方向、選工具、評估做法和成本、審視外包交付品質，或針對特定設備與技術做研究分析，例如半導體設備。</p></div>
+      <div class="head-row">
+        <div><p class="eyebrow mono">SERVICES ｜ 我能做的事</p><h2 class="h2-big">四種工作，看你的需求落在哪一種</h2></div>
+        <a class="more-link" href="/services/">看各項服務的詳細說明 →</a>
       </div>
-      <p style="margin-top:24px;"><a class="btn btn-ghost" href="/services/">看各項服務的詳細說明 →</a></p>
+      <div class="channels-grid">
+        <article class="ch"><div class="chn mono"><span>CH-01</span><span class="on">● 接案中</span></div><h3>系統串接與流程自動化</h3><p>把你手上的服務接起來：POS 機串接、LINE 官方帳號建置與串接、SharePoint 串接、報表與資料處理腳本。目標是讓你不用再每週做同一件事。</p></article>
+        <article class="ch"><div class="chn mono"><span>CH-02</span><span class="on">● 接案中</span></div><h3>網站與小型產品</h3><p>形象網站、部落格、內部工具，到一個完整的小型產品。重視載入速度、手機體驗，和搜尋引擎能不能正確讀到你的內容。</p></article>
+        <article class="ch"><div class="chn mono"><span>CH-03</span><span class="on">● 接案中</span></div><h3>自動化設備軟體</h3><p>產線設備的控制軟體、機器視覺量測與檢測、雷射加工自動化。這是我做了 15 年的本業：從演算法、相機校正到現場驗收，整套都經手過。</p></article>
+        <article class="ch"><div class="chn mono"><span>CH-04</span><span class="on">● 接案中</span></div><h3>技術顧問與研究分析</h3><p>不一定要寫程式。幫你看方向、選工具、評估做法和成本、審視外包交付品質，或針對特定設備與技術做研究分析，例如半導體設備。</p></article>
+      </div>
     </div>
   </section>
 
   <!-- ④ 作品 -->
-  <section>
+  <section style="padding-top:0">
     <div class="wrap-wide">
       <div class="head-row">
-        <div>
-          <p class="eyebrow mono">WORKS ｜ 作品與 Demo</p>
-          <h2 class="h2-big">看得到、點得進去的東西</h2>
-        </div>
+        <div><p class="eyebrow mono">WORKS ｜ 作品與 Demo</p><h2 class="h2-big">看得到、點得進去的東西</h2></div>
         <a class="more-link" href="/works/">看全部 {works.length} 件作品 →</a>
       </div>
-      <div class="grid-3">
-        {featured.map((e) => (
-          <a class="card card-link work-card" href={entryPath('works', e.id)}>
-            {'cover' in e.data && e.data.cover && (
-              <img class="card-cover" src={e.data.cover} alt={e.data.coverAlt ?? e.data.title} width="1200" height="900" loading="lazy" />
-            )}
-            {'kind' in e.data && <span class="tag">{e.data.kind}</span>}
-            <h3>{e.data.shortTitle ?? e.data.title}</h3>
-            <p>{e.data.description}</p>
-          </a>
-        ))}
+      <div class="works-grid">
+        {featured.map((e) => {
+          const thumb = BRAND_THUMBS[e.id] ?? ('cover' in e.data ? e.data.cover : undefined);
+          return (
+            <a class="w" href={entryPath('works', e.id)}>
+              <div class="w-img">
+                {thumb && <img src={thumb} alt={e.id in BRAND_THUMBS ? '' : (e.data.coverAlt ?? e.data.title)} loading="lazy" />}
+                <span class="w-kind mono">{e.id in BRAND_THUMBS ? '品牌網站 Demo' : ('kind' in e.data ? e.data.kind : '')}</span>
+              </div>
+              <div class="w-txt">
+                <h3>{e.data.shortTitle ?? e.data.title}</h3>
+                <p>{e.data.description}</p>
+                {'stack' in e.data && e.data.stack.length > 0 && <span class="w-stack mono">{e.data.stack.slice(0, 3).join(' · ')}</span>}
+              </div>
+            </a>
+          );
+        })}
       </div>
-      <div class="grid-2" style="margin-top:20px;">
-        <div class="card">
-          <h3>捐前一查</h3>
-          <p>台灣公益單位查詢平台。收錄 126 家已立案單位，逐筆查證勸募字號與財報揭露。捐款一律導向各單位官方管道，平台不經手款項。</p>
-          <p style="margin-top:14px;"><a class="btn btn-ghost" href={KINDMAP_URL}>kindmap.link →</a></p>
-        </div>
-        <div class="card">
-          <h3>完整履歷</h3>
-          <p>英文版，含各段經歷、技術清單與研究背景。機器視覺、工業自動化、資安軟體，中央大學資工碩士與太空科學碩士。</p>
-          <p style="margin-top:14px;"><a class="btn btn-ghost" href={RESUME_URL}>tedshen.github.io →</a></p>
-        </div>
+      <div class="side-links">
+        <a href={KINDMAP_URL}><strong>捐前一查</strong><span>台灣公益單位查詢平台。收錄 126 家已立案單位，逐筆查證勸募字號與財報揭露。捐款一律導向各單位官方管道，平台不經手款項。</span><em>kindmap.link →</em></a>
+        <a href={RESUME_URL}><strong>完整履歷</strong><span>英文版，含各段經歷、技術清單與研究背景。機器視覺、工業自動化、資安軟體，中央大學資工碩士與太空科學碩士。</span><em>tedshen.github.io →</em></a>
       </div>
     </div>
   </section>
 
   <!-- ⑤ 接案經歷 -->
-  <section class="tint">
-    <div class="wrap-wide split">
-      <div class="split-side">
-        <p class="eyebrow mono">EXPERIENCE ｜ 接案經歷</p>
-        <h2 class="h2-big">做過的案子</h2>
-        <p>案子的細節多半有保密約定，能講的範圍我會在第一次聯絡時說清楚。</p>
+  <section style="padding-top:0">
+    <div class="wrap-wide">
+      <div class="head-row">
+        <div><p class="eyebrow mono">EXPERIENCE ｜ 接案經歷</p><h2 class="h2-big">做過的案子</h2></div>
+        <p class="head-note">案子的細節多半有保密約定，能講的範圍我會在第一次聯絡時說清楚。</p>
       </div>
       <ul class="exp-list">
         <li><strong>自動化設備軟體</strong><span>設備控制與量測系統</span></li>
@@ -177,18 +171,18 @@ const websiteSchema = {
   </section>
 
   <!-- ⑥ 合作方式 -->
-  <section>
+  <section style="padding-top:0">
     <div class="wrap-wide">
       <p class="eyebrow mono">HOW ｜ 合作方式</p>
       <h2 class="h2-big">大小案子都談，但先講清楚</h2>
-      <div class="grid-3">
+      <div class="how-grid">
         <div class="how"><h3>單次專案</h3><p>範圍明確、有交付日期的案子，先報價再開工。</p></div>
         <div class="how"><h3>持續合作</h3><p>固定時數的維護、迭代或兼職開發。</p></div>
         <div class="how"><h3>顧問時段</h3><p>以小時計的技術諮詢，適合評估與決策階段。</p></div>
       </div>
       <p class="zone-note">
         另一條線：我同時也是財務教練。財務、資產或理財的事，入口在
-        <a href={`${GROW_URL}/`} style="color:var(--brand-dark);font-weight:600;">grow.tedshen.link</a>；軟體的事在這頁談，兩邊我都不推銷。
+        <a href={`${GROW_URL}/`} style="color:var(--read);font-weight:600;">grow.tedshen.link</a>；軟體的事在這頁談，兩邊我都不推銷。
       </p>
     </div>
   </section>
@@ -203,7 +197,7 @@ const websiteSchema = {
         </div>
         <div class="btn-row">
           <a class="btn btn-line" href={LINE_URL}>加 LINE 聊一聊 →</a>
-          <a class="btn btn-outline-dark" href={mailto}>{EMAIL}</a>
+          <a class="btn btn-ghost" href={mailto}>{EMAIL}</a>
         </div>
       </div>
     </div>
@@ -214,78 +208,155 @@ const websiteSchema = {
 </Base>
 
 <style>
-  .mono { font-family: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace; }
-  .dark-band { background: #0b1220; color: #e6edf7; }
-  .accent { color: #34d399; }
-  .top-nav { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding-top: 18px; padding-bottom: 18px; border-bottom: 1px solid #1e293b; }
-  .top-brand { color: #e6edf7; text-decoration: none; font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; gap: 10px; }
-  .top-nav ul { list-style: none; display: flex; flex-wrap: wrap; align-items: center; gap: 22px; }
-  .top-nav a { color: #cbd5e1; text-decoration: none; font-weight: 600; font-size: .95rem; }
-  .top-nav a:hover { color: #ffffff; }
-  .top-nav a.nav-line { background: var(--line); color: #052e16; padding: 10px 18px; border-radius: 999px; display: inline-flex; min-height: 44px; align-items: center; }
+  section { padding: 104px 0; }
+  .top-nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; background: rgba(13, 15, 18, .86); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+  .nav-in { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 14px; padding-bottom: 14px; flex-wrap: wrap; }
+  .top-brand { display: flex; align-items: center; gap: 10px; color: var(--text); font-weight: 900; text-decoration: none; }
+  .top-brand i { width: 10px; height: 10px; border-radius: 50%; background: var(--laser); box-shadow: 0 0 12px var(--laser); }
+  .top-nav ul { list-style: none; display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
+  .top-nav a { color: var(--muted); text-decoration: none; font-size: .94rem; }
+  .top-nav a:hover { color: var(--text); }
+  .top-nav a.nav-line { background: var(--laser); color: #160806; font-weight: 700; padding: 0 18px; min-height: 44px; display: inline-flex; align-items: center; border-radius: 2px; }
 
-  .hero2 { display: flex; flex-wrap: wrap; align-items: center; gap: 56px; padding-top: 72px; padding-bottom: 88px; }
-  .hero2-text { flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 22px; }
-  .eyebrow { font-size: .85rem; letter-spacing: .08em; font-weight: 600; color: var(--brand-dark); margin-bottom: 8px; }
-  .hero2 .eyebrow { color: #34d399; margin-bottom: 0; }
-  .hero2 h1 { font-size: clamp(2.2rem, 4.6vw, 3.6rem); line-height: 1.18; font-weight: 900; color: #e6edf7; }
-  .hero2-lead { font-size: 1.12rem; line-height: 1.8; color: #a9b8cc; }
-  .btn-row { display: flex; flex-wrap: wrap; gap: 12px; }
-  .btn-line { color: #052e16; }
-  .btn-outline-dark { border: 1.5px solid #334155; color: #e6edf7; background: transparent; }
-  .hero2-me { display: flex; align-items: center; gap: 12px; color: #a9b8cc; font-size: .92rem; }
-  .avatar-sm { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; object-position: center 20%; border: 1px solid #334155; display: block; }
+  .scan-hero { position: relative; min-height: min(90svh, 860px); display: grid; align-items: end; overflow: hidden; border-bottom: 1px solid var(--border); }
+  #scan { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .hero-in { position: relative; display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, .7fr); gap: 32px; align-items: end; padding-top: 170px; padding-bottom: 64px; }
+  .eyebrow { color: var(--laser); font-size: .74rem; letter-spacing: .14em; margin-bottom: 10px; }
+  .scan-hero h1 { font-size: clamp(2.6rem, 6.4vw, 5.4rem); line-height: 1.12; font-weight: 900; letter-spacing: .02em; }
+  .scan-hero h1 em { font-style: normal; color: var(--laser); }
+  .hero-lead { max-width: 34rem; color: #C9C4BB; margin-top: 22px; font-size: 1.05rem; }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+  .hero-me { display: flex; align-items: center; gap: 12px; margin-top: 26px; color: var(--muted); font-size: .9rem; }
+  .avatar-sm { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; object-position: center 20%; display: block; border: 1px solid var(--border); }
+  .readout { justify-self: end; width: min(100%, 300px); border: 1px solid var(--border); background: rgba(20, 23, 28, .82); padding: 16px 18px; font-family: var(--f-mono); font-size: .78rem; display: grid; gap: 6px; }
+  .readout div { display: flex; justify-content: space-between; gap: 12px; }
+  .readout b { font-weight: 500; color: var(--read); font-variant-numeric: tabular-nums; }
+  .readout small { color: var(--muted); font-size: .68rem; letter-spacing: .06em; }
+  .readout a { color: var(--read); text-decoration: none; margin-top: 4px; font-family: var(--f-body); font-size: .85rem; }
+  .readout a:hover { text-decoration: underline; }
 
-  .status-card { flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 16px; background: #111a2e; border: 1px solid #1f2b44; border-radius: 16px; padding: 22px; color: #e6edf7; text-decoration: none; transition: transform .15s ease; }
-  .status-card:hover { transform: translateY(-2px); }
-  .status-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; }
-  .status-head div { display: flex; flex-direction: column; }
-  .status-head span { font-size: .78rem; color: #94a3b8; }
-  .status-head .badge-sim { color: #fcd34d; border: 1px solid #a16207; border-radius: 999px; padding: 4px 10px; }
-  .status-ok { background: #0f2a1f; border: 1px solid #166534; border-radius: 10px; padding: 14px 16px; display: flex; align-items: center; gap: 10px; font-weight: 700; color: #86efac; }
-  .dot { width: 10px; height: 10px; border-radius: 50%; background: #34d399; display: inline-block; }
-  .status-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-  .status-grid div { background: #0b1220; border: 1px solid #1f2b44; border-radius: 10px; padding: 12px; display: flex; flex-direction: column; }
-  .status-grid span { font-size: .78rem; color: #94a3b8; }
-  .status-grid b { font-size: 1.5rem; font-weight: 500; }
-  .status-flow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: .78rem; color: #cbd5e1; }
-  .status-flow span { border: 1px solid #166534; border-radius: 6px; padding: 6px 10px; }
-  .status-flow i { color: #64748b; font-style: normal; }
-  .status-note { font-size: .78rem; color: #94a3b8; }
+  .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-bottom: 1px solid var(--border); }
+  .stats div { padding: 28px 20px; border-right: 1px solid var(--border); display: grid; gap: 2px; }
+  .stats div:last-child { border-right: 0; }
+  .stats b { font-family: var(--f-num); font-weight: 800; font-size: 3.4rem; line-height: 1; font-variant-numeric: tabular-nums; }
+  .stats b small { font-size: 1.1rem; color: var(--muted); margin-left: 6px; font-family: var(--f-body); }
+  .stats span { color: var(--muted); font-size: .86rem; }
 
-  .stats-band { padding: 36px 0; border-bottom: 1px solid var(--border); }
-  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: 24px; }
-  .stats div { display: flex; flex-direction: column; }
-  .stats b { font-size: 2.2rem; font-weight: 900; line-height: 1.2; }
-  .stats small { font-size: 1.1rem; font-weight: 700; }
-  .stats span { color: var(--muted); font-size: .95rem; }
+  .head-row { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; flex-wrap: wrap; margin-bottom: 40px; }
+  .h2-big { font-size: clamp(1.8rem, 3.4vw, 2.8rem); font-weight: 900; line-height: 1.3; margin: 0; }
+  .more-link { color: var(--read); text-decoration: none; font-weight: 600; }
+  .more-link:hover { text-decoration: underline; }
+  .head-note { max-width: 26rem; }
 
-  section { padding: 88px 0; }
-  .tint { background: var(--surface); }
-  .h2-big { font-size: clamp(1.6rem, 2.6vw, 2.25rem); font-weight: 900; margin-bottom: 32px; line-height: 1.35; }
-  .card-white { background: var(--bg); }
-  .head-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px; }
-  .more-link { color: var(--brand-dark); font-weight: 700; text-decoration: none; margin-bottom: 32px; }
-  .work-card h3 { margin-top: 6px; }
+  .channels-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .ch { background: var(--bg); padding: 34px 30px; display: grid; gap: 12px; position: relative; overflow: hidden; min-width: 0; align-content: start; }
+  .ch::after { content: ""; position: absolute; left: 0; bottom: 0; height: 2px; width: 0; background: var(--laser); box-shadow: 0 0 12px var(--laser); transition: width .5s ease; }
+  .ch:hover::after { width: 100%; }
+  .chn { display: flex; justify-content: space-between; font-size: .72rem; letter-spacing: .14em; color: var(--muted); }
+  .chn .on { color: var(--read); }
+  .ch h3 { font-size: 1.45rem; }
+  .ch p { color: #BDB8AF; }
 
-  .split { display: flex; flex-wrap: wrap; gap: 48px; }
-  .split-side { flex: 1 1 300px; min-width: 0; }
-  .split-side .h2-big { margin-bottom: 14px; }
-  .exp-list { flex: 2 1 480px; min-width: 0; list-style: none; }
-  .exp-list li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding: 18px 0; border-bottom: 1px solid var(--border); }
-  .exp-list li:last-child { border-bottom: 0; }
-  .exp-list span { color: var(--muted); }
+  .works-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .w { background: var(--surface); border: 1px solid var(--border); display: grid; grid-template-rows: auto 1fr; text-decoration: none; color: var(--text); min-width: 0; transition: border-color .2s; }
+  .w:hover { border-color: var(--laser); }
+  .w-img { aspect-ratio: 16 / 10; max-width: 100%; overflow: hidden; position: relative; background: #1b1f26; }
+  .w-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .6s ease; }
+  .w:hover .w-img img { transform: scale(1.04); }
+  .w-kind { position: absolute; left: 12px; top: 12px; font-size: .68rem; letter-spacing: .1em; background: rgba(13, 15, 18, .82); padding: 3px 8px; color: var(--text); }
+  .w-txt { padding: 20px 22px 24px; display: grid; gap: 8px; align-content: start; }
+  .w-txt h3 { font-size: 1.1rem; }
+  .w-txt p { font-size: .9rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .w-stack { font-size: .7rem; color: var(--read); letter-spacing: .04em; }
+  .side-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-top: 18px; }
+  .side-links a { border: 1px solid var(--border); padding: 22px 24px; display: grid; gap: 8px; text-decoration: none; color: var(--text); transition: border-color .2s; }
+  .side-links a:hover { border-color: var(--read); }
+  .side-links span { color: var(--muted); font-size: .92rem; }
+  .side-links em { font-style: normal; color: var(--read); font-weight: 600; font-size: .9rem; }
 
-  .how { border-top: 3px solid var(--brand-dark); padding-top: 18px; }
-  .how h3 { font-size: 1.15rem; margin-bottom: 6px; }
+  .exp-list { list-style: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-top: 1px solid var(--border); }
+  .exp-list li { padding: 22px 16px 22px 0; display: grid; gap: 4px; border-bottom: 1px solid var(--border); }
+  .exp-list span { color: var(--muted); font-size: .86rem; }
 
-  .cta-dark { background: #0b1220; color: #e6edf7; border-radius: 20px; padding: 56px 40px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 28px; }
-  .cta-dark > div:first-child { flex: 1 1 420px; min-width: 0; }
-  .cta-dark h2 { font-size: clamp(1.6rem, 2.6vw, 2.25rem); font-weight: 900; margin-bottom: 10px; }
-  .cta-dark p { color: #a9b8cc; }
-  @media (max-width: 560px) {
-    .hero2 { padding-top: 48px; padding-bottom: 64px; gap: 40px; }
-    section { padding: 64px 0; }
-    .cta-dark { padding: 40px 24px; }
+  .how-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 32px; }
+  .how { border-left: 2px solid var(--laser); padding: 6px 0 6px 20px; display: grid; gap: 8px; }
+  .how h3 { font-size: 1.15rem; }
+
+  .cta-dark { border: 1px solid var(--border); background: linear-gradient(120deg, rgba(255, 74, 46, .12), transparent 55%), var(--surface); padding: 56px 44px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 28px; align-items: center; }
+  .cta-dark h2 { font-size: clamp(1.8rem, 3vw, 2.6rem); margin-bottom: 12px; }
+  .cta-dark p { color: #C9C4BB; max-width: 40rem; }
+  .cta-dark .btn-row { margin-top: 0; }
+
+  @media (max-width: 900px) {
+    .hero-in { grid-template-columns: minmax(0, 1fr); }
+    .readout { justify-self: start; }
+    .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .stats div:nth-child(2) { border-right: 0; }
+    .stats div:nth-child(-n+2) { border-bottom: 1px solid var(--border); }
+    .works-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .exp-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .how-grid { grid-template-columns: minmax(0, 1fr); }
+    .cta-dark { grid-template-columns: minmax(0, 1fr); padding: 40px 24px; }
   }
+  @media (max-width: 640px) {
+    section { padding: 80px 0; }
+    .top-nav li:not(:last-child) { display: none; }
+    .hero-in { padding-top: 120px; padding-bottom: 40px; }
+    .channels-grid, .works-grid, .side-links { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (prefers-reduced-motion: reduce) { .ch::after, .w-img img { transition: none; } }
 </style>
+
+<script>
+  // 首屏背景：一條線雷射掃過加工件的點雲（示意動畫）。滑鼠移動時雷射跟著走。
+  const cv = document.getElementById('scan') as HTMLCanvasElement | null;
+  const ctx = cv?.getContext('2d');
+  if (cv && ctx) {
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const rx = document.getElementById('rx'), rz = document.getElementById('rz');
+    const COLS = 150, ROWS = 46;
+    let W = 0, H = 0, laser = 0.1, last = 0, target: number | null = null;
+    const zf = (u: number, v: number) =>
+      -Math.exp(-((u - 0.42) ** 2) / 0.0018) * 0.9 +
+      Math.exp(-(((u - 0.72) ** 2) / 0.004 + ((v - 0.35) ** 2) / 0.02)) * 1.2 +
+      Math.exp(-(((u - 0.18) ** 2) / 0.006 + ((v - 0.7) ** 2) / 0.03)) * 0.8 +
+      Math.sin(u * 18 + v * 4) * 0.06;
+    const pts: { u: number; v: number; z: number; seen: number }[] = [];
+    for (let j = 0; j < ROWS; j++) for (let i = 0; i < COLS; i++) { const u = i / (COLS - 1), v = j / (ROWS - 1); pts.push({ u, v, z: zf(u, v), seen: 0 }); }
+    const size = () => { const dpr = Math.min(devicePixelRatio || 1, 2); W = cv.clientWidth; H = cv.clientHeight; cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); };
+    const proj = (u: number, v: number, z: number): [number, number] => {
+      const narrow = W < 900;
+      const ox = narrow ? W * 0.04 : W * 0.3, ow = narrow ? W * 0.92 : W * 0.68;
+      const oy = narrow ? H * 0.1 : H * 0.12, oh = narrow ? H * 0.3 : H * 0.42;
+      return [ox + u * ow + v * ow * 0.12, oy + v * oh - z * oh * 0.22];
+    };
+    cv.parentElement?.addEventListener('pointermove', (e) => { const r = cv.getBoundingClientRect(); target = (e.clientX - r.left) / r.width; });
+    cv.parentElement?.addEventListener('pointerleave', () => { target = null; });
+    const frame = (t: number) => {
+      const dt = Math.min(0.05, (t - last) / 1000 || 0.016); last = t;
+      if (target !== null) laser += (target - laser) * 0.12; else if (!reduce) laser += dt * 0.12;
+      if (laser > 1.08) laser = -0.08;
+      ctx.clearRect(0, 0, W, H);
+      for (const p of pts) {
+        const d = Math.abs(p.u - laser);
+        p.seen = d < 0.006 ? 1 : Math.max(0, p.seen - dt * 0.25);
+        const [x, y] = proj(p.u, p.v, p.z);
+        if (d < 0.006) { ctx.fillStyle = '#FF4A2E'; ctx.fillRect(x - 1.2, y - 1.2, 2.6, 2.6); }
+        else if (p.seen > 0) { ctx.fillStyle = `rgba(127,224,211,${0.15 + p.seen * 0.7})`; ctx.fillRect(x - 0.8, y - 0.8, 1.6, 1.6); }
+        else { ctx.fillStyle = 'rgba(236,232,225,.10)'; ctx.fillRect(x - 0.6, y - 0.6, 1.2, 1.2); }
+      }
+      const lc = Math.min(1, Math.max(0, laser));
+      const [lx0, ly0] = proj(laser, 0, 2.2);
+      const g = ctx.createLinearGradient(lx0, 0, lx0, H);
+      g.addColorStop(0, 'rgba(255,74,46,0)'); g.addColorStop(0.25, 'rgba(255,74,46,.22)'); g.addColorStop(1, 'rgba(255,74,46,0)');
+      ctx.strokeStyle = g; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(lx0, 0); ctx.lineTo(lx0, ly0 + 40); ctx.stroke();
+      ctx.strokeStyle = '#FF4A2E'; ctx.lineWidth = 1.6; ctx.shadowColor = '#FF4A2E'; ctx.shadowBlur = 10; ctx.beginPath();
+      for (let j = 0; j <= 40; j++) { const v = j / 40; const [x, y] = proj(laser, v, zf(lc, v)); if (j) ctx.lineTo(x, y); else ctx.moveTo(x, y); }
+      ctx.stroke(); ctx.shadowBlur = 0;
+      if (rx) rx.textContent = (lc * 240).toFixed(2) + ' mm';
+      if (rz) rz.textContent = (zf(lc, 0.5) * 3.2).toFixed(3) + ' mm';
+      requestAnimationFrame(frame);
+    };
+    size(); addEventListener('resize', size); requestAnimationFrame(frame);
+  }
+</script>
