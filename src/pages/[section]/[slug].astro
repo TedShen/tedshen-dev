@@ -90,25 +90,42 @@ const schema =
     </section>
   ) : (
     <>
-      <article class="wrap prose page-head entry">
-        <p class="zone-label">{meta.label}</p>
-        <h1>{d.title}</h1>
-        <p class="entry-meta mono">
-          {section === 'works' && d.kind && <span class="on">● {d.kind}</span>}
-          <span>{d.updated ? `更新於 ${formatDate(d.updated)}` : formatDate(d.pubDate)}</span>
-          {d.tags.map((t: string) => <span>#{t}</span>)}
-        </p>
-        {section === 'works' && d.cover && (
-          <figure class="entry-cover"><img src={d.cover} alt={d.coverAlt ?? d.title} width="1200" height="900" /></figure>
-        )}
-        {section === 'works' && (d.stack?.length || d.link) && (
-          <dl class="entry-facts mono">
-            {d.stack?.length > 0 && <div><dt>STACK ／ 技術</dt><dd>{d.stack.join(' · ')}</dd></div>}
-            {d.link && <div><dt>LINK ／ 連結</dt><dd><a href={d.link}>{d.linkLabel ?? d.link} →</a></dd></div>}
-          </dl>
-        )}
-        <Content />
-        <p><a class="back-link" href={meta.path}>← 回到{meta.name}</a></p>
+      <article class="wrap-wide entry">
+        <header class={d.cover && section === 'works' ? 'entry-head has-cover' : 'entry-head'}>
+          <div class="entry-title">
+            <p class="zone-label">{meta.label}</p>
+            <h1>{d.title}</h1>
+            <p class="entry-desc">{d.description}</p>
+            <p class="entry-meta mono">
+              {section === 'works' && d.kind && <span class="on">● {d.kind}</span>}
+              <span>{d.updated ? `更新於 ${formatDate(d.updated)}` : formatDate(d.pubDate)}</span>
+              {d.tags.map((t: string) => <span>#{t}</span>)}
+            </p>
+            {section === 'works' && (d.stack?.length || d.link) && (
+              <dl class="entry-facts mono">
+                {d.stack?.length > 0 && <div><dt>STACK ／ 技術</dt><dd>{d.stack.join(' · ')}</dd></div>}
+                {d.link && <div><dt>LINK ／ 連結</dt><dd><a href={d.link}>{d.linkLabel ?? d.link} →</a></dd></div>}
+              </dl>
+            )}
+          </div>
+          {section === 'works' && d.cover && (
+            <figure class="entry-cover"><img src={d.cover} alt={d.coverAlt ?? d.title} width="1200" height="900" /></figure>
+          )}
+        </header>
+        <div class="entry-body">
+          <div class="prose">
+            <Content />
+            <p><a class="back-link" href={meta.path}>← 回到{meta.name}</a></p>
+          </div>
+          <aside class="entry-aside" aria-label="聯絡">
+            <div class="aside-card">
+              <span class="zone-label">CONTACT ／ 聯絡</span>
+              <p>{section === 'notes' ? '遇到類似的問題？' : '你的情況也類似？'}說說你現在怎麼做，我回你可行的做法。</p>
+              <a class="btn btn-line" href={LINE_URL}>加 LINE 聊一聊 →</a>
+              <a class="aside-back" href={meta.path}>← 回到{meta.name}</a>
+            </div>
+          </aside>
+        </div>
       </article>
       <ContactCTA subject={`洽詢：${d.shortTitle ?? d.title}`} />
     </>
