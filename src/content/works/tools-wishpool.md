@@ -1,7 +1,7 @@
 ---
-title: 軟體工具許願池：檔案不上傳的三語 PDF 工具站
+title: 軟體工具許願池：檔案不上傳的三語 PDF 與圖片工具站
 shortTitle: 軟體工具許願池 tools.tedshen.link
-description: 在瀏覽器裡完成的 PDF 工具站，中英日三語，檔案不上傳。PDF 合併、轉 Word／文字／圖片都在使用者裝置上處理；許願頁讓人提出想要的工具與預算，即時寄信通知。全部跑在 Cloudflare 免費額度內。
+description: 在瀏覽器裡完成的 PDF 與圖片工具站，中英日三語，檔案不上傳。PDF 合併、分割、轉檔，圖片壓縮與 QR code 都在使用者裝置上處理；許願頁讓人提出想要的工具與預算，即時寄信通知。
 pubDate: 2026-10-15
 tags: [網站架設, 瀏覽器端處理, Cloudflare, 多語系]
 order: 10
@@ -17,7 +17,7 @@ linkLabel: tools.tedshen.link
 
 ## 做了什麼
 
-- **PDF 工具**：PDF 合併；PDF 轉 Word、純文字、JPG、PNG。之後陸續加入 PDF 分割、圖片壓縮／轉檔、QR code。
+- **五個工具**：PDF 合併、PDF 分割、PDF 轉 Word／純文字／JPG／PNG、圖片壓縮／轉檔、QR code 產生。
 - **中英日三語**：中文在根目錄，英文 `/en/`、日文 `/ja/`，路徑一一對應；三種語言共用同一支程式，提示文字依頁面語言切換。
 - **許願頁**：使用者寫下想要的工具和預算，資料存進資料庫，同時寄通知信給我，直接回信就能聯絡許願的人。
 - **每個工具配一篇指南**：說明不同情境下該用什麼方法，包含其他工具的比較。
@@ -31,6 +31,7 @@ linkLabel: tools.tedshen.link
 | 通知信 | Cloudflare Email Routing |
 | PDF 合併 | pdf-lib，放在站內，不從外部 CDN 載入 |
 | PDF 轉檔 | pdf.js（legacy 版，舊 iPhone 也能跑）＋ fflate 打包 .docx 與 .zip |
+| QR code | qrcode-generator，放在站內 |
 | 測試 | Playwright（WebKit），貼近 iPhone Safari |
 
 ## 設計上的考量
