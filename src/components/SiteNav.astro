@@ -12,11 +12,13 @@ const links = [
 ];
 ---
 
-<nav class="site-nav wrap-wide" aria-label="主要導覽">
-  <a class="site-nav-brand" href="/">Ted ｜ 軟體開發</a>
+<nav class="site-nav" aria-label="主要導覽">
+  <div class="wrap-wide site-nav-in">
+  <a class="site-nav-brand" href="/"><i aria-hidden="true"></i>Ted ｜ 軟體開發</a>
   <ul>
     {links.slice(1).map((l) => (
       <li><a href={l.path} aria-current={current === l.path ? 'page' : undefined}>{l.name}</a></li>
     ))}
   </ul>
+  </div>
 </nav>
