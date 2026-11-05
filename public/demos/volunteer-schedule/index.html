@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>晴光陪伴協會｜志工排班系統 Demo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: 公開官網（專線橫條＋首屏＋快速入口＋消息／登入側欄）→ 登入後切換成排班系統（月曆＋當日時段面板） */
+:root{
+  --bg:#F3F6F4; --paper:#FFFFFF; --ink:#18302A; --muted:#5A6B66; --line:#D5E0DB;
+  --pine:#1E5A4A; --pine-soft:#E2EEE9; --dawn:#F0B23E; --dawn-ink:#3A2600;
+  --ok:#2E7D4F; --ok-soft:#E3F2E8; --wait:#A86A00; --wait-soft:#FFF2D6; --no:#B23A32; --no-soft:#FBE6E3;
+  --f-display:"Huninn","jf-openhuninn","PingFang TC","Microsoft JhengHei",sans-serif;
+  --f-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --shadow:0 8px 24px rgba(24,48,42,.08);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0F1A17; --paper:#16241F; --ink:#E4EEEA; --muted:#9DB0AA; --line:#2A3D37;
+  --pine:#7CC7B0; --pine-soft:#1C3A31; --dawn:#F0B23E; --dawn-ink:#2A1B00;
+  --ok:#6FCB94; --ok-soft:#183526; --wait:#F0B23E; --wait-soft:#3A2C10; --no:#F08A80; --no-soft:#3C1E1B;
+  --shadow:0 8px 24px rgba(0,0,0,.35); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1A17; --paper:#16241F; --ink:#E4EEEA; --muted:#9DB0AA; --line:#2A3D37;
+  --pine:#7CC7B0; --pine-soft:#1C3A31; --dawn:#F0B23E; --dawn-ink:#2A1B00;
+  --ok:#6FCB94; --ok-soft:#183526; --wait:#F0B23E; --wait-soft:#3A2C10; --no:#F08A80; --no-soft:#3C1E1B;
+  --shadow:0 8px 24px rgba(0,0,0,.35); color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.75}
+a{color:var(--pine)}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--dawn);outline-offset:2px}
+.wrap{max-width:1160px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;line-height:1.3;text-wrap:balance;margin:0}
+p{margin:0}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:42px;padding:0 18px;border-radius:999px;border:1px solid transparent;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn-main{background:var(--pine);color:var(--paper)}
+.btn-sun{background:var(--dawn);color:var(--dawn-ink)}
+.btn-ghost{background:transparent;border-color:var(--line);color:var(--ink)}
+.btn-sm{min-height:34px;padding:0 12px;font-size:.88rem}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.demo-tag{display:inline-block;font-size:.72rem;padding:1px 8px;border-radius:999px;background:var(--wait-soft);color:var(--wait);font-weight:700;letter-spacing:.04em}
+
+/* 專線橫條 */
+.hotline{background:var(--pine);color:#fff}
+.hotline .wrap{display:flex;flex-wrap:wrap;gap:4px 18px;align-items:center;justify-content:space-between;padding-block:8px;font-size:.88rem}
+.hotline b{font-family:var(--f-mono);font-size:1.05rem;letter-spacing:.06em;color:var(--dawn)}
+/* 頁首 */
+header.site{background:var(--paper);border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);z-index:20}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--paper)}
+header.site .wrap{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding-block:12px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+.logo-mark{width:38px;height:38px;flex:none}
+.logo strong{font-family:var(--f-display);font-size:1.35rem;font-weight:400;display:block;line-height:1.1}
+.logo small{color:var(--muted);font-size:.72rem;letter-spacing:.12em}
+nav.main ul{display:flex;flex-wrap:wrap;gap:2px 4px;list-style:none;margin:0;padding:0}
+nav.main a{display:block;padding:6px 10px;border-radius:8px;text-decoration:none;color:var(--ink);font-weight:500}
+nav.main a:hover{background:var(--pine-soft)}
+.who{display:flex;align-items:center;gap:10px;font-size:.9rem}
+.who .role{font-size:.72rem;padding:2px 8px;border-radius:999px;background:var(--pine-soft);color:var(--pine);font-weight:700}
+
+/* 首屏 */
+.hero{padding-block:44px 36px}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:36px;align-items:center}
+.hero h1{font-size:clamp(2.1rem,5vw,3.4rem);color:var(--pine)}
+.hero p.lead{font-size:1.08rem;color:var(--muted);margin:14px 0 22px;max-width:34em}
+.hero .acts{display:flex;flex-wrap:wrap;gap:10px}
+.hero-art{width:100%;max-width:100%;height:auto;display:block}
+/* 快速入口 */
+.quick{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:40px}
+.quick a{display:grid;gap:4px;padding:16px 18px;background:var(--paper);border:1px solid var(--line);border-radius:14px;text-decoration:none;color:var(--ink)}
+.quick a:hover{border-color:var(--pine)}
+.quick b{font-family:var(--f-display);font-weight:400;font-size:1.12rem;color:var(--pine)}
+.quick span{font-size:.86rem;color:var(--muted)}
+/* 主內容＋側欄 */
+.cols{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:28px;align-items:start;padding-bottom:48px}
+.sec{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin-bottom:20px}
+.sec-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:10px}
+.sec-head h2{font-size:1.35rem}
+.sec-head a{font-size:.86rem}
+.list{list-style:none;margin:0;padding:0}
+.list li{display:grid;grid-template-columns:96px minmax(0,1fr);gap:12px;padding:10px 0;border-top:1px dashed var(--line)}
+.list li:first-child{border-top:0}
+.list time{color:var(--muted);font-size:.85rem}
+.list .cat{display:inline-block;font-size:.72rem;padding:0 7px;border-radius:6px;background:var(--pine-soft);color:var(--pine);margin-right:6px;font-weight:700}
+.programs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.programs div{padding:14px;border-radius:12px;background:var(--pine-soft)}
+.programs h3{font-size:1.05rem;color:var(--pine);margin-bottom:4px}
+.programs p{font-size:.86rem;color:var(--muted)}
+/* 登入卡 */
+.login{position:sticky;top:96px}
+.login h2{font-size:1.25rem;margin-bottom:12px}
+.field{display:grid;gap:4px;margin-bottom:10px}
+.field label{font-size:.85rem;font-weight:700}
+.field input,.field select{min-height:42px;border:1px solid var(--line);border-radius:10px;padding:0 12px;background:var(--bg)}
+.err{color:var(--no);font-size:.86rem;min-height:1.2em;margin-bottom:6px}
+.demo-acc{margin-top:14px;padding-top:14px;border-top:1px dashed var(--line);display:grid;gap:8px}
+.demo-acc p{font-size:.82rem;color:var(--muted)}
+.demo-acc .row{display:flex;flex-wrap:wrap;gap:6px}
+footer.site{background:var(--paper);border-top:1px solid var(--line);padding-block:24px;font-size:.85rem;color:var(--muted)}
+footer.site .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px 24px}
+
+/* ===== 排班系統 ===== */
+.app{padding-block:26px 48px}
+.app-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:14px;margin-bottom:18px}
+.app-top h1{font-size:1.8rem}
+.app-top p{color:var(--muted);font-size:.9rem}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:18px}
+.stat{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:12px 16px}
+.stat span{font-size:.8rem;color:var(--muted);display:block}
+.stat b{font-family:var(--f-mono);font-size:1.6rem;font-weight:500}
+.rules{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.rules span{font-size:.82rem;padding:4px 10px;border-radius:999px;background:var(--paper);border:1px solid var(--line)}
+.rules b{color:var(--pine)}
+.board{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:20px;align-items:start}
+.cal{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:16px}
+.cal-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
+.cal-head h2{font-size:1.3rem}
+.cal-head .nav{display:flex;gap:6px}
+.grid7{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.dow{text-align:center;font-size:.78rem;color:var(--muted);font-weight:700;padding-bottom:2px}
+.day{min-height:96px;border:1px solid var(--line);border-radius:10px;padding:6px;background:var(--bg);text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:4px;min-width:0}
+.day:hover{border-color:var(--pine)}
+.day.out{opacity:.38}
+.day.past{background:transparent}
+.day.sel{border:2px solid var(--pine);padding:5px;background:var(--paper)}
+.day.today .dn{background:var(--pine);color:var(--paper);border-radius:999px;padding:0 7px}
+.dn{font-family:var(--f-mono);font-size:.85rem;align-self:flex-start}
+.slots{display:grid;gap:3px}
+.sl{display:flex;align-items:center;gap:4px;font-size:.68rem;color:var(--muted);line-height:1}
+.sl i{width:7px;height:7px;border-radius:50%;border:1.5px solid var(--line);flex:none}
+.sl i.a{background:var(--ok);border-color:var(--ok)}
+.sl i.p{border-color:var(--wait);background:var(--wait-soft)}
+.sl.mine{color:var(--ink);font-weight:700}
+.sl.mine::after{content:"我";font-size:.62rem;background:var(--dawn);color:var(--dawn-ink);border-radius:4px;padding:1px 3px;margin-left:auto}
+.sl.mine.mp::after{content:"審";background:var(--wait-soft);color:var(--wait)}
+.legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;font-size:.78rem;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--line);display:inline-block}
+.legend i.a{background:var(--ok);border-color:var(--ok)}
+.legend i.p{border-color:var(--wait);background:var(--wait-soft)}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:18px;position:sticky;top:96px}
+.panel h2{font-size:1.25rem}
+.panel .sub{color:var(--muted);font-size:.85rem;margin-bottom:12px}
+.slot{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
+.slot-h{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.slot-h b{font-size:1rem}
+.slot-h .cap{font-family:var(--f-mono);font-size:.85rem;color:var(--muted)}
+.slot-h .cap.full{color:var(--no)}
+.ppl{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}
+.pill{font-size:.78rem;padding:2px 9px;border-radius:999px;font-weight:700;white-space:nowrap}
+.pill.a{background:var(--ok-soft);color:var(--ok)}
+.pill.p{background:var(--wait-soft);color:var(--wait)}
+.pill.r{background:var(--no-soft);color:var(--no)}
+.pill.me{outline:2px solid var(--dawn)}
+.empty{font-size:.8rem;color:var(--muted)}
+.why{font-size:.8rem;color:var(--no);margin-top:6px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:.9rem;z-index:50;max-width:calc(100% - 32px);box-shadow:var(--shadow)}
+/* 我的班表／審核清單 */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:.78rem;color:var(--muted);font-weight:700}
+td .acts{display:flex;gap:6px;flex-wrap:wrap}
+.tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.tabs button{border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:6px 14px;cursor:pointer;font-weight:700}
+.tabs button[aria-selected="true"]{background:var(--pine);color:var(--paper);border-color:var(--pine)}
+.note{font-size:.8rem;color:var(--muted);margin-top:10px}
+
+@media (max-width:960px){
+  .hero .wrap,.cols,.board{grid-template-columns:minmax(0,1fr)}
+  .login,.panel{position:static}
+  .quick,.stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .programs{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:560px){
+  .day{min-height:62px;padding:4px}
+  .sl{gap:2px}
+  .sl span{display:none}
+  .sl i{width:6px;height:6px;border-width:1px}
+  .slots{gap:2px}
+  .sl.mine::after{display:none}
+  .sl.mine i{box-shadow:0 0 0 2px var(--dawn)}
+  .grid7{gap:3px}
+  .list li{grid-template-columns:minmax(0,1fr);gap:0}
+  nav.main{width:100%}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.demo-badge{position:fixed;z-index:40;left:max(16px,env(safe-area-inset-left,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));font-size:.78rem;background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:99px;text-decoration:none;max-width:calc(100% - 32px)}
+</style>
+</head>
+<body>
+<div class="hotline"><div class="wrap">
+  <span>情緒低落、需要人陪你說說話 ・ 24 小時陪伴專線 <b>0800-000-000</b> <span class="demo-tag">示範號碼</span></span>
+  <span>協會電話 02-0000-0000 ・ 週一至週五 09:00–18:00</span>
+</div></div>
+
+<header class="site"><div class="wrap">
+  <a class="logo" href="#home" aria-label="晴光陪伴協會首頁">
+    <svg class="logo-mark" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="24" r="10" fill="var(--dawn)"/><path d="M4 26h32" stroke="var(--pine)" stroke-width="3" stroke-linecap="round"/><path d="M20 4v5M8.5 9.5l3.4 3.4M31.5 9.5l-3.4 3.4" stroke="var(--dawn)" stroke-width="3" stroke-linecap="round"/><path d="M6 32h28" stroke="var(--pine)" stroke-width="3" stroke-linecap="round" opacity=".5"/></svg>
+    <span><strong>晴光陪伴協會</strong><small>QINGGUANG ・ 示範網站</small></span>
+  </a>
+  <nav class="main" id="mainNav" aria-label="主要導覽"></nav>
+  <div class="who" id="who"></div>
+</div></header>
+
+<main id="view"></main>
+
+<footer class="site"><div class="wrap">
+  <span>© 晴光陪伴協會（虛構的示範組織）・ 地址、電話、專線號碼皆為示範用</span>
+  <span>這是排班系統 Demo：資料只存在你這台瀏覽器，按「重設示範資料」可回到初始狀態。</span>
+</div></footer>
+<div class="toast" id="toast" hidden role="status"></div>
+
+<script>
+(function(){
+/* ---------- 基本設定 ---------- */
+const SLOTS=[{k:'早班',t:'08:00–12:00'},{k:'午班',t:'12:00–16:00'},{k:'晚班',t:'16:00–20:00'},{k:'夜班',t:'20:00–24:00'}];
+const CAP=3, MAX_RUN=2, KEY='qg-schedule-v1';
+const USERS=[
+  {id:'S001',name:'黃美玲',role:'admin',title:'督導'},
+  {id:'V023',name:'林曉晴',role:'vol'},{id:'V031',name:'陳以安',role:'vol'},
+  {id:'V008',name:'張家豪',role:'vol'},{id:'V012',name:'李佩珊',role:'vol'},
+  {id:'V015',name:'吳承恩',role:'vol'},{id:'V019',name:'蔡宜蓁',role:'vol'},
+  {id:'V027',name:'鄭子維',role:'vol'},{id:'V033',name:'許雅婷',role:'vol'},
+  {id:'V036',name:'周冠宇',role:'vol'},{id:'V041',name:'謝欣妤',role:'vol'}
+];
+const U=Object.fromEntries(USERS.map(u=>[u.id,u]));
+const pad=n=>String(n).padStart(2,'0');
+const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const fromIso=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+const TODAY=iso(new Date());
+const fmt=s=>{const d=fromIso(s);return (d.getMonth()+1)+'/'+d.getDate()+'（'+'日一二三四五六'[d.getDay()]+'）'};
+
+/* ---------- 資料 ---------- */
+function seed(){
+  const out=[];let id=1;const vols=USERS.filter(u=>u.role==='vol');
+  const base=new Date();base.setDate(base.getDate()-10);
+  let r=7;const rnd=()=>{r=(r*9301+49297)%233280;return r/233280};
+  for(let i=0;i<40;i++){
+    const d=new Date(base);d.setDate(base.getDate()+i);const ds=iso(d);
+    for(let s=0;s<4;s++){
+      const n=Math.floor(rnd()*4); // 0~3 人
+      const pool=[...vols].sort(()=>rnd()-.5);
+      for(let k=0;k<n;k++){
+        const v=pool[k];
+        const st= ds<TODAY ? 'approved' : (rnd()<.85?'approved':'pending');
+        const cand={id:id,vid:v.id,date:ds,slot:s,status:st};
+        if(v.id==='V023'||v.id==='V031'){ if(rnd()<.55) continue; }
+        if(check(out,v.id,ds,s,null,true).ok){out.push(cand);id++;}
+      }
+    }
+  }
+  return {shifts:out,next:id};
+}
+let db;
+function load(){try{const j=JSON.parse(localStorage.getItem(KEY));if(j&&j.shifts)return j}catch(e){}return seed()}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}}
+
+/* ---------- 規則 ---------- */
+const live=s=>s.status==='approved'||s.status==='pending';
+function inSlot(list,date,slot){return list.filter(s=>s.date===date&&s.slot===slot&&live(s))}
+function runLen(list,vid,date,slot){ // 加入這一班後，同一天連續的班數
+  const mine=new Set(list.filter(s=>s.vid===vid&&s.date===date&&live(s)).map(s=>s.slot));mine.add(slot);
+  let a=slot,b=slot;while(mine.has(a-1))a--;while(mine.has(b+1))b++;return b-a+1;
+}
+function check(list,vid,date,slot,ignoreId,allowPast){
+  const L=ignoreId?list.filter(s=>s.id!==ignoreId):list;
+  if(date<TODAY&&!allowPast) return {ok:false,why:'已經過去的日期不能排班'};
+  if(L.some(s=>s.vid===vid&&s.date===date&&s.slot===slot&&live(s))) return {ok:false,why:'你已經申請過這個時段'};
+  if(inSlot(L,date,slot).length>=CAP) return {ok:false,why:`這個時段已滿 ${CAP} 人`};
+  if(runLen(L,vid,date,slot)>MAX_RUN) return {ok:false,why:`同一人最多連續 ${MAX_RUN} 班，這樣會變成連續 ${runLen(L,vid,date,slot)} 班`};
+  return {ok:true};
+}
+
+db=load();
+let me=null; try{me=sessionStorage.getItem('qg-me')}catch(e){}
+if(me&&!U[me]) me=null;
+
+/* ---------- 共用 ---------- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let toastT;function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,2600)}
+let view={month:null,sel:TODAY,tab:'pending'};
+{const d=new Date();view.month=new Date(d.getFullYear(),d.getMonth(),1)}
+
+function renderChrome(){
+  const u=me&&U[me];
+  const links=u?[['#'+(u.role==='admin'?'admin':'portal'),'排班系統'],['#home','回官網首頁']]
+    :[['#news','最新消息'],['#about','關於我們'],['#programs','服務方案'],['#join','志工招募'],['#donate','捐款支持'],['#login','志工登入']];
+  $('#mainNav').innerHTML='<ul>'+links.map(([h,t])=>`<li><a href="${h}">${t}</a></li>`).join('')+'</ul>';
+  $('#who').innerHTML=u?`<span class="role">${u.role==='admin'?'督導':'志工'}</span><span>${esc(u.name)}</span><button class="btn btn-ghost btn-sm" id="logout">登出</button>`:'';
+  if(u) $('#logout').onclick=()=>{me=null;try{sessionStorage.removeItem('qg-me')}catch(e){}location.hash='#home';route();toast('已登出')};
+}
+
+/* ---------- 官網首頁 ---------- */
+function home(){
+  return `
+<section class="hero"><div class="wrap">
+  <div>
+    <h1>你說，我們聽。<br>每通電話都有人在。</h1>
+    <p class="lead">晴光陪伴協會由受過訓練的志工輪班接聽陪伴專線，全年無休。我們也走進學校與社區，陪大家學會照顧自己的情緒。</p>
+    <div class="acts"><a class="btn btn-sun" href="#join">成為陪伴志工</a><a class="btn btn-ghost" href="#donate">捐款支持專線</a></div>
+  </div>
+  <svg class="hero-art" viewBox="0 0 480 300" role="img" aria-label="地平線上的晨光與兩個人並肩坐著">
+    <rect width="480" height="300" rx="24" fill="var(--pine-soft)"/>
+    <circle cx="300" cy="196" r="84" fill="var(--dawn)" opacity=".9"/>
+    <g stroke="var(--dawn)" stroke-width="6" stroke-linecap="round" opacity=".7"><path d="M300 74v-30"/><path d="M220 106l-20-20"/><path d="M380 106l20-20"/></g>
+    <rect y="196" width="480" height="104" fill="var(--pine)"/>
+    <path d="M0 214c80-14 160-14 240 0s160 14 240 0" stroke="var(--pine-soft)" stroke-width="3" fill="none" opacity=".5"/>
+    <g fill="var(--paper)"><circle cx="128" cy="150" r="15"/><path d="M106 198c0-24 10-36 22-36s22 12 22 36z"/><circle cx="176" cy="156" r="13"/><path d="M157 198c0-20 8-30 19-30s19 10 19 30z"/></g>
+    <path d="M150 178q13-10 26-2" stroke="var(--dawn)" stroke-width="4" fill="none" stroke-linecap="round"/>
+  </svg>
+</div></section>
+<div class="wrap">
+  <div class="quick">
+    <a href="#programs"><b>陪伴專線</b><span>24 小時，志工輪班接聽</span></a>
+    <a href="#join"><b>志工招募</b><span>2027 春季培訓報名中</span></a>
+    <a href="#donate"><b>捐款支持</b><span>每月 300 元撐起一個班</span></a>
+    <a href="#news"><b>講座活動</b><span>校園、社區情緒健康課</span></a>
+  </div>
+  <div class="cols">
+    <div>
+      <section class="sec" id="news">
+        <div class="sec-head"><h2>最新消息</h2><a href="#news">更多消息</a></div>
+        <ul class="list">
+          <li><time class="mono">2026-11-02</time><p><span class="cat">志工</span>2027 春季陪伴志工培訓開放報名，共 12 堂課＋4 次實習</p></li>
+          <li><time class="mono">2026-10-28</time><p><span class="cat">講座</span>「睡不好也沒關係？」社區情緒健康講座，11/22 於板橋活動中心</p></li>
+          <li><time class="mono">2026-10-15</time><p><span class="cat">公告</span>11 月夜班人力不足，歡迎資深志工透過排班系統加班</p></li>
+          <li><time class="mono">2026-10-03</time><p><span class="cat">刊物</span>《晴光通訊》2026 秋季號出刊</p></li>
+        </ul>
+      </section>
+      <section class="sec" id="programs">
+        <div class="sec-head"><h2>服務方案</h2></div>
+        <div class="programs">
+          <div><h3>陪伴專線</h3><p>受訓志工 24 小時輪班接聽，傾聽、陪伴，必要時協助轉介。</p></div>
+          <div><h3>長者關懷</h3><p>定期電話問安獨居長輩，留意情緒變化。</p></div>
+          <div><h3>校園講座</h3><p>帶國高中生認識情緒、學會求助與互相支持。</p></div>
+        </div>
+      </section>
+      <section class="sec" id="join">
+        <div class="sec-head"><h2>成為陪伴志工</h2></div>
+        <p>年滿 20 歲、每月可排 4 班以上即可報名。完成培訓與實習後，就能用志工帳號登入排班系統，自己挑日期和時段。</p>
+      </section>
+      <section class="sec" id="about">
+        <div class="sec-head"><h2>關於我們</h2></div>
+        <p>晴光陪伴協會成立於 2009 年，目前有 180 位受訓志工，一年接聽約 4 萬通電話。每一班至少兩位志工在線，由督導排班與審核。</p>
+      </section>
+      <section class="sec" id="donate">
+        <div class="sec-head"><h2>捐款支持</h2></div>
+        <p>專線電話費、志工培訓與督導都靠大家支持。每月 300 元，就能撐起專線一個時段的電話費。</p>
+        <p class="note">示範網站，沒有實際的捐款功能。</p>
+      </section>
+    </div>
+    <aside class="sec login" id="loginBox">${loginForm()}</aside>
+  </div>
+</div>`;
+}
+function loginForm(){
+  return `<h2>志工登入</h2>
+  <form id="loginForm" novalidate>
+    <div class="field"><label for="acc">志工編號</label><input id="acc" autocomplete="username" placeholder="例如 V023"></div>
+    <div class="field"><label for="pw">密碼</label><input id="pw" type="password" autocomplete="current-password" placeholder="示範密碼：demo"></div>
+    <p class="err" id="loginErr"></p>
+    <button class="btn btn-main" style="width:100%">登入排班系統</button>
+  </form>
+  <div class="demo-acc"><p><span class="demo-tag">示範帳號</span> 點一下直接登入</p>
+    <div class="row">
+      <button class="btn btn-ghost btn-sm" data-quick="V023">志工 林曉晴</button>
+      <button class="btn btn-ghost btn-sm" data-quick="V031">志工 陳以安</button>
+      <button class="btn btn-ghost btn-sm" data-quick="S001">督導 黃美玲</button>
+    </div></div>`;
+}
+function bindLogin(){
+  const f=$('#loginForm');if(!f)return;
+  f.onsubmit=e=>{e.preventDefault();const a=$('#acc').value.trim().toUpperCase(),p=$('#pw').value;
+    if(!a||!p){$('#loginErr').textContent='請輸入志工編號和密碼。';return}
+    if(!U[a]||p!=='demo'){$('#loginErr').textContent='編號或密碼不正確。示範帳號的密碼是 demo。';return}
+    doLogin(a)};
+  document.querySelectorAll('[data-quick]').forEach(b=>b.onclick=()=>doLogin(b.dataset.quick));
+}
+function doLogin(id){me=id;try{sessionStorage.setItem('qg-me',id)}catch(e){}
+  location.hash=U[id].role==='admin'?'#admin':'#portal';route();toast('歡迎，'+U[id].name)}
+
+/* ---------- 月曆 ---------- */
+function calendar(){
+  const m=view.month,y=m.getFullYear(),mo=m.getMonth();
+  const start=new Date(y,mo,1);start.setDate(1-((start.getDay()+6)%7));
+  let cells='';
+  for(let i=0;i<42;i++){
+    const d=new Date(start);d.setDate(start.getDate()+i);const ds=iso(d);
+    if(i===35&&d.getMonth()!==mo)break;
+    const cls=['day'];if(d.getMonth()!==mo)cls.push('out');if(ds<TODAY)cls.push('past');if(ds===TODAY)cls.push('today');if(ds===view.sel)cls.push('sel');
+    const rows=SLOTS.map((S,si)=>{
+      const L=inSlot(db.shifts,ds,si);
+      const dots=[0,1,2].map(k=>`<i class="${L[k]?(L[k].status==='approved'?'a':'p'):''}"></i>`).join('');
+      const mine=me&&U[me].role==='vol'&&L.find(s=>s.vid===me);
+      return `<div class="sl${mine?' mine'+(mine.status==='pending'?' mp':''):''}" title="${S.k} ${L.length}/${CAP}"><span>${S.k[0]}</span>${dots}</div>`;
+    }).join('');
+    cells+=`<button class="${cls.join(' ')}" data-day="${ds}" aria-label="${fmt(ds)}"><span class="dn">${d.getDate()}</span><div class="slots">${rows}</div></button>`;
+  }
+  return `<div class="cal">
+    <div class="cal-head"><h2>${y} 年 ${mo+1} 月</h2>
+      <div class="nav"><button class="btn btn-ghost btn-sm" data-mv="-1" aria-label="上個月">‹ 上月</button><button class="btn btn-ghost btn-sm" data-mv="0">本月</button><button class="btn btn-ghost btn-sm" data-mv="1" aria-label="下個月">下月 ›</button></div></div>
+    <div class="grid7">${'一二三四五六日'.split('').map(c=>`<div class="dow">${c}</div>`).join('')}${cells}</div>
+    <div class="legend"><span><i class="a"></i>已核准</span><span><i class="p"></i>待審核</span><span><i></i>空位</span><span>每格三個點＝每個時段最多 ${CAP} 人</span></div>
+  </div>`;
+}
+function bindCal(){
+  document.querySelectorAll('[data-day]').forEach(b=>b.onclick=()=>{view.sel=b.dataset.day;const d=fromIso(view.sel);
+    if(d.getMonth()!==view.month.getMonth())view.month=new Date(d.getFullYear(),d.getMonth(),1);route();
+    if(innerWidth<961){const p=$('.panel');p&&p.scrollIntoView({behavior:'smooth',block:'start'})}});
+  document.querySelectorAll('[data-mv]').forEach(b=>b.onclick=()=>{const v=+b.dataset.mv;
+    if(v===0){const d=new Date();view.month=new Date(d.getFullYear(),d.getMonth(),1);view.sel=TODAY}
+    else view.month=new Date(view.month.getFullYear(),view.month.getMonth()+v,1);route()});
+}
+
+/* ---------- 志工端 ---------- */
+function portal(){
+  const mine=db.shifts.filter(s=>s.vid===me).sort((a,b)=>(a.date+a.slot).localeCompare(b.date+b.slot));
+  const up=mine.filter(s=>s.date>=TODAY&&live(s));
+  const monthKey=iso(view.month).slice(0,7);
+  const st={a:mine.filter(s=>s.status==='approved'&&s.date.startsWith(monthKey)).length,p:mine.filter(s=>s.status==='pending').length,
+    r:mine.filter(s=>s.status==='rejected').length,n:up.filter(s=>s.status==='approved')[0]};
+  const day=view.sel, past=day<TODAY;
+  const slotHtml=SLOTS.map((S,si)=>{
+    const L=inSlot(db.shifts,day,si);const my=db.shifts.find(s=>s.vid===me&&s.date===day&&s.slot===si&&live(s));
+    const c=check(db.shifts,me,day,si);
+    const ppl=L.length?L.map(s=>`<span class="pill ${s.status==='approved'?'a':'p'}${s.vid===me?' me':''}">${esc(U[s.vid].name)}${s.status==='pending'?'・待審':''}</span>`).join(''):'<span class="empty">還沒有人排</span>';
+    let act='';
+    if(my) act=my.status==='pending'?`<button class="btn btn-ghost btn-sm" data-cancel="${my.id}">取消申請</button>`:`<span class="empty">已核准，要異動請聯絡督導</span>`;
+    else act=`<button class="btn btn-main btn-sm" data-apply="${si}" ${c.ok?'':'disabled'}>申請這一班</button>${c.ok?'':`<p class="why">${esc(c.why)}</p>`}`;
+    return `<div class="slot"><div class="slot-h"><b>${S.k} <span class="mono" style="font-weight:400;font-size:.82rem;color:var(--muted)">${S.t}</span></b><span class="cap mono${L.length>=CAP?' full':''}">${L.length}/${CAP}</span></div><div class="ppl">${ppl}</div>${past?'':act}</div>`;
+  }).join('');
+  const rows=mine.slice().reverse().slice(0,30).map(s=>`<tr><td class="mono">${s.date}</td><td>${SLOTS[s.slot].k} <span class="mono" style="color:var(--muted)">${SLOTS[s.slot].t}</span></td>
+    <td><span class="pill ${s.status==='approved'?'a':s.status==='pending'?'p':'r'}">${s.status==='approved'?'已核准':s.status==='pending'?'待審核':'未通過'}</span>${s.note?`<span class="empty">　${esc(s.note)}</span>`:''}</td>
+    <td>${s.status==='pending'?`<button class="btn btn-ghost btn-sm" data-cancel="${s.id}">取消</button>`:''}</td></tr>`).join('');
+  return `<div class="wrap app">
+  <div class="app-top"><div><h1>我的排班</h1><p>${esc(U[me].name)}（${me}）・ 點月曆上的日期，在右邊選時段申請，送出後等督導審核。</p></div>
+    <button class="btn btn-ghost btn-sm" id="reset">重設示範資料</button></div>
+  <div class="stats">
+    <div class="stat"><span>本月已核准</span><b>${st.a}</b> 班</div>
+    <div class="stat"><span>待審核</span><b>${st.p}</b> 班</div>
+    <div class="stat"><span>未通過</span><b>${st.r}</b> 班</div>
+    <div class="stat"><span>下一班</span><b style="font-size:1rem">${st.n?fmt(st.n.date)+' '+SLOTS[st.n.slot].k:'尚無'}</b></div>
+  </div>
+  <div class="rules"><span>每個時段最多 <b>${CAP} 人</b></span><span>同一人最多連續 <b>${MAX_RUN} 班</b>（同一天相鄰時段）</span><span>待審核也會先佔名額</span></div>
+  <div class="board">${calendar()}
+    <aside class="panel" aria-live="polite"><h2>${fmt(day)}</h2><p class="sub">${past?'已經過去的日期，只能查看。':'選一個時段申請，督導核准後才算排上。'}</p>${slotHtml}</aside>
+  </div>
+  <section class="sec" style="margin-top:20px"><div class="sec-head"><h2>申請紀錄</h2><span class="empty">最近 30 筆</span></div>
+    <div class="tbl-wrap"><table><thead><tr><th>日期</th><th>時段</th><th>狀態</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="4" class="empty">還沒有申請紀錄，從月曆挑一天開始。</td></tr>'}</tbody></table></div></section>
+</div>`;
+}
+function bindPortal(){
+  bindCal();
+  document.querySelectorAll('[data-apply]').forEach(b=>b.onclick=()=>{const si=+b.dataset.apply;const c=check(db.shifts,me,view.sel,si);
+    if(!c.ok){toast(c.why);return}
+    db.shifts.push({id:db.next++,vid:me,date:view.sel,slot:si,status:'pending'});save();route();toast(`已送出 ${fmt(view.sel)} ${SLOTS[si].k}，等待督導審核`)});
+  document.querySelectorAll('[data-cancel]').forEach(b=>b.onclick=()=>{const s=db.shifts.find(x=>x.id===+b.dataset.cancel);
+    if(s){db.shifts=db.shifts.filter(x=>x!==s);save();route();toast('已取消申請')}});
+  bindReset();
+}
+
+/* ---------- 督導端 ---------- */
+function admin(){
+  const pend=db.shifts.filter(s=>s.status==='pending').sort((a,b)=>(a.date+a.slot).localeCompare(b.date+b.slot));
+  // 未來 7 天人力
+  let gaps=0,full=0;for(let i=0;i<7;i++){const d=new Date();d.setDate(d.getDate()+i);const ds=iso(d);
+    for(let s=0;s<4;s++){const n=inSlot(db.shifts,ds,s).filter(x=>x.status==='approved').length;if(n===0)gaps++;if(n>=CAP)full++}}
+  const monthKey=iso(view.month).slice(0,7);
+  const appr=db.shifts.filter(s=>s.status==='approved'&&s.date.startsWith(monthKey)).length;
+  const day=view.sel;
+  const slotHtml=SLOTS.map((S,si)=>{
+    const L=inSlot(db.shifts,day,si);
+    const ppl=L.length?L.map(s=>`<span class="pill ${s.status==='approved'?'a':'p'}">${esc(U[s.vid].name)}${s.status==='pending'?'・待審':''}</span>`).join(''):'<span class="empty">沒有人排，需要補人</span>';
+    const btns=L.map(s=>s.status==='pending'
+      ?`<button class="btn btn-main btn-sm" data-ok="${s.id}">核准 ${esc(U[s.vid].name)}</button><button class="btn btn-ghost btn-sm" data-no="${s.id}">退回</button>`
+      :(day>=TODAY?`<button class="btn btn-ghost btn-sm" data-drop="${s.id}">移除 ${esc(U[s.vid].name)}</button>`:'')).join('');
+    return `<div class="slot"><div class="slot-h"><b>${S.k} <span class="mono" style="font-weight:400;font-size:.82rem;color:var(--muted)">${S.t}</span></b><span class="cap mono${L.length>=CAP?' full':''}">${L.length}/${CAP}</span></div><div class="ppl">${ppl}</div>${btns?`<div class="acts" style="display:flex;flex-wrap:wrap;gap:6px">${btns}</div>`:''}</div>`;
+  }).join('');
+  const rows=pend.map(s=>{const c=check(db.shifts,s.vid,s.date,s.slot,s.id);
+    return `<tr><td class="mono">${s.date}</td><td>${SLOTS[s.slot].k}</td><td>${esc(U[s.vid].name)} <span class="mono empty">${s.vid}</span></td>
+    <td class="mono">${inSlot(db.shifts,s.date,s.slot).length}/${CAP}</td>
+    <td>${c.ok?'<span class="pill a">符合規則</span>':`<span class="pill r">${esc(c.why)}</span>`}</td>
+    <td><div class="acts"><button class="btn btn-main btn-sm" data-ok="${s.id}" ${c.ok?'':'disabled'}>核准</button><button class="btn btn-ghost btn-sm" data-no="${s.id}">退回</button></div></td></tr>`}).join('');
+  return `<div class="wrap app">
+  <div class="app-top"><div><h1>排班審核</h1><p>${esc(U[me].name)} 督導 ・ 審核志工的排班申請，也可以從月曆查看每天每個時段的人力。</p></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-sun btn-sm" id="okAll" ${pend.length?'':'disabled'}>全部符合規則的一次核准</button><button class="btn btn-ghost btn-sm" id="reset">重設示範資料</button></div></div>
+  <div class="stats">
+    <div class="stat"><span>待審核</span><b>${pend.length}</b> 筆</div>
+    <div class="stat"><span>本月已核准</span><b>${appr}</b> 班</div>
+    <div class="stat"><span>未來 7 天沒人的時段</span><b style="color:${gaps?'var(--no)':'inherit'}">${gaps}</b> 個</div>
+    <div class="stat"><span>未來 7 天已滿的時段</span><b>${full}</b> 個</div>
+  </div>
+  <div class="tabs" role="tablist"><button role="tab" aria-selected="${view.tab==='pending'}" data-tab="pending">待審核（${pend.length}）</button><button role="tab" aria-selected="${view.tab==='cal'}" data-tab="cal">班表月曆</button></div>
+  ${view.tab==='pending'
+    ?`<section class="sec"><div class="tbl-wrap"><table><thead><tr><th>日期</th><th>時段</th><th>志工</th><th>人數</th><th>規則檢查</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="6" class="empty">目前沒有待審核的申請。</td></tr>'}</tbody></table></div>
+      <p class="note">規則檢查會排除這筆申請本身再算一次：時段人數（含其他待審核）不能超過 ${CAP} 人，同一人同一天不能連續超過 ${MAX_RUN} 班。</p></section>`
+    :`<div class="board">${calendar()}<aside class="panel" aria-live="polite"><h2>${fmt(day)}</h2><p class="sub">核准、退回待審核的申請，或移除已排的班。</p>${slotHtml}</aside></div>`}
+</div>`;
+}
+function bindAdmin(){
+  bindCal();bindReset();
+  document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{view.tab=b.dataset.tab;route()});
+  const find=id=>db.shifts.find(s=>s.id===+id);
+  document.querySelectorAll('[data-ok]').forEach(b=>b.onclick=()=>{const s=find(b.dataset.ok);const c=check(db.shifts,s.vid,s.date,s.slot,s.id);
+    if(!c.ok){toast('不能核准：'+c.why);return}s.status='approved';save();route();toast(`已核准 ${U[s.vid].name} ${fmt(s.date)} ${SLOTS[s.slot].k}`)});
+  document.querySelectorAll('[data-no]').forEach(b=>b.onclick=()=>{const s=find(b.dataset.no);s.status='rejected';s.note='督導退回，請改選其他時段';save();route();toast(`已退回 ${U[s.vid].name} 的申請`)});
+  document.querySelectorAll('[data-drop]').forEach(b=>b.onclick=()=>{const s=find(b.dataset.drop);s.status='rejected';s.note='督導已移除這一班';save();route();toast(`已移除 ${U[s.vid].name}`)});
+  const all=$('#okAll');if(all)all.onclick=()=>{let n=0;db.shifts.filter(s=>s.status==='pending').sort((a,b)=>a.id-b.id).forEach(s=>{if(check(db.shifts,s.vid,s.date,s.slot,s.id).ok){s.status='approved';n++}});save();route();toast(`已核准 ${n} 筆`)};
+}
+function bindReset(){const r=$('#reset');if(!r)return;let armed=false;
+  r.onclick=()=>{if(!armed){armed=true;r.textContent='再按一次確認重設';r.classList.add('btn-sun');setTimeout(()=>{armed=false;r.textContent='重設示範資料';r.classList.remove('btn-sun')},3000);return}
+    db=seed();save();route();toast('已重設成初始示範資料')}}
+
+/* ---------- 路由 ---------- */
+function route(){
+  const h=location.hash.slice(1)||'home';
+  renderChrome();
+  const v=$('#view');
+  if(me&&U[me].role==='admin'&&(h==='admin'||h==='portal')){v.innerHTML=admin();bindAdmin();return}
+  if(me&&U[me].role==='vol'&&(h==='portal'||h==='admin')){v.innerHTML=portal();bindPortal();return}
+  if((h==='portal'||h==='admin')&&!me){location.hash='#login';return}
+  v.innerHTML=home();bindLogin();
+  if(h!=='home'){const t=document.getElementById(h==='login'?'loginBox':h);if(t)requestAnimationFrame(()=>t.scrollIntoView({block:'start'}));if(h==='login'){const a=$('#acc');a&&a.focus({preventScroll:true})}}
+  else scrollTo(0,0);
+}
+addEventListener('hashchange',route);
+route();
+})();
+</script>
+<a class="demo-badge" href="/works/volunteer-schedule-site/">← 示範作品：虛構協會，回作品頁</a>
+<script>if(window.self!==window.top){var b=document.querySelector(".demo-badge");if(b)b.style.display="none";}</script>
+</body>
+</html>
