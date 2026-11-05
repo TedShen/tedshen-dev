@@ -54,7 +54,7 @@ const listSchema = {
             <a class="w" href={entryPath(section, e.id)}>
               <div class="w-img">
                 {e.data.cover && <img src={e.data.cover} alt={e.data.demo ? '' : (e.data.coverAlt ?? e.data.title)} loading="lazy" />}
-                {(e.data.demo || !/^\/works\/cover-.*\.webp$/.test(e.data.cover ?? '')) && <span class="w-kind mono">{e.data.demo ? '品牌網站 Demo' : e.data.kind}</span>}
+                {(e.data.demo || !/^\/works\/cover-.*\.webp$/.test(e.data.cover ?? '')) && <span class="w-kind mono">{e.data.demo ? (e.data.demoKind ?? '品牌網站 Demo') : e.data.kind}</span>}
               </div>
               <div class="w-txt">
                 <h3>{e.data.shortTitle ?? e.data.title}</h3>

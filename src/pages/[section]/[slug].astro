@@ -71,12 +71,12 @@ const schema =
     <section class="demo-view" aria-label={`${d.demoName ?? d.title} 網站 Demo`}>
       <div class="wrap-wide demo-bar">
         <div class="demo-id">
-          <span class="zone-label">BRAND SITE ／ 品牌網站 Demo</span>
+          <span class="zone-label">{d.demoKind ? 'WEB APP' : 'BRAND SITE'} ／ {d.demoKind ?? '品牌網站 Demo'}</span>
           <h1>{d.demoName ?? d.title}</h1>
         </div>
         <div class="demo-actions">
           <a class="btn btn-ghost" href={d.demo} target="_blank" rel="noopener">全螢幕開啟 ↗</a>
-          <a class="btn btn-line" href={LINE_URL}>做一個你的品牌官網 →</a>
+          <a class="btn btn-line" href={LINE_URL}>{d.demoKind ? '做一套你的系統 →' : '做一個你的品牌官網 →'}</a>
         </div>
       </div>
       <div class="demo-frame">
@@ -84,7 +84,7 @@ const schema =
         <iframe src={d.demo} title={`${d.demoName ?? d.title} 網站 Demo`} loading="eager"></iframe>
       </div>
       <p class="wrap-wide demo-note">
-        虛構品牌示範，商品、價格與數據都是編的。{d.credits && `照片來自 Unsplash（可免費商用）：${d.credits}。`}
+        這是虛構的示範，名稱、內容與數據都是編的。{d.credits && `照片來自 Unsplash（可免費商用）：${d.credits}。`}
         <a href={meta.path}>← 回到{meta.name}</a>
       </p>
     </section>

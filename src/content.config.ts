@@ -51,6 +51,8 @@ const works = defineCollection({
     demo: z.string().optional(),
     /** Demo 的品牌名，作品頁大標用 */
     demoName: z.string().optional(),
+    /** Demo 類別，預設「品牌網站 Demo」 */
+    demoKind: z.string().optional(),
     /** 照片來源，作品頁底部小字 */
     credits: z.string().optional(),
   }),

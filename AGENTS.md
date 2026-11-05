@@ -69,6 +69,11 @@
 
 ## 6. 作業紀錄
 
+### 2026-11-05 — 新增作品〈志工排班系統：晴光陪伴協會〉
+- 範圍：`public/demos/volunteer-schedule/`（虛構公益協會官網＋志工登入＋月曆排班＋督導審核；每時段最多 3 人、同一人同一天最多連續 2 班，申請與核准都檢查；資料只存在瀏覽器 localStorage；`img/cover.webp` 為排班畫面截圖）、`src/content/works/volunteer-schedule-site.md`（order 15，`demo` 直接嵌入）、`src/content.config.ts`（works 新增 `demoKind`，預設「品牌網站 Demo」）、`src/pages/[section]/[slug].astro`（Demo 標籤與按鈕依 `demoKind` 切換；備註改成通用說法）、`src/pages/[section]/index.astro`（卡片標籤用 `demoKind`）
+- 原因：站主 2026-11-05 要求依新北市生命線網站的形式做志工登入＋排班審核 Demo，並放進作品集
+- 驗證：`npm run build` 通過；Playwright 測過志工申請（連續第 3 班被擋、額滿時段被擋）、督導核准／一次核准；作品列表、作品頁、Demo 頁 390／768／1024／1440px 無橫向捲動、無 JS 錯誤
+
 ### 2026-11-04 — 守物包材 Demo 改用 Unsplash 實景照片
 - 範圍：`public/demos/shouwu-packaging/index.html`（首屏、四張產業卡、15 張產品卡由 SVG 插圖改成照片；拿掉 `ART` 插圖物件；頁尾加攝影師標註；「食品冷鏈」改「食品外帶」、「珍珠棉」改「PE 保護膜」、「鋁箔保冷袋」改「外帶牛皮紙袋」，讓品項跟找得到的免費照片對得上；選材表同步改）、`public/demos/shouwu-packaging/img/*.webp`（hero 889×593、產業卡 800×500、產品卡 800×600，Pillow 裁切轉檔，共約 0.9MB；`cover.webp` 重新截圖）、`src/content/works/shouwu-packaging-site.md`（加 `credits`、`updated`）
 - 原因：站主 2026-11-04 指示從網路找可商用授權的照片取代插圖
